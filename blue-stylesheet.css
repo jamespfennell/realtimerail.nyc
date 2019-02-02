@@ -1,0 +1,669 @@
+/*
+ Realtime Rail CSS stylesheet (c) James Fennell 2018
+
+ This stylesheet has a number of distinct sections:
+ * General html styling commands - like setting the font, and basic color classes.
+ * Styling for the HEADER
+ * Styling for each of the following pages: HOME, ROUTE, STOP, TRIP (4 sections)
+ * One section for the "list of stops" (LOS) element (features in the Route and Trip pages)
+ * One section for the "list of trips" (LOT) element (features in the Stop page)
+ * The LOADING animation
+ * Some styling for the FOOTER
+*/
+
+/*
+ General HTML styling
+*/
+
+html {
+	overflow-y:scroll; 
+}
+body {
+	font-family: 'Fira Sans', 'Open Sans', sans-serif; 
+	background: #ACD1E9; #2d8aca;
+	/*color: white;*/
+}
+a, a:visited {
+	color: black; 
+}
+a:hover {
+	color: #333; 
+}
+/* Basic color classes. These allow one to easily assign a standard color to a class. */
+.orange {
+	background: orange; 
+	color: white;
+}
+.green {	
+	background: #00933c;
+	color: white;
+}
+.red {
+	background: #ee352e; 
+	color: white;
+}
+.white {
+	background: #F5FAFA;
+	color: black;
+}
+.cream {
+	background: #F5FAFA; 
+}
+/* Structural elements */
+#cont {
+	width: 100%; 
+}
+#pages {
+	width: 100%;
+	border: 3px solid #F5FAFA;
+	border-width: 3px 0px;
+	display: none;
+}
+/* If on a computer/table with width above 400px, the page width is constrained. */
+@media only screen and (min-width: 400px) {
+	#cont {
+		margin: 0px auto;
+		width: 312px; 
+	}
+	#pages {
+		width: 100%;
+		margin: 0px -3px;
+		border: 3px solid #F5FAFA;
+		border-radius: 15px; 
+	}
+}
+
+/* 
+ The HEADER 
+*/
+
+#header {
+	opacity: 0.5;
+	margin: 8px 10px 0px 10px;
+	height: 38px; 
+	position: relative;
+}
+#header div {
+	padding: 12px 8px 8px 8px; 
+	margin: 0px; 
+	height: 18px; 
+	border-top-left-radius: 6px; 
+	border-top-right-radius: 6px; 
+	vertical-align: middle;
+}
+/* If using a mouse, hover is used to illuminate the buttons. */
+@media only screen and (min-width: 400px) {
+	#header-back:hover, #header-reload:hover, #header-title:hover {
+		background: white; #F6ECE6; 
+		cursor: pointer;
+	}
+}
+/* The shield prevents users from clicking the buttons during loading */
+#header-shield {
+	position: absolute;
+	left: 0px;
+	right: 0px; 
+	top: 0px; 
+	bottom: 0px;
+	z-index: 10;
+	display: none;
+}
+#header #header-title {
+	text-align: center;
+	width: auto;
+	text-height: 18px;
+	margin: 0px 40px;
+	padding: 10px 8px 10px 8px;
+}
+#header #header-title img {
+	margin: -3px 0px 3px 5px;
+	vertical-align: middle;
+}
+#header img {
+	width: 18px; 
+	height: 18px;
+	margin: 0px;
+}
+#header #header-back {
+	float: left;
+	width: 18px;
+}
+#header #header-reload {
+	float: right; 
+	width: 18px;
+}
+
+/*
+ The HOME page 
+*/
+
+#home {
+	display: none;
+	padding: 10px 0px;
+}
+#home-status {
+	margin: 0px 10px 15px 10px;
+	padding: 14px 0px; 
+	text-align: center;
+	height: 20px;
+	line-height: 20px;
+	border-radius: 6px;
+	cursor: pointer;
+}
+.home-row {
+	clear: left;
+}
+.home-row-spacer-2 {
+	width: 27%;
+	height: 10px;
+	float: left;
+}
+.home-row-spacer-3 {
+	width: 15%;
+	height: 10px;
+	float: left;
+}
+.home-row-spacer-4 {
+	width: 4%;
+	height: 10px;
+	float: left;
+}
+.home-row-route {
+	width: 20%;
+	margin: 1% 1.5%;
+	float: left;
+	position: relative;
+}
+.home-row-route img {
+	width: 100%;
+	cursor: pointer;
+}
+.home-row-route img:hover {
+	opacity: 0.9;
+}
+.home-row-route-title {
+	width: 100%; 
+	text-align: center;
+	cursor: pointer;
+}
+.home-row-route-status {
+	width: 14%;
+	height: 14%;
+	border-radius: 50%;
+	position: absolute;
+	right: 0;
+	top: 0;
+}
+
+/* 
+ The TRIP page 
+*/
+
+#trip-header {
+	margin: 10px;
+	height: 100px;
+	position: relative;
+	margin-bottom: 20px;
+}
+#trip-header-route-logo {
+	width: 100px;
+	height: 100px;
+	position: absolute;
+	top: 0px;
+	left: 0px;
+}
+#trip-header-route-logo img {
+	width: 100px;
+	height: 100px;
+}
+#trip-header-text {
+	height: 100px;
+	position: absolute;
+	top: 0px;
+	right: 0px;
+	left: 110px;
+}
+#trip-header-origin {
+	font-size: 1.2em;
+	position: absolute;
+	vertical-align: bottom;
+	height: 50px; 
+	left: 0px;
+	top: 0px;
+	line-height: 50px;
+	overflow: hidden;
+}
+#trip-header-terminus {
+	font-size: 1.2em;
+	position: absolute;
+	left: 0px;
+	top: 50px;
+	height: 50px; 
+	line-height: 50px;
+	overflow: hidden;
+}
+#trip-header-to {
+	position: absolute;
+	left: 5px;
+	top: 40px;
+	height: 20px;
+	line-height: 20px;
+
+}
+#trip-not-left {
+	margin: 15px 0px -15px 0px;
+	border-top: 1px solid white;
+	padding: 8px 10px;
+	font-style: italic;
+}
+#trip-details {
+	margin: 10px;
+}
+.trip-details-entry {
+	margin-top: 10px;
+}
+.trip-details-entry span:first-child {
+	font-size: 0.9em;
+	color: #333;
+}
+
+/* 
+ The ROUTE page 
+*/
+
+#route {
+	padding: 0px; 
+	display: none;
+}
+
+#route-bad-feed {
+	margin: 10px 10px 15px 10px;
+	padding: 10px 0px; 
+	text-align: center;
+	border-radius: 6px;
+	position: relative;
+}
+
+
+#route-bad-feed > img { width: 40px; height: 40px; position: absolute; top: 17px; left: 10px;  }
+
+#route-bad-feed-text {margin: 0px 10px 0px 60px; line-height: 18px; font-size: 0.9em; height: 54px; text-align: left; }
+#route-bad-feed-text img {width: 16px; height: 16px; padding: 0px; margin: 0px 0px 2px 0px; vertical-align: middle; }
+
+#route-logo {
+	width: 100px;
+	height: 100px;
+	margin: 10px auto;
+}
+#route-logo img {
+	width: 100%; 
+	height: 100%;
+}
+#route-status-button {
+	width: 130px; 
+	margin: 10px auto 0px auto; 
+	padding: 10px;
+	height: 20px; line-height: 20px;  
+	text-align: center; 
+	border-radius: 10px;
+}
+#route-status-frequency, #route-status-no-service {
+	width: 190px; 
+	margin: 10px auto;
+	text-align: center;
+	display: none;
+}
+#route-status-messages-cont {
+	display: none;
+	margin: 10px 15px !important;
+	padding-top: 0px;
+	line-height: 20px;
+}
+#route-status-messages-cont img {
+	width: 18px; 
+	height: 18px;
+	margin-bottom: 2px;
+	vertical-align: middle;
+}
+.route-status-message-space {
+	height: 10px;
+}
+.route-status-message-title {
+	padding-top: 0px;
+	font-weight: bold;
+	margin: 0px 0px 5px 0px !important;
+}
+.route-status-message-body {
+	margin: 0px 0px 5px 0px !important;
+}
+.route-status-message-time {
+	margin: 0px 0px 0px 0px !important;
+	font-size: 0.8em;
+}
+#route-status-frequency span {
+	font-weight: bold;
+}
+.skipping {
+	font-size: 0.8em;
+	color: #333;
+}
+
+/*
+ The LIST OF STOPS (LOS) element
+*/
+
+.list-of-stops {
+	margin: 15px 0px 0px 0px !important;
+	position: relative;
+	border-radius: 20px;
+
+}
+.los-route-bar  {
+	position: absolute;
+	border-right: 3px solid #2850ad;
+	top: 18px;
+	bottom: 18px;
+	left: 0px;
+	width: 16px;
+	z-index: 1;
+}
+.los-route-start {
+	position:absolute;
+	background: #2850ad;
+	width: 9px;
+	height: 9px;
+	top: 16px;
+	left: 13px;
+	z-index: 2;
+}
+.los-route-end {
+	position:absolute;
+	background: #2850ad;
+	width: 9px;
+	height: 9px;
+	bottom: 16px;
+	left: 13px;
+	z-index: 2;
+}
+.los-entry, .los-data-missing {
+	position: relative;
+	padding: 10px 8px 10px 33px; 
+	border-top: 1px solid white;
+}
+.los-entry:hover {
+	background: #d5e8f4; 
+	cursor: pointer;
+}
+.los-stop-marker {
+	position: absolute; 
+	border: 2px solid #ACD1E9;
+	top: 14px; 
+	left: 11px; 
+	width: 9px; 
+	height: 9px; 
+	background: #555; border-radius: 50%;
+	z-index: 11;
+}
+.los-entry:nth-child(4) .los-stop-marker, .los-entry:last-child .los-stop-marker {
+	border-radius: 0;
+	border: 2px solid #ACD1E9;
+}
+.los-entry:hover .los-stop-marker {
+	border-color: #d5e8f4; 
+}
+.los-separator {
+	border-top: 1px solid white;
+	background: #F5FAFA;
+	padding: 2px;
+}
+.los-separator-borough-name {
+	font-style: italic;
+	text-align: center;
+	font-size: 0.9em;
+	padding: 2px;
+	
+}
+.list-of-stops > .los-entry:last-child {
+	border-bottom-left-radius: 13px; 
+	border-bottom-right-radius: 13px;
+	padding-bottom: 12px;
+}
+.los-sub-list {
+	padding-top: 30px;
+	margin-left: 18px;
+	position: relative;
+}
+.los-sub-list .los-route-bar {
+	border-top: 3px solid #2850ad;
+	top: 5px;
+	border-top-right-radius: 13px;
+}			
+#los-separator-trip {
+	position: relative;
+	height: 80px;
+}
+#los-separator-trip-arrow {
+	width: 0px;
+	height: 0px;
+	
+	position: absolute;
+	left: 5px;
+	top: 31px;
+	border-left: 10px solid transparent;
+	border-right: 10px solid transparent;
+  	border-top: 18px solid #2850ad;
+}
+#los-separator-trip-time {
+	position: absolute;
+	right: 10px;
+	top: 30px;
+	line-height: 20px;
+}
+#los-separator-trip-text {
+	font-style: italic;
+	position: absolute;
+	left: 100px;
+	right: 0px;
+	top: 22px;
+	line-height: 18px;
+}
+#los-separator-trip-route-logo {
+	position: absolute;
+	left: 30px;
+	top: 10px;
+	width: 60px;
+	height: 60px;
+}
+.los-time {
+	position: absolute;
+	text-align: right;
+	right: 10px;
+	top: 10px;
+	width: 100px;
+}
+			
+
+/* The STOP page */
+#stop {
+	
+	display: none;
+}
+#stop-title {
+	text-align: center;
+	font-size: 1.2em;
+	margin: 20px 0px 20px 0px;
+}
+
+/*
+ The LIST OF TIMES (LOT) element
+*/
+
+.lot-direction, .lot-other-platforms-header {
+	
+	border-top: 1px solid #F5FAFA;
+	background: #F5FAFA;
+	padding: 8px;
+	margin-top: 10px;
+}
+.lot-other-platforms-header {
+	font-style: italic;
+}
+.lot-other-platform {
+	border-top: 1px solid #F5FAFA;
+	padding: 8px; 
+	height: 24px;
+	cursor: pointer;
+}
+.lot-other-platform img {
+	width: 24px;
+	height: 24px;
+}
+.lot-other-platform:last-child {
+
+	border-bottom-left-radius: 13px; 
+	border-bottom-right-radius: 13px;
+}
+.lot-other-platform img {
+	float: left;
+	margin-right: 4px;
+}
+.lot-other-platform:hover {
+	background: #d5e8f4; 
+}
+.lot-entry {
+	border-top: 1px solid white;
+	padding: 11px 10px 9px 36px;
+	position: relative;
+	height: 20px;
+	text-height: 20px;
+	cursor: pointer;
+}
+.lot-entry:hover {
+	background:  #d5e8f4;
+}
+.lot-all-assigned {
+	padding: 10px 10px 0px 10px; 
+	font-size: 0.8em;
+}
+.lot-all-assigned:last-child {
+	padding-bottom: 10px;
+}
+.lot-entry-route-logo {
+	position: absolute; 
+	top: 9px;
+	left: 6px;
+}
+img.lot-entry-route-logo {
+	width: 24px;
+	height: 24px;
+}
+.lot-entry-time {
+	position: absolute;
+	top: 10px;
+	right: 10px;
+	height: 20px;
+	text-height: 20px;
+	text-align: left;
+	font-weight: bold;
+}
+
+img.lot-entry-warning {
+	width: 16px; height: 16px; margin: 0px 0px 4px 0px; vertical-align: middle;
+}
+.lot-all-assigned img {
+	width: 16px; height: 16px; margin: 0px 0px 2px 0px; vertical-align: middle;
+}
+/* 
+ The LOADING page 
+
+ The following code is based on an animation by Tobias Ahlin (http://tobiasahlin.com/spinkit/) that is released under the MIT Licence. 
+*/
+
+#loading {
+	display: block; 
+}
+.spinner {
+  	margin: 140px auto 0px auto;
+  	width: 100px;
+  	height: 100px;
+  	position: relative;
+  	text-align: center;
+  	animation: sk-rotate 5.7s infinite linear;
+}
+/* Each div within the spinner is a route logo. */
+.spinner div {
+	font-weight: bold;
+	line-height:60px;
+	text-align: middle;
+	font-size: 40px; 
+  	width: 60%;
+  	height: 60%;
+  	display: inline-block;
+  	position: absolute;
+  	border-radius: 50%;
+	color: white;
+  	animation: sk-bounce 20.0s infinite ease-in-out;
+}
+/* This places the route logos in a 2x2 grid, with 5 route logos in each grid box. */
+.spinner div:nth-child(4n+1) {top: auto; right: 0; }
+.spinner div:nth-child(4n+2) {left:0; top: 0; }
+.spinner div:nth-child(4n+3) {left: 0; bottom: 0; }
+.spinner div:nth-child(4n) {right: 0; bottom: 0; }
+/* This delays the animation so that they don't appear at the same time. */
+.spinner div:nth-child(1) {animation-delay: 0.0s}
+.spinner div:nth-child(2) {animation-delay: -2.0s}
+.spinner div:nth-child(3) {animation-delay: -2.0s}
+.spinner div:nth-child(4) {animation-delay: -3.0s}
+.spinner div:nth-child(5) {animation-delay: -4.0s}
+.spinner div:nth-child(6) {animation-delay: -5.0s}
+.spinner div:nth-child(7) {animation-delay: -6.0s}
+.spinner div:nth-child(8) {animation-delay: -7.0s}
+.spinner div:nth-child(9) {animation-delay: -8.0s}
+.spinner div:nth-child(10) {animation-delay: -9.0s}
+.spinner div:nth-child(11) {animation-delay: -10.0s}
+.spinner div:nth-child(12) {animation-delay: -11.0s}
+.spinner div:nth-child(13) {animation-delay: -12.0s}
+.spinner div:nth-child(14) {animation-delay: -13.0s}
+.spinner div:nth-child(15) {animation-delay: -14.0s}
+.spinner div:nth-child(16) {animation-delay: -15.0s}
+.spinner div:nth-child(17) {animation-delay: -16.0s}
+.spinner div:nth-child(18) {animation-delay: -17.0s}
+.spinner div:nth-child(19) {animation-delay: -18.0s}
+.spinner div:nth-child(20) {animation-delay: -19.0s}
+/* Route logo color setter. */
+.routeACE {background: #2850ad; }
+.routeBDFM {background: #ff6319; }
+.routeJZ {background: #996633; }
+.routeL {background: #a7a9ac; }
+.routeG {background: #6cbe45; }
+.routeNQRW {background: #fccc0a; color: black; }
+.route7 {background: #b933ad; }
+.route456 {background: #00933c; }
+.route123 {background: #ee352e; }
+/* The animation itself is composed of a rotation of the box, along with each route logo bouncing. */
+@keyframes sk-rotate { 
+	100% { 
+		transform: rotate(360deg);  
+	}
+}
+@keyframes sk-bounce {
+	0%, 10%, 100% { 
+ 		transform: scale(0.0);
+ 	}
+   	5% { 
+		transform: scale(1.0);
+	}
+}
+
+/* 
+ The FOOTER 
+*/
+#footer {
+	display: none;
+	margin: 0px 10px 20px 10px;
+}
+#footer p {
+	margin: 10px 0px;
+	padding: 0px;
+	font-size: 0.8em;
+}
