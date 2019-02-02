@@ -375,8 +375,10 @@ function update_route(json, status){
 	if (json.service_status == "Good Service"){
 		$route_status_button.addClass('green')
 		if (json.hasOwnProperty('frequency')){
-			$('#mins', $route_status_frequency).html(json.frequency)
-			$route_status_frequency.css('display', 'block')
+		    if (json.frequency != null) {
+                $('#mins', $route_status_frequency).html(json.frequency)
+                $route_status_frequency.css('display', 'block')
+		    }
 		}
 	}
 	// If no service, make the button white and display the no service message.
