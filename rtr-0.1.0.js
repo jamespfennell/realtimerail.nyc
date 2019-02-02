@@ -182,7 +182,7 @@ function set_history_state(page, uid, url) {
 
 // Return a HTML element of the route logo, clickable to go to that route page.
 function route_logo(route_id) {
-	$img = $('<img src="/static/images/routes/' + route_id.toLowerCase() + '.svg">')
+	$img = $('<img src="/images/routes/' + route_id.toLowerCase() + '.svg">')
 	$img.click({route_id : route_id}, load_route_from_event)
 	return $img
 }
@@ -200,7 +200,7 @@ function insert_images_in_message(message) {
 	pre = message.substring(0,a)
 	route_id = message.substring(a+1,b)
 	post = message.substring(b+1)
-	return pre + '<img src="/static/images/routes/' + route_id.toLowerCase() + '.svg">' + insert_images_in_message(post)
+	return pre + '<img src="/images/routes/' + route_id.toLowerCase() + '.svg">' + insert_images_in_message(post)
 }
 
 // This jQuery extension shuffles the children of the element it is called on.
@@ -306,7 +306,7 @@ function generate_home() {
 		for(var j=0; j < cols; j++) {
 			$new_route = $('<div class="home-row-route" id="home-route-' + layout[i][j] + '"></div>')
 			$new_route.append('<div class="home-row-route-status"></div>')
-			$new_route.append('<img src="/static/images/routes/' + layout[i][j] + '.svg">')
+			$new_route.append('<img src="/images/routes/' + layout[i][j] + '.svg">')
 			$new_row.append($new_route)
 			$new_route.click({route_id : layout[i][j]}, load_route_from_event)
 		}
@@ -334,12 +334,12 @@ function load_route(route_id) {
 function update_route(json, status){
 	// FIRST (of 3): Set the route image
 	var route_id = json.route_id
-	$('#route-logo img', $route).attr('src', '/static/images/routes/' + route_id.toLowerCase() + '.svg')
+	$('#route-logo img', $route).attr('src', '/images/routes/' + route_id.toLowerCase() + '.svg')
 
 	// FIRST and a half: determine if the feed has not been updated recently, and note if it hasn't.
 	if (current_time - json.feed_last_updated > 180) {
 		$('#route-bad-feed', $route).css('display', 'block')
-		$('#route-bad-feed-route', $route).attr('src', '/static/images/routes/' + route_id.toLowerCase() + '.svg')
+		$('#route-bad-feed-route', $route).attr('src', '/images/routes/' + route_id.toLowerCase() + '.svg')
 		$('#route-bad-feed-mins', $route).text(  Math.floor((current_time-json.feed_last_updated)/60) )
 	}
 	else {
@@ -538,7 +538,7 @@ function update_stop(json, status) {
 			// If the trip is not assigned, add a start to the terminus text.
 			if (current_time - this.feed_last_updated > 180) {
 				feed_problem = true
-				terminus = terminus + ' <img src="/static/images/icons/ex.svg" class="lot-entry-warning">'
+				terminus = terminus + ' <img src="/images/icons/ex.svg" class="lot-entry-warning">'
 				if (current_time - this.feed_last_updated < min_feed_delay) {
 					min_feed_delay = current_time - this.feed_last_updated
 				}
@@ -549,7 +549,7 @@ function update_stop(json, status) {
 			}
 			// Put the HTML in the list of trips
 			$new_trip = $('<div class="lot-entry">' +
-				      '    <img class="lot-entry-route-logo" src="/static/images/routes/' + route_id.toLowerCase() + '.svg">' +
+				      '    <img class="lot-entry-route-logo" src="/images/routes/' + route_id.toLowerCase() + '.svg">' +
 				      '    <div class="lot-entry-time">' + minutes + '</div>' + terminus +
 				      '</div>')
 			$lot.append($new_trip)
@@ -559,7 +559,7 @@ function update_stop(json, status) {
 	// Put in the stars or feed delay explanation, if necessary.
 	if (feed_problem) {
 		$lot.append('<div class="lot-all-assigned">' +
-			    '    The feeds for trains marked with <img src="/static/images/icons/ex.svg"> have not been updated for at least ' + 
+			    '    The feeds for trains marked with <img src="/images/icons/ex.svg"> have not been updated for at least ' +
 			         Math.floor(min_feed_delay/60) +
 			    '    minutes; predictions may be inaccurate.' + 
 			    '</div>')
@@ -575,7 +575,7 @@ function update_stop(json, status) {
 		$.each(json.sibling_stops, function(){
 			var images = ''
 			$.each(this.daytime_routes, function(){
-				images = images + '<img src="/static/images/routes/' + this.toLowerCase() + '.svg">'
+				images = images + '<img src="/images/routes/' + this.toLowerCase() + '.svg">'
 			})
 			$new_sibling = $('<div class="lot-other-platform">' + images + '</div>')
 			$lot.append($new_sibling)
@@ -603,7 +603,7 @@ function load_trip(trip_uid) {
 
 function update_trip(json, status) {
 	// Set the basic page information
-	$('#trip-header-route-logo img', $trip).attr('src','/static/images/routes/' + json.route_id.toLowerCase() + '.svg')
+	$('#trip-header-route-logo img', $trip).attr('src','/images/routes/' + json.route_id.toLowerCase() + '.svg')
 	$('#trip-header-origin', $trip).text(json.origin_name)
 	$('#trip-header-terminus', $trip).text(json.terminating_stop_name)
 	$('#rtr-trip-uid', $trip).text(json.trip_uid)
@@ -649,7 +649,7 @@ function update_trip(json, status) {
 					    '    <div id="los-separator-trip">' +
 					    '	     <div id="los-separator-trip-arrow"></div>' + 
 					    '	     <div id="los-separator-trip-route-logo">' + 
-					    '            <img src="/static/images/routes/' + json.route_id.toLowerCase() + '.svg">' + 
+					    '            <img src="/images/routes/' + json.route_id.toLowerCase() + '.svg">' +
 					    '	     </div>' +
 					    '	     <div id="los-separator-trip-text">En route to<br /> ' + this.name + '</div>' +
 					    '    </div>' + 
