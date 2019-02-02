@@ -327,7 +327,7 @@ function load_route_from_event(event) {
 function load_route(route_id) {
 	hide_all_pages()
 	setTimeout(function(){
-		$.ajax({dataType: "json", url: "/json/routes/" + route_id + ".json", success: update_route, cache: false});
+		$.ajax({dataType: "json", url: "/transiter/systems/nycsubway/routes/" + route_id, success: update_route, cache: false});
 	},fade_time)
 }
 
@@ -337,7 +337,8 @@ function update_route(json, status){
 	$('#route-logo img', $route).attr('src', '/images/routes/' + route_id.toLowerCase() + '.svg')
 
 	// FIRST and a half: determine if the feed has not been updated recently, and note if it hasn't.
-	if (current_time - json.feed_last_updated > 180) {
+	//if (current_time - json.feed_last_updated > 180) {
+	if (false) {
 		$('#route-bad-feed', $route).css('display', 'block')
 		$('#route-bad-feed-route', $route).attr('src', '/images/routes/' + route_id.toLowerCase() + '.svg')
 		$('#route-bad-feed-mins', $route).text(  Math.floor((current_time-json.feed_last_updated)/60) )
@@ -379,7 +380,7 @@ function update_route(json, status){
 		}
 	}
 	// If no service, make the button white and display the no service message.
-	else if (json.service_status == "No Service"){
+	else if (json.service_status == "No service"){
 		$route_status_button.addClass('white')
 		$route_status_no_service.css('display', 'block')
 	}
@@ -409,17 +410,17 @@ function update_route(json, status){
 			else {
 				$new_message.append('<p class="route-status-message-spacer"></div>')
 			}
-			$new_message.append('<p class="route-status-message-title">' + insert_images_in_message(this.message_heading) + '</p>')
+			$new_message.append('<p class="route-status-message-title">' + insert_images_in_message(this.message_title) + '</p>')
 			// Sometimes the MTA doesn't provide description text in a non-html format
 			// (ironically, this is usually when the service change is the most serious)
 			// so instead a link is added to the MTA website.
-			if (this.message_text == ''){
+			if (this.message_content == ''){
 				$new_message.append('<p class="route-status-message-body">See the <a href="http://www.mta.info">MTA website</a> for information.</p>')
 			}
 			else {
-				$new_message.append('<p class="route-status-message-body">' + insert_images_in_message(this.message_text) + '</p>')
+				$new_message.append('<p class="route-status-message-body">' + insert_images_in_message(this.message_content) + '</p>')
 			}
-			$new_message.append('<p class="route-status-message-time">' + this.posted_time + '</p>')
+			$new_message.append('<p class="route-status-message-time">' + this.creation_time + '</p>')
 			$route_status_messages.append($new_message)
 		})
 
@@ -447,19 +448,20 @@ function update_route(json, status){
 	$.each(json.stops,function(){
 		// Place the borough, if it has changed since the last stop.
 		// By default, the borough of the first stop is not specified.
+		var this_borough = null
 		if(borough == null){
-			borough = this.borough
+			borough = this_borough
 		}
-		else if(borough != this.borough) {
+		else if(borough != this_borough) {
 			var $borough_divider =	'<div class="los-separator">' +
 						'<div class="los-separator-borough-name">' + borough + '</div>' +
-						'<div class="los-separator-borough-name">' + this.borough + '</div>' +
+						'<div class="los-separator-borough-name">' + this_borough + '</div>' +
 						'</div>'
 			$los.append($borough_divider)
-			borough = this.borough
+			borough = this_borough
 		}
 		//Now place the stop proper
-		var stop_uid = this.stop_uid
+		var stop_uid = this.id
 		var name = this.name
 		$new_stop = $('<div class="los-entry"></div>').text(name)
 		$los.append($new_stop)
@@ -468,7 +470,7 @@ function update_route(json, status){
 			$new_stop.html('<div class="los-stop-marker"></div>' + name) 
 		}
 		//Otherwise apply the skipping class (makes the text smaller)
-		else if (json.service_status != "No Service") {
+		else {
 			$new_stop.addClass('skipping')
 		}
 		//Finally add the click event
