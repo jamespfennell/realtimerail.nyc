@@ -327,13 +327,13 @@ function load_route_from_event(event) {
 function load_route(route_id) {
 	hide_all_pages()
 	setTimeout(function(){
-		$.ajax({dataType: "json", url: "/transiter/systems/nycsubway/routes/" + route_id, success: update_route, cache: false});
+		$.ajax({dataType: "json", url: "/transiter/systems/nycsubway/routes/" + route_id.toUpperCase(), success: update_route, cache: false});
 	},fade_time)
 }
 
 function update_route(json, status){
 	// FIRST (of 3): Set the route image
-	var route_id = json.route_id
+	var route_id = json.id
 	$('#route-logo img', $route).attr('src', '/images/routes/' + route_id.toLowerCase() + '.svg')
 
 	// FIRST and a half: determine if the feed has not been updated recently, and note if it hasn't.
@@ -341,7 +341,7 @@ function update_route(json, status){
 	if (false) {
 		$('#route-bad-feed', $route).css('display', 'block')
 		$('#route-bad-feed-route', $route).attr('src', '/images/routes/' + route_id.toLowerCase() + '.svg')
-		$('#route-bad-feed-mins', $route).text(  Math.floor((current_time-json.feed_last_updated)/60) )
+		//$('#route-bad-feed-mins', $route).text(  Math.floor((current_time-json.feed_last_updated)/60) )
 	}
 	else {
 		$('#route-bad-feed', $route).css('display', 'none')
