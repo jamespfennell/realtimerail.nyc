@@ -241,7 +241,7 @@ function load_service_status() {
 		$service_status_button.fadeOut(fade_time)
 		service_status_loaded = true
 		setTimeout(function(){
-			$.ajax({dataType: "json", url: "/json/service_status.json", success: update_service_status, cache: false});
+			$.ajax({dataType: "json", url: "/transiter/systems/nycsubway/routes", success: update_service_status, cache: false});
 		}, fade_time)
 	}
 }
@@ -250,7 +250,7 @@ function update_service_status(json, status){
 	var all_good_service = true
 	// Iterate over each service status message
 	$.each(json,function(){
-		$service_status_marker = $('#home-route-' + this.route_id.toLowerCase() + ' .home-row-route-status', $home)
+		$service_status_marker = $('#home-route-' + this.id.toLowerCase() + ' .home-row-route-status', $home)
 		// The type of message determines the color of the marker - orange for these...
 		if (this.service_status == "Planned Work" || this.service_status == "Service Change") {
 			$service_status_marker.addClass('orange')
