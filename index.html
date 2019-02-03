@@ -5,11 +5,11 @@
   	<title>Realtime Subway Arrivals - realtimerail.nyc</title>
 
 	<!-- Favicons -->
-	<link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png">
-	<link rel="icon" type="image/png" sizes="32x32" href="/favicon/favicon-32x32.png">
-	<link rel="icon" type="image/png" sizes="16x16" href="/favicon/favicon-16x16.png">
-	<link rel="manifest" href="/favicon/site.webmanifest">
-	<link rel="mask-icon" href="/favicon/safari-pinned-tab.svg" color="#5bbad5">
+	<link rel="apple-touch-icon" sizes="180x180" href="./favicon/apple-touch-icon.png">
+	<link rel="icon" type="image/png" sizes="32x32" href="./favicon/favicon-32x32.png">
+	<link rel="icon" type="image/png" sizes="16x16" href="./favicon/favicon-16x16.png">
+	<link rel="manifest" href="./favicon/site.webmanifest">
+	<link rel="mask-icon" href="./favicon/safari-pinned-tab.svg" color="#5bbad5">
 	<meta name="msapplication-TileColor" content="#da532c">
 	<meta name="theme-color" content="#ffffff">
   	
@@ -17,18 +17,19 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 
 	<link href="https://fonts.googleapis.com/css?family=Fira+Sans" rel="stylesheet">
-  	<link rel="stylesheet" href="/blue-stylesheet.css">
+  	<link rel="stylesheet" href="./blue-stylesheet.css">
 
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-	<!--<script src="/js/jquery-3.3.1.js"></script>-->
-	<script src="/rtr-0.1.0.js"></script>
+	<script src="./js/moment.min.js"></script>
+    <script src="./js/moment-timezone.min.js"></script>
+	<script src="./rtr-0.1.0.js"></script>
 </head>
 <body>
 <div id="cont">
 	<div id="header">
-		<div id="header-back" onclick="window.history.back()"><img src="/images/icons/back2.svg"></div>
-		<div id="header-reload" onclick="reload()"><img src="/images/icons/reload.svg"></div>
-		<div id="header-title" onclick="load_home()">realtimerail.nyc<img src="/images/icons/home-2.svg"></div>
+		<div id="header-back" onclick="window.history.back()"><img src="./images/icons/back2.svg"></div>
+		<div id="header-reload" onclick="reload()"><img src="./images/icons/reload.svg"></div>
+		<div id="header-title" onclick="load_home()">realtimerail.nyc<img src="./images/icons/home-2.svg"></div>
 		<div id="header-shield"></div>
 	</div>
 	<div id="pages">
@@ -67,7 +68,7 @@
 			<div id="route-bad-feed" class="cream">
 				<img src="/images/icons/ex.svg">
 				<div id="route-bad-feed-text">
-					Predictions for the <img src="/images/routes/6.svg" id="route-bad-feed-route"> were last updated 
+					Predictions for the <img src="./images/routes/6.svg" id="route-bad-feed-route"> were last updated
 					<span id="route-bad-feed-mins"></span> minutes ago.
 					<!--We're having problems updating data for the <img src="/images/routes/6.svg" id="route-bad-feed-route"> right now.-->
 					Times may be inaccurate.
@@ -98,8 +99,12 @@
 	</div>
 
 	<div id="footer">
-		<p>All subway symbols are trademarked and are used with the permission of the <a href="http://www.mta.info">MTA</a>.</p>
-		<p>Realtime rail is part of the <a href="http://www.subwaydataproject.nyc">NYC Subway Data Project</a>.</p>
+        <p>realtimerail.nyc is an <a href="https://github.com/jamespfennell/realtimerail.nyc">open source app</a>
+            that uses the <a href="https://github.com/jamespfennell/transiter">open source software Transiter</a>
+            for accessing New York City Transit's realtime data.</p>
+		<p>All subway symbols are trademarked
+            and are used pursuant to a license from the <a href="http://www.mta.info">MTA</a>.</p>
+        <p>We're proud to feature no tracking, no cookies and no ads!</p>
 	</div>
 
 	<div id="loading">

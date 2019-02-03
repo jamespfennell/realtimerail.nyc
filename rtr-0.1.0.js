@@ -31,6 +31,9 @@ var fade_time = 150  // specifies, in milliseconds, how long the fade out/in ani
 
 var current_time = Math.floor((new Date()).getTime() / 1000)
 
+var TRANSITER_APP_ROOT = '/transiter/'
+//var TRANSITER_APP_ROOT = 'https://new.realtimerail.nyc/transiter/'
+
 var route_colors = {
 	"1": "#ee352e",
 	"2": "#ee352e",
@@ -89,6 +92,7 @@ $(document).ready(function() {
 	window.history.replaceState({page : 'home', uid : '' },'','')
 	generate_home()
 	show_page('home')
+	load_service_status()
 })
 
 // This function is called when the user clicks the reload button...
@@ -109,7 +113,7 @@ function load_page_from_event(event) {
 		load_route(event.state.uid)
 	}
 	if (event.state.page == 'trip') {
-		load_trip(event.state.uid)
+		load_trip(event.state.uid, event.state.url)
 	}
 	if (event.state.page == 'home') {
 		load_home()
@@ -173,8 +177,8 @@ function set_history_state(page, uid, url) {
 			return
 		}
 	}
-	url = '' // The url feature has yet to be implemented (requires backend work as well)
-	window.history.pushState({page : page, uid : uid },'',url)
+	//url = '' // The url feature has yet to be implemented (requires backend work as well)
+	window.history.pushState({page : page, uid : uid, url: url },'','')
 }
 
 
@@ -182,7 +186,7 @@ function set_history_state(page, uid, url) {
 
 // Return a HTML element of the route logo, clickable to go to that route page.
 function route_logo(route_id) {
-	$img = $('<img src="/images/routes/' + route_id.toLowerCase() + '.svg">')
+	$img = $('<img src="./images/routes/' + route_id.toLowerCase() + '.svg">')
 	$img.click({route_id : route_id}, load_route_from_event)
 	return $img
 }
@@ -200,7 +204,7 @@ function insert_images_in_message(message) {
 	pre = message.substring(0,a)
 	route_id = message.substring(a+1,b)
 	post = message.substring(b+1)
-	return pre + '<img src="/images/routes/' + route_id.toLowerCase() + '.svg">' + insert_images_in_message(post)
+	return pre + '<img src="./images/routes/' + route_id.toLowerCase() + '.svg">' + insert_images_in_message(post)
 }
 
 // This jQuery extension shuffles the children of the element it is called on.
@@ -241,7 +245,7 @@ function load_service_status() {
 		$service_status_button.fadeOut(fade_time)
 		service_status_loaded = true
 		setTimeout(function(){
-			$.ajax({dataType: "json", url: "/transiter/systems/nycsubway/routes", success: update_service_status, cache: false});
+			$.ajax({dataType: "json", url: TRANSITER_APP_ROOT + 'systems/nycsubway/routes', success: update_service_status, cache: false});
 		}, fade_time)
 	}
 }
@@ -306,7 +310,7 @@ function generate_home() {
 		for(var j=0; j < cols; j++) {
 			$new_route = $('<div class="home-row-route" id="home-route-' + layout[i][j] + '"></div>')
 			$new_route.append('<div class="home-row-route-status"></div>')
-			$new_route.append('<img src="/images/routes/' + layout[i][j] + '.svg">')
+			$new_route.append('<img src="./images/routes/' + layout[i][j] + '.svg">')
 			$new_row.append($new_route)
 			$new_route.click({route_id : layout[i][j]}, load_route_from_event)
 		}
@@ -327,20 +331,20 @@ function load_route_from_event(event) {
 function load_route(route_id) {
 	hide_all_pages()
 	setTimeout(function(){
-		$.ajax({dataType: "json", url: "/transiter/systems/nycsubway/routes/" + route_id.toUpperCase(), success: update_route, cache: false});
+		$.ajax({dataType: "json", url: TRANSITER_APP_ROOT + "systems/nycsubway/routes/" + route_id.toUpperCase(), success: update_route, cache: false});
 	},fade_time)
 }
 
 function update_route(json, status){
 	// FIRST (of 3): Set the route image
 	var route_id = json.id
-	$('#route-logo img', $route).attr('src', '/images/routes/' + route_id.toLowerCase() + '.svg')
+	$('#route-logo img', $route).attr('src', './images/routes/' + route_id.toLowerCase() + '.svg')
 
 	// FIRST and a half: determine if the feed has not been updated recently, and note if it hasn't.
 	//if (current_time - json.feed_last_updated > 180) {
 	if (false) {
 		$('#route-bad-feed', $route).css('display', 'block')
-		$('#route-bad-feed-route', $route).attr('src', '/images/routes/' + route_id.toLowerCase() + '.svg')
+		$('#route-bad-feed-route', $route).attr('src', './images/routes/' + route_id.toLowerCase() + '.svg')
 		//$('#route-bad-feed-mins', $route).text(  Math.floor((current_time-json.feed_last_updated)/60) )
 	}
 	else {
@@ -372,7 +376,7 @@ function update_route(json, status){
 
 	// What happens next is determined by the service status.
 	// If good service, make the button green and display the frequency information.
-	if (json.service_status == "Good Service"){
+	if (json.service_status == "Good service"){
 		$route_status_button.addClass('green')
 		if (json.hasOwnProperty('frequency')){
 		    if (json.frequency != null) {
@@ -381,22 +385,18 @@ function update_route(json, status){
 		    }
 		}
 	}
-	// If no service, make the button white and display the no service message.
-	else if (json.service_status == "No service"){
-		$route_status_button.addClass('white')
-		$route_status_no_service.css('display', 'block')
-	}
-	//Otherwise display the relevant button and the service announcements
 	else {
+	    // If no service, make the button white and display the no service message.
+	    if (json.service_status == "No service") {
+            $route_status_button.addClass('white')
+            $route_status_no_service.css('display', 'block')
 		//Depending on the service status severity, a different color is used for the button
-		if (json.service_status == "Delays") {
+		} else if (json.service_status == "Delays") {
 			$route_status_button.addClass('red')
 		}
 		else {
 			$route_status_button.addClass('orange')
 		}
-		//The service status button will be used to open messages, so mark it as a button
-		$route_status_button.css('cursor', 'pointer')
 
 		//Populate the messages container with messages
 		var first_message = true
@@ -422,20 +422,32 @@ function update_route(json, status){
 			else {
 				$new_message.append('<p class="route-status-message-body">' + insert_images_in_message(this.message_content) + '</p>')
 			}
-			$new_message.append('<p class="route-status-message-time">' + this.creation_time + '</p>')
+            created_time = moment.unix(this.creation_time).tz("America/New_York")
+            if (created_time.format("HHmm") == "0000") {
+                formatted_time = created_time.format("ll")
+            } else {
+                formatted_time = created_time.format("HH:mm, ll")
+            }
+			$new_message.append('<p class="route-status-message-time">Posted: ' + formatted_time + '</p>')
 			$route_status_messages.append($new_message)
 		})
 
-		//Make the service status button clickable to open the messages
-		$route_status_button.click(function(){
-			var $route_status_messages = $('#route-status-messages-cont', $route)
-			if ($route_status_messages.css('display') == 'none') {
-				$route_status_messages.slideDown()
-			}
-			else {
-				$route_status_messages.slideUp()
-			}
-		})
+        //If service, Make the service status button clickable to open the messages
+	    if (json.service_status != "No service") {
+            //The service status button will be used to open messages, so mark it as a button
+            $route_status_button.css('cursor', 'pointer')
+            $route_status_button.click(function(){
+                var $route_status_messages = $('#route-status-messages-cont', $route)
+                if ($route_status_messages.css('display') == 'none') {
+                    $route_status_messages.slideDown()
+                }
+                else {
+                    $route_status_messages.slideUp()
+                }
+            })
+		} else {
+		    $route_status_messages.css('display', 'block')
+		}
 	}
 
 	// THIRD: Make the list of stops structure.
@@ -492,13 +504,13 @@ function load_stop_from_event(event) {
 function load_stop(stop_uid) {
 	hide_all_pages()
 	setTimeout(function(){
-		$.ajax({dataType: "json", url: "/json/stops/" + stop_uid + ".json", success: update_stop, cache: false});
+		$.ajax({dataType: "json", url: TRANSITER_APP_ROOT + "systems/nycsubway/stops/" + stop_uid, success: update_stop, cache: false});
 	},fade_time)
 }
 
 function update_stop(json, status) {
 	// Basic information
-	var stop_uid = json.stop_uid
+	var stop_uid = json.id
 	var name = json.name 
 	$('#stop-title', $stop).text(name)
 
@@ -509,57 +521,66 @@ function update_stop(json, status) {
 	var feed_problem = false // this will determine whether an explanation for trips from deleted feeds will need to be printed
 	var min_feed_delay = 100000 //minimum feed delay gives the "at least" delay in minutes for the station
 
-	// Now iterate over each direction.
-	$.each(json.directions, function(){
-		// Make the directions title
-		var direction_name = this.name
-		$lot.append('<div class="lot-direction">' + direction_name + '</div>')
-		if (this.trips.length == 0) {
-			$lot.append('<div class="lot-all-assigned">No trains scheduled.</div>')
+	var direction_name_to_html = {}
+	var direction_name_to_num_trips = {}
+	$.each(json.direction_names, function(){
+	    direction_name_to_html[this] = ['<div class="lot-direction">' + this + '</div>']
+	    direction_name_to_num_trips[this] = 0
+	})
+
+    // Iterate over each trip.
+	$.each(json.stop_time_updates, function(){
+		var direction_name = this.direction_name
+        var route_id = this.trip.route.id
+        var terminus = this.trip.last_stop.name
+        var minutes = ''
+        // First calculate the number of seconds until the trip arrives.
+        if (this.departure_time == null) {
+            var seconds = (this.arrival_time - current_time) // in this case, the train is going nowhere...should be noted
+        }
+        else {
+            var seconds = (this.departure_time - current_time)
+        }
+        // Now based on the seconds, calculate the minutes display.
+        if (seconds >= 60) {
+            minutes = Math.floor(seconds/60)
+        }
+        else if (seconds >= 30) {
+            minutes = '&#189;'
+        }
+        else {
+            minutes = 'Arr'
+        }
+        // If the trip is not assigned, add a star to the terminus text.
+        if (current_time - this.trip.last_update_time > 180) {
+            feed_problem = true
+            terminus = terminus + ' <img src="./images/icons/ex.svg" class="lot-entry-warning">'
+            if (current_time - this.trip.last_update_time < min_feed_delay) {
+                min_feed_delay = current_time - this.trip.last_update_time
+            }
+        }
+        else if (this.trip.current_status == null) {
+            all_assigned = false
+            terminus = terminus + ' &#9733;'
+        }
+        // Put the HTML in the list of trips
+        $new_trip = $('<div class="lot-entry">' +
+                  '    <img class="lot-entry-route-logo" src="./images/routes/' + route_id.toLowerCase() + '.svg">' +
+                  '    <div class="lot-entry-time">' + minutes + '</div>' + terminus +
+                  '</div>')
+        $new_trip.click({trip_uid : this.trip.id, route_uid: this.trip.route.id}, load_trip_from_event)
+        direction_name_to_html[direction_name].push($new_trip)
+        direction_name_to_num_trips[direction_name] += 1
+	})
+	$.each(json.direction_names, function(){
+		if (direction_name_to_num_trips[this] == 0) {
+			direction_name_to_html[this].push('<div class="lot-all-assigned">No trains scheduled.</div>')
 		}
-		// Iterate over each trip.
-		$.each(this.trips, function(){
-			var route_id = this.route_id
-			var terminus = this.terminus
-			var minutes = ''
-			// First calculate the number of seconds until the trip arrives.
-			if (this.departure_time == null) {
-				var seconds = (this.arrival_time - current_time) // in this case, the train is going nowhere...should be noted
-			}
-			else {
-				var seconds = (this.departure_time - current_time)
-			}
-			// Now based on the seconds, calculate the minutes display.
-			if (seconds >= 60) {
-				minutes = Math.floor(seconds/60)
-			}
-			else if (seconds >= 30) {
-				minutes = '&#189;'
-			}
-			else {
-				minutes = 'Arr'
-			}
-			// If the trip is not assigned, add a start to the terminus text.
-			if (current_time - this.feed_last_updated > 180) {
-				feed_problem = true
-				terminus = terminus + ' <img src="/images/icons/ex.svg" class="lot-entry-warning">'
-				if (current_time - this.feed_last_updated < min_feed_delay) {
-					min_feed_delay = current_time - this.feed_last_updated
-				}
-			}
-			else if (this.is_assigned == false) {
-				all_assigned = false
-				terminus = terminus + ' &#9733;'
-			}
-			// Put the HTML in the list of trips
-			$new_trip = $('<div class="lot-entry">' +
-				      '    <img class="lot-entry-route-logo" src="/images/routes/' + route_id.toLowerCase() + '.svg">' +
-				      '    <div class="lot-entry-time">' + minutes + '</div>' + terminus +
-				      '</div>')
-			$lot.append($new_trip)
-			$new_trip.click({trip_uid : this.trip_uid}, load_trip_from_event)
+		$.each(direction_name_to_html[this], function(){
+		    $lot.append(this)
 		})
 	})
+
 	// Put in the stars or feed delay explanation, if necessary.
 	if (feed_problem) {
 		$lot.append('<div class="lot-all-assigned">' +
@@ -574,16 +595,16 @@ function update_stop(json, status) {
 			    '</div>')
 	}
 	// If this stop has sibling stops, display the sibling stops header and them list the stops
-	if(json.sibling_stops.length > 0) {
+	if(json.parent_stop != null && json.parent_stop.child_stops.length > 0) {
 		$lot.append('<div class="lot-other-platforms-header">Other platforms at this station</div>')
-		$.each(json.sibling_stops, function(){
+		$.each(json.parent_stop.child_stops, function(){
 			var images = ''
-			$.each(this.daytime_routes, function(){
+			$.each(this.usual_routes, function(){
 				images = images + '<img src="/images/routes/' + this.toLowerCase() + '.svg">'
 			})
 			$new_sibling = $('<div class="lot-other-platform">' + images + '</div>')
 			$lot.append($new_sibling)
-			$new_sibling.click({stop_uid : this.stop_uid}, load_stop_from_event)
+			$new_sibling.click({stop_uid : this.id}, load_stop_from_event)
 
 		})
 	}
@@ -594,34 +615,35 @@ function update_stop(json, status) {
 // TRIP PAGE 
 
 function load_trip_from_event(event) {
-	load_trip(event.data.trip_uid)
+	load_trip(event.data.trip_uid, event.data.route_uid)
 }
 
-function load_trip(trip_uid) {
+function load_trip(trip_uid, route_id) {
 	hide_all_pages()
 	setTimeout(function(){
-		$.ajax({dataType: "json", url: "/json/trips/" + trip_uid + ".json", success: update_trip, cache: false});
+		$.ajax({dataType: "json", url: TRANSITER_APP_ROOT + "systems/nycsubway/routes/" + route_id + "/trips/" + trip_uid, success: update_trip, cache: false});
 
 	},fade_time)
 }
 
 function update_trip(json, status) {
 	// Set the basic page information
-	$('#trip-header-route-logo img', $trip).attr('src','/images/routes/' + json.route_id.toLowerCase() + '.svg')
-	$('#trip-header-origin', $trip).text(json.origin_name)
-	$('#trip-header-terminus', $trip).text(json.terminating_stop_name)
-	$('#rtr-trip-uid', $trip).text(json.trip_uid)
-	$('#train-id', $trip).text(json.train_id)
+	$('#trip-header-route-logo img', $trip).attr('src','./images/routes/' + json.route.id.toLowerCase() + '.svg')
+	// TODO: nice to have would be to infer the start from the vehicle ID
+	$('#trip-header-origin', $trip).text(json.route.id + ' train')
+	var last_stop = json.stop_time_updates[json.stop_time_updates.length - 1].stop
+	$('#trip-header-terminus', $trip).text(last_stop.name)
+	$('#rtr-trip-uid', $trip).text(json.id)
+	$('#train-id', $trip).text(json.vehicle_id)
 
 	// Calculate the update time in minutes, and add that too
-	m = Math.ceil((current_time - json.update_time)/60)
+	m = Math.ceil((current_time - json.last_update_time)/60)
 	if (m == 1) {
 		$('#data-last-updated', $trip).text('1 minute ago')
 	}
 	else {
 		$('#data-last-updated', $trip).text(m + ' minutes ago')
 	}
-
 	// Now make the list of stops structure
 	var $los = $('#trip-list-of-stops', $trip)
 	$platform_cont = $los
@@ -629,7 +651,7 @@ function update_trip(json, status) {
 		  '<div class="los-route-start"></div>' +
 		  '<div class="los-route-end"></div>')
 	// If the full data set is not present, the origin inferred from the train_id and the missing data are shown
-	if (!json.full_dataset) {
+	if (false) {
 		$los.append('<div class="los-entry">' + 
 			    '    <div class="los-stop-marker"></div>' + json.origin_name +
 			    '</div>' + 
@@ -639,23 +661,23 @@ function update_trip(json, status) {
 	// Now iterate over the stops
 	var first = true
 	var future = false
-	$.each(json.stops,function(){
+	$.each(json.stop_time_updates,function(){
 		// If no future stops have been placed and the present stop being placed is in the future, add the 'in transit' information
-		if(!future && this.future == 1)
+		if(!future && this.future)
 		{
 			future = true
-			$('#next-stop', $trip).text(this.name)
+			$('#next-stop', $trip).text(this.stop.name)
 			// If this is not the first stop, this trip has already left. Add the in transit element
-			if (!first || !json.full_dataset)
+			if (!first)
 			{
 				$('#trip-not-left', $trip).css('display', 'none')
 				$los.append('<div class="los-separator">' +
 					    '    <div id="los-separator-trip">' +
 					    '	     <div id="los-separator-trip-arrow"></div>' + 
 					    '	     <div id="los-separator-trip-route-logo">' + 
-					    '            <img src="/images/routes/' + json.route_id.toLowerCase() + '.svg">' +
+					    '            <img src="/images/routes/' + json.route.id.toLowerCase() + '.svg">' +
 					    '	     </div>' +
-					    '	     <div id="los-separator-trip-text">En route to<br /> ' + this.name + '</div>' +
+					    '	     <div id="los-separator-trip-text">En route to<br /> ' + this.stop.name + '</div>' +
 					    '    </div>' + 
 					    '</div>')
 			}
@@ -668,25 +690,29 @@ function update_trip(json, status) {
 
 		// Now place the stop proper
 		// Get the information
-		var stop_uid = this.stop_uid
-		var name = this.name
+		var stop_uid = this.stop.id
+		var name = this.stop.name
 		t = this.arrival_time
 		if (t == null) {
 			t = this.departure_time
 		}
+
+
+        formatted_time = moment.unix(t).tz("America/New_York").format("HH:mm")
+
 		// Place in the element, and add the element to the lsit
 		$new_stop = $('<div class="los-entry">' + 
 			      '    <div class="los-stop-marker"></div>' + 
-			      '    <div class="los-time">' + t + '</div>' + name +
+			      '    <div class="los-time">' + formatted_time + '</div>' + name +
 			      '</div>')
 		$los.append($new_stop)
 		//Finally add the click event
 		$new_stop.click({stop_uid : stop_uid}, load_stop_from_event)
 	})
-	$los.set_color(route_colors[json.route_id.toLowerCase()])
-	set_history_state('trip', json.trip_uid, 'union-sq/')
+
+
+	$los.set_color(route_colors[json.route.id.toLowerCase()])
+	set_history_state('trip', json.id, json.route.id)
 	show_page('trip')
 }
-
-
 
