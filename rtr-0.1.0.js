@@ -31,7 +31,7 @@ var fade_time = 150  // specifies, in milliseconds, how long the fade out/in ani
 
 var current_time = Math.floor((new Date()).getTime() / 1000)
 
-var TRANSITER_APP_ROOT = '/transiter/'
+var TRANSITER_APP_ROOT = '/transiter/v1/'
 //var TRANSITER_APP_ROOT = 'https://new.realtimerail.nyc/transiter/'
 
 var route_colors = {
@@ -256,11 +256,11 @@ function update_service_status(json, status){
 	$.each(json,function(){
 		$service_status_marker = $('#home-route-' + this.id.toLowerCase() + ' .home-row-route-status', $home)
 		// The type of message determines the color of the marker - orange for these...
-		if (this.service_status == "Planned Work" || this.service_status == "Service Change") {
+		if (this.status == "PLANNED_SERVICE_CHANGE" || this.status == "UNPLANNED_SERVICE_CHANGE") {
 			$service_status_marker.addClass('orange')
 		}
 		//... and red for these
-		if (this.service_status == "Delays" ){
+		if (this.status == "DELAYS" ){
 			$service_status_marker.addClass('red')
 		}
 		// Fade in the marker.
@@ -366,7 +366,6 @@ function update_route(json, status){
 	var $route_status_no_service = $('#route-status-no-service', $route)
 
 	// Then reset them.
-	$route_status_button.html(json.service_status)
 	$route_status_button.off("click") // removes clickability if previously displayed a status with a drop down message
 	$route_status_button.css('cursor', 'default') // again, the pointer cursor is a possible artifact of a previous status
 	$route_status_button.removeClass() // the class of the button determines its color, so reset
@@ -376,10 +375,11 @@ function update_route(json, status){
 
 	// What happens next is determined by the service status.
 	// If good service, make the button green and display the frequency information.
-	if (json.service_status == "Good service"){
+	if (json.status == "GOOD_SERVICE"){
+        $route_status_button.html("Good service")
 		$route_status_button.addClass('green')
-		if (json.hasOwnProperty('frequency')){
-		    if (json.frequency != null) {
+		if (json.hasOwnProperty('periodicity')){
+		    if (json.periodicity != null) {
                 $('#mins', $route_status_frequency).html(json.frequency)
                 $route_status_frequency.css('display', 'block')
 		    }
@@ -387,14 +387,17 @@ function update_route(json, status){
 	}
 	else {
 	    // If no service, make the button white and display the no service message.
-	    if (json.service_status == "No service") {
+	    if (json.status == "NO_SERVICE") {
+            $route_status_button.html("No service")
             $route_status_button.addClass('white')
             $route_status_no_service.css('display', 'block')
 		//Depending on the service status severity, a different color is used for the button
-		} else if (json.service_status == "Delays") {
+		} else if (json.status == "DELAYS") {
+            $route_status_button.html("Delays")
 			$route_status_button.addClass('red')
 		}
 		else {
+            $route_status_button.html("Service change")
 			$route_status_button.addClass('orange')
 		}
 
@@ -402,7 +405,7 @@ function update_route(json, status){
 		var first_message = true
 		$route_status_messages.html('') // delete previous messages
 		$route_status_messages.css('display', 'none') // the messages are hidden by default, they may be open from previous status
-		$.each(json.service_status_messages, function(){
+		$.each(json.alerts, function(){
 			$new_message = $('<div class="route-status-message"></div>')
 			// jQuery's slideDown/slideUp interacts funkily with margins at the top and bottom of the sliding element.
 			// A spacer is used between messages instead to avoid using the css margin attribute
@@ -412,7 +415,7 @@ function update_route(json, status){
 			else {
 				$new_message.append('<p class="route-status-message-spacer"></div>')
 			}
-			$new_message.append('<p class="route-status-message-title">' + insert_images_in_message(this.message_title) + '</p>')
+			$new_message.append('<p class="route-status-message-title">' + insert_images_in_message(this.header) + '</p>')
 			// Sometimes the MTA doesn't provide description text in a non-html format
 			// (ironically, this is usually when the service change is the most serious)
 			// so instead a link is added to the MTA website.
@@ -420,7 +423,7 @@ function update_route(json, status){
 				$new_message.append('<p class="route-status-message-body">See the <a href="http://www.mta.info">MTA website</a> for information.</p>')
 			}
 			else {
-				$new_message.append('<p class="route-status-message-body">' + insert_images_in_message(this.message_content) + '</p>')
+				$new_message.append('<p class="route-status-message-body">' + insert_images_in_message(this.description) + '</p>')
 			}
             created_time = moment.unix(this.creation_time).tz("America/New_York")
             if (created_time.format("HHmm") == "0000") {
@@ -433,7 +436,7 @@ function update_route(json, status){
 		})
 
         //If service, Make the service status button clickable to open the messages
-	    if (json.service_status != "No service") {
+	    if (json.status != "NO_SERVICE") {
             //The service status button will be used to open messages, so mark it as a button
             $route_status_button.css('cursor', 'pointer')
             $route_status_button.click(function(){
@@ -451,6 +454,16 @@ function update_route(json, status){
 	}
 
 	// THIRD: Make the list of stops structure.
+	var active_stops = new Set();
+	$.each(json.service_maps,function(){
+	    if (this.group_id != "realtime") {
+	        return;
+	    }
+        $.each(this.stops, function(){
+	        active_stops.add(this.id);
+        })
+	})
+
 	var $los = $('#route-list-of-stops', $route)
 	$los.html('<div class="los-route-bar"></div>' + 
 		  '<div class="los-route-start"></div>' +
@@ -459,7 +472,10 @@ function update_route(json, status){
 	// Now iterate through all of the stops.
 	// We keep a track of the borough to know when to note that the borough has changed.
 	var borough = null
-	$.each(json.stops,function(){
+	$.each(json.service_maps,function(){
+	    if (this.group_id != "any_time") {
+	        return;
+	    }
 		// Place the borough, if it has changed since the last stop.
 		// By default, the borough of the first stop is not specified.
 		var this_borough = null
@@ -474,21 +490,27 @@ function update_route(json, status){
 			$los.append($borough_divider)
 			borough = this_borough
 		}
-		//Now place the stop proper
-		var stop_uid = this.id
-		var name = this.name
-		$new_stop = $('<div class="los-entry"></div>').text(name)
-		$los.append($new_stop)
-		//If trains are stopping here, add a stop marker
-		if (this.current_service)  {
-			$new_stop.html('<div class="los-stop-marker"></div>' + name) 
-		}
-		//Otherwise apply the skipping class (makes the text smaller)
-		else {
-			$new_stop.addClass('skipping')
-		}
-		//Finally add the click event
-		$new_stop.click({stop_uid : stop_uid}, load_stop_from_event)
+
+        $.each(this.stops, function(){
+
+            //Now place the stop proper
+            var stop_uid = this.id
+            var name = this.name
+            $new_stop = $('<div class="los-entry"></div>').text(name)
+            $los.append($new_stop)
+            //If trains are stopping here, add a stop marker
+            if (active_stops.has(stop_uid)) {
+                $new_stop.html('<div class="los-stop-marker"></div>' + name)
+            }
+            //Otherwise apply the skipping class (makes the text smaller)
+            else {
+                $new_stop.addClass('skipping')
+            }
+            //Finally add the click event
+            $new_stop.click({stop_uid : stop_uid}, load_stop_from_event)
+
+		})
+
 	})
 	// Show the page now
 	set_history_state('route', route_id.toLowerCase(), '')
@@ -546,20 +568,20 @@ function update_stop(json, status) {
             minutes = Math.floor(seconds/60)
         }
         else if (seconds >= 30) {
-            minutes = '&#189;'
+            minutes = '&#189;' // one-half symbol
         }
         else {
             minutes = 'Arr'
         }
         // If the trip is not assigned, add a star to the terminus text.
-        if (current_time - this.trip.last_update_time > 180) {
+        if (current_time - this.trip.last_update_time > 400 && this.trip.current_stop_sequence != 0) {
             feed_problem = true
             terminus = terminus + ' <img src="./images/icons/ex.svg" class="lot-entry-warning">'
             if (current_time - this.trip.last_update_time < min_feed_delay) {
                 min_feed_delay = current_time - this.trip.last_update_time
             }
         }
-        else if (this.trip.current_status == null) {
+        else if (this.trip.current_status == null && this.trip.current_stop_sequence == 0) {
             all_assigned = false
             terminus = terminus + ' &#9733;'
         }

@@ -149,6 +149,7 @@ a:hover {
 	line-height: 20px;
 	border-radius: 6px;
 	cursor: pointer;
+	display: none;
 }
 .home-row {
 	clear: left;
