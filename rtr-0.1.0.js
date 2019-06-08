@@ -621,8 +621,13 @@ function update_stop(json, status) {
 		$lot.append('<div class="lot-other-platforms-header">Other platforms at this station</div>')
 		$.each(json.parent_stop.child_stops, function(){
 			var images = ''
-			$.each(this.usual_routes, function(){
-				images = images + '<img src="/images/routes/' + this.toLowerCase() + '.svg">'
+			$.each(this.service_maps, function(){
+                if(this.group_id != "weekday_day") {
+                    return;
+                }
+                $.each(this.routes, function(){
+                    images = images + '<img src="/images/routes/' + this.id.toLowerCase() + '.svg">'
+                })
 			})
 			$new_sibling = $('<div class="lot-other-platform">' + images + '</div>')
 			$lot.append($new_sibling)
