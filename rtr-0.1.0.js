@@ -375,24 +375,24 @@ function update_route(json, status){
 
 	// What happens next is determined by the service status.
 	// If good service, make the button green and display the frequency information.
-	if (json.status == "GOOD_SERVICE"){
+	if (json.status === "GOOD_SERVICE"){
         $route_status_button.html("Good service")
 		$route_status_button.addClass('green')
 		if (json.hasOwnProperty('periodicity')){
 		    if (json.periodicity != null) {
-                $('#mins', $route_status_frequency).html(json.frequency)
+                $('#mins', $route_status_frequency).html(Math.round(json.periodicity));
                 $route_status_frequency.css('display', 'block')
 		    }
 		}
 	}
 	else {
 	    // If no service, make the button white and display the no service message.
-	    if (json.status == "NO_SERVICE") {
+	    if (json.status === "NO_SERVICE") {
             $route_status_button.html("No service")
             $route_status_button.addClass('white')
             $route_status_no_service.css('display', 'block')
 		//Depending on the service status severity, a different color is used for the button
-		} else if (json.status == "DELAYS") {
+		} else if (json.status === "DELAYS") {
             $route_status_button.html("Delays")
 			$route_status_button.addClass('red')
 		}
@@ -403,13 +403,13 @@ function update_route(json, status){
 
 		//Populate the messages container with messages
 		var first_message = true
-		$route_status_messages.html('') // delete previous messages
+		$route_status_messages.html(''); // delete previous messages
 		$route_status_messages.css('display', 'none') // the messages are hidden by default, they may be open from previous status
 		$.each(json.alerts, function(){
 			$new_message = $('<div class="route-status-message"></div>')
 			// jQuery's slideDown/slideUp interacts funkily with margins at the top and bottom of the sliding element.
 			// A spacer is used between messages instead to avoid using the css margin attribute
-			if (first_message == true) {
+			if (first_message === true) {
 				first_message = false
 			}
 			else {
@@ -419,7 +419,7 @@ function update_route(json, status){
 			// Sometimes the MTA doesn't provide description text in a non-html format
 			// (ironically, this is usually when the service change is the most serious)
 			// so instead a link is added to the MTA website.
-			if (this.message_content == ''){
+			if (this.message_content === ''){
 				$new_message.append('<p class="route-status-message-body">See the <a href="http://www.mta.info">MTA website</a> for information.</p>')
 			}
 			else {
@@ -433,15 +433,15 @@ function update_route(json, status){
             }
 			$new_message.append('<p class="route-status-message-time">Posted: ' + formatted_time + '</p>')
 			$route_status_messages.append($new_message)
-		})
+		});
 
         //If service, Make the service status button clickable to open the messages
-	    if (json.status != "NO_SERVICE") {
+	    if (json.status !== "NO_SERVICE") {
             //The service status button will be used to open messages, so mark it as a button
             $route_status_button.css('cursor', 'pointer')
             $route_status_button.click(function(){
                 var $route_status_messages = $('#route-status-messages-cont', $route)
-                if ($route_status_messages.css('display') == 'none') {
+                if ($route_status_messages.css('display') === 'none') {
                     $route_status_messages.slideDown()
                 }
                 else {
