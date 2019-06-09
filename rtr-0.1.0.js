@@ -626,6 +626,9 @@ function update_stop(json, status) {
                     return;
                 }
                 $.each(this.routes, function(){
+                    if (this.id == "5X" || this.id == "6X") {
+                        return;
+                    }
                     images = images + '<img src="/images/routes/' + this.id.toLowerCase() + '.svg">'
                 })
 			})
