@@ -299,8 +299,8 @@ function generate_home() {
 		["a", "c", "e"],
 		["b", "d", "f", "m"],
 		["n", "q", "r", "w"],
-		["j", "z"],
-		["gs", "si"]
+		["j", "z", "si"],
+		["h", "fs", "gs"]
 	]
 	// Based on the layout, the page is constructed.
 	for(var i=0, len=layout.length; i < len; i++){
@@ -310,7 +310,16 @@ function generate_home() {
 		for(var j=0; j < cols; j++) {
 			$new_route = $('<div class="home-row-route" id="home-route-' + layout[i][j] + '"></div>')
 			$new_route.append('<div class="home-row-route-status"></div>')
-			$new_route.append('<img src="./images/routes/' + layout[i][j] + '.svg">')
+			$new_route.append('<img src="./images/routes/' + layout[i][j] + '.svg">');
+			if (layout[i][j] === 'h') {
+				$new_route.append('<div>Rockaways<br />shuttle</div>');
+			}
+			if (layout[i][j] === 'fs') {
+				$new_route.append('<div>Frankin Av<br />shuttle</div>');
+			}
+			if (layout[i][j] === 'gs') {
+				$new_route.append('<div>42nd St<br />shuttle</div>');
+			}
 			$new_row.append($new_route)
 			$new_route.click({route_id : layout[i][j]}, load_route_from_event)
 		}

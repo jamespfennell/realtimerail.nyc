@@ -170,6 +170,8 @@ a:hover {
 	float: left;
 }
 .home-row-route {
+	font-size: 0.8em;
+	text-align: center;
 	width: 20%;
 	margin: 1% 1.5%;
 	float: left;
