@@ -746,7 +746,7 @@ function update_trip(json, status) {
 			      '</div>')
 		$los.append($new_stop)
 		//Finally add the click event
-		$new_stop.click({stop_uid : stop_uid}, load_stop_from_event)
+		$new_stop.click({stop_uid : stop_uid.substring(0, 3)}, load_stop_from_event)
 	})
 
 
