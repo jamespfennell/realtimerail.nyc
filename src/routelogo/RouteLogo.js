@@ -66,6 +66,7 @@ class RouteLogo extends React.Component {
     }
 }
 
+//TODO: rename route routeId
 RouteLogo.propTypes = {
     route: PropTypes.string
 };

@@ -14,11 +14,21 @@ class RouteButton extends React.Component {
       "UNPLANNED_SERVICE_CHANGE": "Orange",
       "DELAYS": "Red",
     };
-    let statusClasses = "HomePage-RouteButton-Status " + _.get(statusToColorClass, this.props.status, "");
+    let statusClasses = "statusCircle " + _.get(statusToColorClass, this.props.status, "");
+    let buttonClasses = "cell";
+    if (this.props.status === "NO_SERVICE") {
+      buttonClasses += " NoService"
+    }
+
+    let descriptionElement = null;
+    if (this.props.description !== "") {
+      descriptionElement = <div className="description">{this.props.description}</div>
+    }
     return (
-      <div className="HomePage-RouteButton">
+      <div className={buttonClasses}>
         <div className={statusClasses}/>
         <RouteLogo route={this.props.route}/>
+        {descriptionElement}
       </div>
     )
   }
@@ -61,22 +71,24 @@ class HomePage extends React.Component {
       for (const routeId of routeIds) {
         row.push(
           <RouteButton
-            key={routeId}
             route={routeId}
+            key={routeId}
             status={_.get(this.state.routeIdToStatus, routeId, "")}
             description={_.get(this.routeIdToDescription, routeId, "")}
           />
         )
       }
       grid.push(
-        <div className="HomePage-row" key={routeIds}>
+        <div className="row" key={routeIds}>
           {row}
         </div>
       );
     }
     return (
       <div className="HomePage">
+        <div className="routeGrid">
         {grid}
+        </div>
       </div>
     );
   }

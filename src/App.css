@@ -1,5 +1,11 @@
 .App {
-  text-align: center;
+  width: 300px;
+  padding: 10px;
+border-radius: 12px;
+  background-color: aliceblue;
+  margin: 10px auto;
+  min-height: 400px;
+
 }
 
 .App-logo {

@@ -1,0 +1,129 @@
+/* move somewhere generic */
+
+.pointer {
+    cursor: pointer;
+}
+.noTextSelect {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+
+
+
+.StatusSummary {
+
+
+}
+
+
+.StatusSummaryMessage {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 12px;
+
+
+}
+
+.StatusSummaryMessage .arrow {
+    border: solid gray;
+    padding: 3px;
+    border-width: 0 2px 2px 0;
+    margin: 0 2px 0 4px;
+}
+
+.StatusSummaryMessage .arrowUp {
+  margin-bottom: 4px;
+  transform: rotate(45deg);
+  -webkit-transform: rotate(45deg);
+}
+.StatusSummaryMessage .arrowDown {
+  margin-top: 4px;
+  transform: rotate(225deg);
+  -webkit-transform: rotate(225deg);
+}
+
+.StatusSummaryMessage .message {
+  padding: 0px 3px;
+    font-size: 0.9em;
+    color: gray;
+
+}
+
+
+
+
+
+.RoutePage .RouteLogo {
+    margin: 0 auto;
+    display: block;
+    height: 120px;
+
+    width: 120px;
+}
+
+
+
+.StatusSummaryHeader {
+    margin: 10px auto 5px auto;
+    font-weight: normal;
+    text-align: center;
+    font-size: 1.3em;
+}
+
+.Orange {
+    color: orange;
+}
+.Red {
+    color: #ee352e;
+}
+
+.Green {
+    color: #00933c;
+}
+
+
+
+
+
+
+
+
+.Alert {
+    margin: 0px 6px;
+}
+
+.Alert .header {
+    margin: 0px 0px 6px 0;
+    color: lightseagreen;
+}
+
+.Alert .description {
+    font-size: 0.9em;
+    margin: 6px 0px;
+    line-height: 1.4em;
+}
+
+/*
+NOTE: by using the margins, we need to make the effective height of the element less that 1em
+so that the line spacing is not affected.
+ */
+.Alert .description .RouteLogo {
+    width: 1.2em;
+height: 1.2em;
+    margin-top: -0.15em;
+    margin-bottom: -0.1em;
+    vertical-align: middle;
+    display: inline-block;
+}
+
+.Alert .timeMessage {
+    color: dimgray;
+    margin: 6px 0px 12px 0px;
+    font-size: 0.8em;
+}

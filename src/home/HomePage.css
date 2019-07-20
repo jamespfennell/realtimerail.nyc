@@ -1,4 +1,70 @@
 
+
+
+
+
+.routeGrid {
+    margin: 5%;
+}
+
+
+.routeGrid .row {
+  display: flex;
+  justify-content: center;
+}
+
+.routeGrid .cell {
+
+  width: 23%;
+  padding-bottom: 23%;
+  margin: 1%;
+  position: relative;
+}
+
+.routeGrid .RouteLogo {
+  position: absolute;
+    left: 0;
+    top: 0;
+  width: 100%;
+}
+
+.routeGrid .statusCircle {
+    transition: background-color 0.5s;
+   width: 15%;
+   height: 15%;
+   position: absolute;
+   border-radius: 100%;
+   right: 0;
+   top: 0;
+}
+
+.routeGrid .description {
+    padding-top: 5%;
+    font-family: 'Roboto Condensed', sans-serif;
+  margin-top: 100%;
+    font-size: 0.8em;
+  margin-bottom: -100%
+}
+
+
+.routeGrid .Orange {
+    background-color: orange;
+    transition: background-color 500ms;
+}
+
+.routeGrid .Red {
+    background-color: red;
+    transition: background-color 500ms;
+}
+
+.routeGrid .NoService {
+    opacity: 0.7;
+    transition: opacity 500ms;
+}
+
+
+
+/*
 .HomePage-row {
     height: 70px;
 }
@@ -18,10 +84,16 @@
 .HomePage-RouteButton .Orange {
     width: 10px;
     height: 10px;
-    background: orange;
+    background-color: orange;
+    transition: background-color 1s;
 }
 .HomePage-RouteButton .Red {
     width: 10px;
 height: 10px;
-    background: red;
+    background-color: red;
+    transition: background-color 1s;
 }
+
+
+
+ */
