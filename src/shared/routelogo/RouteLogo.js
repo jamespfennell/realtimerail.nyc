@@ -71,4 +71,33 @@ RouteLogo.propTypes = {
     route: PropTypes.string
 };
 
-export default RouteLogo;
+
+
+export function replaceRouteIdsWithImages(message)
+{
+  // Replace route markers of the form [L] in a service message with the relevant image.
+	// The function works recursively. It finds the first occurrence of [<route_id>]. What comes before is left intact,
+	// the [<route_id>] string is replaced by an image, and the remainder of the message is processed by the same function
+	// to see if there another [<route_id>] string.
+	let a = message.indexOf('[');
+	let b = message.indexOf(']', a);
+	if (a<0 || b<0) {
+		return message
+	}
+	let pre = message.substring(0,a);
+	let route_id = message.substring(a+1,b);
+	let post =replaceRouteIdsWithImages(message.substring(b+1));
+	let answer = [
+	  <span key={post.length-1}>{pre}</span>,
+    <RouteLogo route={route_id.toUpperCase()} key={post.length}/>
+  ];
+  answer.push(post);
+	return answer;
+
+}
+
+
+
+
+
+export default RouteLogo

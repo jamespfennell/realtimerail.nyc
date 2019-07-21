@@ -3,68 +3,17 @@ import PropTypes from 'prop-types';
 import axios from 'axios'
 import AnimateHeight from 'react-animate-height'
 
-import RouteLogo from '../routelogo/RouteLogo'
-import './RoutePage.css'
-import LoadingBar from '../loadingbar/LoadingBar'
 import _ from 'lodash'
+import RouteLogo, {replaceRouteIdsWithImages} from '../../shared/routelogo/RouteLogo'
+import  {timestampToDateString, timestampToTime} from "../../util/Time";
+
+import './RoutePage.css'
+import LoadingBar from '../../shared/loadingbar/LoadingBar'
+
+import ServiceMap from '../../shared/servicemap/ServiceMap'
 
 
-class ServiceMap extends React.Component {
-  render() {
-    let elements = [];
-    for (const stop of this.props.stops) {
-      elements.push(
-        <div key={stop.id}>{stop.name}</div>
-      )
-    }
-    return (
-      <div>{elements}</div>
-    )
-  }
-}
 
-
-function timestampToDateString(timestamp) {
-  let date = new Date(timestamp*1000);
-let month =  date.toLocaleString('default', { month: 'long' });
-return (
-  month + " " +
-    date.getDate() + " " +
-    date.getFullYear()
-)
-}
-function timestampToTime(timestamp) {
-  let date = new Date(timestamp*1000);
-let hours = date.getHours();
-let minutes = ("0" + date.getMinutes()).substr(-2);
-return (
-  hours + ":" + minutes
-)
-}
-
-
-function replaceRouteIdsWithImages(message)
-{
-  // Replace route markers of the form [L] in a service message with the relevant image.
-	// The function works recursively. It finds the first occurrence of [<route_id>]. What comes before is left intact,
-	// the [<route_id>] string is replaced by an image, and the remainder of the message is processed by the same function
-	// to see if there another [<route_id>] string.
-	let a = message.indexOf('[');
-	let b = message.indexOf(']', a);
-	if (a<0 || b<0) {
-		return message
-	}
-	let pre = message.substring(0,a);
-	let route_id = message.substring(a+1,b);
-	let post =replaceRouteIdsWithImages(message.substring(b+1));
-	let answer = [
-	  <span key={post.length-1}>{pre}</span>,
-    <RouteLogo route={route_id.toUpperCase()} key={post.length}/>
-  ];
-  answer.push(post);
-	return answer;
-
-}
 
 function Alerts(props) {
   let alertElements = [];
@@ -237,6 +186,7 @@ class RoutePage extends React.Component {
       <div className="RoutePage">
         <RouteLogo route={this.props.routeId}/>
         <StatusPanel status={this.state.routeStatus} alerts={this.state.alerts} periodicity={this.state.periodicity} />
+        <ServiceMap stops={this.state.stops} color={this.state.color}/>
       </div>
     );
   }
@@ -255,12 +205,20 @@ class RoutePage extends React.Component {
     // for (const route of response) {
     //  routeIdToStatus[route.id] = route.status
     //}
-    let stops = [];
+    let groupIdToServiceMap = {};
     for (const serviceMap of response.service_maps) {
-      if (serviceMap.group_id !== "any_time") {
-        continue;
-      }
-      stops = serviceMap.stops
+      groupIdToServiceMap[serviceMap.group_id] = serviceMap.stops
+    }
+
+    let activeStopIds = new Set();
+    for (const stop of groupIdToServiceMap['realtime']) {
+      activeStopIds.add(stop.id)
+    }
+
+    let stops = [];
+    for (const stop of groupIdToServiceMap['any_time']) {
+      stop.isActive = activeStopIds.has(stop.id);
+      stops.push(stop)
     }
 
     this.setState({
@@ -268,7 +226,8 @@ class RoutePage extends React.Component {
       routeStatus: response.status,
       alerts: response.alerts,
       stops: stops,
-      periodicity: response.periodicity
+      periodicity: response.periodicity,
+      color: "#" + response.color
     })
   }
 }

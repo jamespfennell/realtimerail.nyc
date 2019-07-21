@@ -1,9 +1,9 @@
 import React from 'react';
 // import HomePage from './home/HomePage.js'
-import RoutePage from './route/RoutePage.js'
-import LoadingBar from './loadingbar/LoadingBar.js'
+import RoutePage from './pages/route/RoutePage.js'
+// import LoadingBar from './shared/loadingbar/LoadingBar.js'
 import './App.css';
-import HomePage from "./home/HomePage";
+import TripPage from "./pages/trip/TripPage";
 
 function App() {
   // <HomePage/>
@@ -11,9 +11,10 @@ function App() {
   //<RoutePage routeId="A" />
   //<RoutePage routeId="Z" />
    // <RoutePage routeId="G" />
+  // <RoutePage routeId="L" />
   return (<div>
           <div className="App">
-            <RoutePage routeId="L" />
+            <TripPage tripId="095950_A..S" routeId="A" lastStopName="Ozone Park - Lefferts Blvd" />
           </div>
       <div style={{textAlign: "center", color: "white" }}>realtimerail.nyc is a ract base</div>
     </div>

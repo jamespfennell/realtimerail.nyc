@@ -1,0 +1,56 @@
+.TripPage .ServiceMap {
+    margin: 15px 0;
+}
+.TripPageHeader {
+  display: flex;
+}
+
+.routeLogo {
+  width: 120px;
+  height: 120px;
+}
+
+.details {
+  margin-left: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.details div {
+    padding: 2px;
+}
+.details .big {
+ font-size: 1em;
+}
+
+.details .small {
+ color: gray;
+    font-size: 0.9em;
+}
+
+
+
+.TripData {
+  margin: 8px 4px;
+ display: flex;
+ align-items: center;
+}
+
+.TripData .dataKey {
+ color: dimgray;
+ font-size: 0.9em;
+ margin-right: 4px;
+}
+
+.TripData .value {
+
+  border-radius: 5px;
+  border: 1px;
+  padding: 2px;
+}
+
+.TripData .value.code {
+
+  font-family: monospace;
+  border: 1px solid lightgray;
+}

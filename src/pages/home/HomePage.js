@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import axios from 'axios'
 import _ from 'lodash'
 
-import RouteLogo from '../routelogo/RouteLogo'
+import RouteLogo from '../../shared/routelogo/RouteLogo'
 import './HomePage.css'
 
 
