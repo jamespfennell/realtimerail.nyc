@@ -39,6 +39,7 @@
 }
 
 .routeGrid .description {
+    text-align: center;
     padding-top: 5%;
     font-family: 'Roboto Condensed', sans-serif;
   margin-top: 100%;

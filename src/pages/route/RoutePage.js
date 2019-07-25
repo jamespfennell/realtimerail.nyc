@@ -1,18 +1,15 @@
 import React from "react";
 import PropTypes from 'prop-types';
-import axios from 'axios'
 import AnimateHeight from 'react-animate-height'
 
 import _ from 'lodash'
 import RouteLogo, {replaceRouteIdsWithImages} from '../../shared/routelogo/RouteLogo'
-import  {timestampToDateString, timestampToTime} from "../../util/Time";
+import {timestampToDateString, timestampToTime} from "../../util/Time";
 
 import './RoutePage.css'
-import LoadingBar from '../../shared/loadingbar/LoadingBar'
 
 import ServiceMap from '../../shared/servicemap/ServiceMap'
-
-
+import LazyLoadingPage from "../LazyLoadingPage";
 
 
 function Alerts(props) {
@@ -20,11 +17,10 @@ function Alerts(props) {
   for (const alert of props.alerts) {
 
 
-
     let timeMessage = "";
     if (alert.end_time != null) {
       timeMessage += "In effect from " + timestampToDateString(alert.start_time) + " to "
-      + timestampToDateString(alert.end_time)
+        + timestampToDateString(alert.end_time)
     } else {
       timeMessage += "Alert posted " + timestampToTime(alert.start_time) + ", " + timestampToDateString(alert.creation_time)
     }
@@ -84,7 +80,7 @@ function StatusSummaryMessage(props) {
     messageText = "Find alternative trains below"
   }
 
-  let arrow = <div />;
+  let arrow = <div/>;
   if (props.canToggleAlerts) {
     if (props.alertsVisible) {
       arrow = <div className="arrow arrowUp"/>
@@ -147,61 +143,39 @@ class StatusPanel extends React.Component {
           animateOpacity={true}
           duration={400}
           height={height}>
-        <Alerts
-          alerts={this.props.alerts}
-          alertsVisible={this.state.alertsVisible}
-        /></AnimateHeight>
+          <Alerts
+            alerts={this.props.alerts}
+            alertsVisible={this.state.alertsVisible}
+          /></AnimateHeight>
       </div>
     )
   }
 }
 
 
-class RoutePage extends React.Component {
+class RoutePage extends LazyLoadingPage {
 
-  constructor(props) {
-    super(props);
-    this.state = {
-      pageStatus: "LOADING",
-      routeStatus: "",
+  className() {
+    return "RoutePage"
+  }
+
+  initialState() {
+    return {
       alerts: [],
       stops: [],
       periodicity: null
-    };
-  }
-
-
-  render() {
-    if (this.state.pageStatus === "LOADING") {
-
-      return (
-        <div className="RoutePage">
-          <RouteLogo route={this.props.routeId}/>
-          <LoadingBar/>
-        </div>
-      );
     }
-    // <ServiceMap stops={this.state.stops} />
-    return (
-      <div className="RoutePage">
-        <RouteLogo route={this.props.routeId}/>
-        <StatusPanel status={this.state.routeStatus} alerts={this.state.alerts} periodicity={this.state.periodicity} />
-        <ServiceMap stops={this.state.stops} color={this.state.color}/>
-      </div>
-    );
   }
 
-  componentDidMount() {
-    // TODO: extract the Transiter API calls?
-    // Maybe something that can return generic 'no internet' messages?
-    // TODO: what about failures?
-    // TODO: what about a timer?
-    axios.get("https://www.realtimerail.nyc/transiter/v1/systems/nycsubway/routes/" + this.props.routeId).then(
-      response => this.loadStatuses(response.data)
-    )
+  transiterUrl() {
+    return "https://www.realtimerail.nyc/transiter/v1/systems/nycsubway/routes/" + this.props.routeId;
   }
 
-  loadStatuses(response) {
+  transiterErrorMessage() {
+    return "Unexpected error"
+  }
+
+  getStateFromTransiterResponse(response) {
     // for (const route of response) {
     //  routeIdToStatus[route.id] = route.status
     //}
@@ -221,17 +195,35 @@ class RoutePage extends React.Component {
       stops.push(stop)
     }
 
-    this.setState({
-      pageStatus: "LOADED",
+    return {
       routeStatus: response.status,
       alerts: response.alerts,
       stops: stops,
       periodicity: response.periodicity,
       color: "#" + response.color
-    })
+    }
+  }
+
+  header() {
+    return (
+      <RouteLogo route={this.props.routeId}/>
+    )
+  }
+
+  body() {
+    return (
+      <div>
+        <StatusPanel
+          status={this.state.routeStatus}
+          alerts={this.state.alerts}
+          periodicity={this.state.periodicity} />
+        <ServiceMap
+          stops={this.state.stops}
+          color={this.state.color} />
+      </div>
+    )
   }
 }
-
 
 RoutePage.propTypes = {
   routeId: PropTypes.string

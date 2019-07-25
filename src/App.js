@@ -1,20 +1,18 @@
 import React from 'react';
 // import HomePage from './home/HomePage.js'
-import RoutePage from './pages/route/RoutePage.js'
 // import LoadingBar from './shared/loadingbar/LoadingBar.js'
 import './App.css';
-import TripPage from "./pages/trip/TripPage";
+import StopPage from "./pages/stop/StopPage";
 
 function App() {
   // <HomePage/>
   // <RoutePage routeId="A" />
-  //<RoutePage routeId="A" />
   //<RoutePage routeId="Z" />
    // <RoutePage routeId="G" />
-  // <RoutePage routeId="L" />
+  // <TripPage tripId="095950_A..S" routeId="A" lastStopName="Ozone Park - Lefferts Blvd" />
   return (<div>
           <div className="App">
-            <TripPage tripId="095950_A..S" routeId="A" lastStopName="Ozone Park - Lefferts Blvd" />
+            <StopPage stopId="M11" name="Union Sq" />
           </div>
       <div style={{textAlign: "center", color: "white" }}>realtimerail.nyc is a ract base</div>
     </div>
