@@ -7,6 +7,14 @@ import RouteLogo from "../../shared/routelogo/RouteLogo";
 import {Header} from "../../util/Header";
 
 
+function SiblingStop(props) {
+  return (
+    <div className="SiblingStop">
+      <ListOfRouteLogos routeIds={props.routeIds}/>
+      <div className="name">{props.name}</div>
+    </div>
+  )
+}
 
 
 function TripStopTime(props) {
@@ -40,8 +48,13 @@ function TripStopTime(props) {
 
 class StopPage extends LazyLoadingPage {
 
+  // TODO: these should just be variables in the constructor
   className() {
     return "StopPage";
+  }
+
+  pollTime() {
+    return -10000;
   }
 
   initialState() {
@@ -49,7 +62,8 @@ class StopPage extends LazyLoadingPage {
       stopName: null,
       directionNameToTripStopTimes: null,
       usualRouteIds: null,
-      currentRouteIds: null
+      currentRouteIds: null,
+      siblingStops: null
     };
   }
 
@@ -83,18 +97,23 @@ class StopPage extends LazyLoadingPage {
       }
     }
 
+    let siblingStops = [];
+    if (stop.parent_stop != null) {
+      siblingStops = stop.parent_stop.child_stops;
+    }
 
     return {
       stopName: stop.name,
       directionNameToTripStopTimes: directionNameToTripStopTimes,
-      usualRouteIds: usualRouteIds
+      usualRouteIds: usualRouteIds,
+      siblingStops: siblingStops
     }
   }
 
   header() {
     return (
       <div className="header">
-        {this.state.stopName == null ? this.props.stopName : this.state.stopName}
+        {this.state.stopName == null ? this.props.name : this.state.stopName}
       </div>
     )
   }
@@ -156,7 +175,33 @@ class StopPage extends LazyLoadingPage {
       )
     }
 
-
+    let siblingStopElements = [];
+    if (this.state.siblingStops.length > 0) {
+      siblingStopElements.push(
+        <Header key="header">Other platforms at this station</Header>
+      );
+      for (const siblingStop of this.state.siblingStops) {
+        let routeIds = [];
+        for (const serviceMap of siblingStop.service_maps) {
+          if (serviceMap.group_id === "weekday_day") {
+            for (const route of serviceMap.routes) {
+              if (route.id.substr(-1, 1) === 'X') {
+                continue
+              }
+              routeIds.push(route.id)
+            }
+            break
+          }
+        }
+        siblingStopElements.push(
+          <SiblingStop
+            key={"siblingStop" + siblingStop.id}
+            name={siblingStop.name}
+            routeIds={routeIds}
+          />
+        )
+      }
+    }
 
     return (
       <div>
@@ -165,6 +210,7 @@ class StopPage extends LazyLoadingPage {
           routeIds={this.state.usualRouteIds} />
       </div>
         {directionNameElements}
+        {siblingStopElements}
       </div>
     )
   }

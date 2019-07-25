@@ -47,3 +47,26 @@
 
     background: #E1F4F7;
 }
+
+
+.SiblingStop {
+    border-radius: 12px;
+    padding: 8px 5px;
+    display: flex;
+    align-items: center;
+}
+
+.SiblingStop:nth-child(odd) {
+
+    background: #E1F4F7;
+}
+
+.SiblingStop .ListOfRouteLogos > div {
+    width: 22px;
+    height: 22px;
+    margin: 0 2px;
+}
+.SiblingStop .name {
+    margin-left: 3px;
+    font-size: 0.9em;
+}

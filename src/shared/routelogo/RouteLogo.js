@@ -33,8 +33,11 @@ let routeIdToImage = {
     '3': ImageFor3,
     '4': ImageFor4,
     '5': ImageFor5,
+  '5X': ImageFor5,
     '6': ImageFor6,
-    '7': ImageFor7,
+  '6X': ImageFor6, // TODO
+  '7': ImageFor7,
+    '7X': ImageFor7,
     'A': ImageForA,
     'B': ImageForB,
     'C': ImageForC,

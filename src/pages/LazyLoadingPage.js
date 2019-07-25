@@ -9,13 +9,18 @@ class LazyLoadingPage extends React.Component {
   constructor(props) {
     super(props);
     this.state = this.initialState();
-    this.state["pageStatus"] = "LOADING"
+    this.state["pageStatus"] = "LOADING";
+    this.interval = null;
   }
 
   // These are the methods that subclasses must overload
 
   className() {
     return ""
+  }
+
+  pollTime() {
+    return -1
   }
 
   initialState() {
@@ -35,19 +40,31 @@ class LazyLoadingPage extends React.Component {
   };
 
   header() {
-    return <div />;
+    return <div/>;
   };
 
   body() {
-    return <div />
+    return <div/>
   };
 
-
   componentDidMount() {
+    this.pollTransiter();
+    if (this.pollTime() > 0) {
+      this.interval = setInterval(this.pollTransiter, this.pollTime());
+    }
+  }
+
+  componentWillUnmount() {
+    if (this.interval != null) {
+      clearInterval(this.interval);
+    }
+  }
+
+  pollTransiter = () => {
     axios.get(this.transiterUrl())
       .then(this.handleHttpSuccess)
       .catch(this.handleHttpError)
-  }
+  };
 
   handleHttpSuccess = (response) => {
     let state = this.getStateFromTransiterResponse(response.data);
@@ -83,7 +100,7 @@ class LazyLoadingPage extends React.Component {
         animateOpacity={true}
         key="bodyContainer"
         height={this.state.pageStatus === "LOADED" ? "auto" : 0}
-        duration={0}>
+        duration={500}>
         {this.state.pageStatus === "LOADED" ? this.body() : ""}
       </AnimateHeight>
     );
