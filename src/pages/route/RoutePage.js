@@ -212,7 +212,6 @@ class RoutePage extends LazyLoadingPage {
   }
 
   header() {
-    console.log(this.props)
     return (
       <RouteLogo route={this.routeId()}/>
     )

@@ -1,18 +1,43 @@
 
-.Star {
-    color: lightseagreen;
-}
 .StopPage .header {
     font-size: 1.3em;
     margin: 20px 0 10px 0;
     text-align: center;
 }
 
-
 .StopPage .mainRoutes .ListOfRouteLogos > div {
     width: 25px;
     height: 25px;
     margin: 0 2px;
+}
+
+.StopPage .noTrainsScheduled {
+    text-align: center;
+    color: dimgray;
+    font-style: italic;
+    margin: 15px 0 20px 0;
+}
+
+.StopPage .TripStopTime {
+    padding: 8px 5px;
+    display: flex;
+    align-items: center;
+}
+
+.StopPage .TripStopTime .time {
+    width: 30px;
+    text-align: right;
+}
+
+.StopPage .TripStopTime .route {
+    width: 22px;
+    height: 22px;
+    margin: 0 5px;
+}
+
+.StopPage .TripStopTime .lastStop {
+    margin-left: 3px;
+    font-size: 0.9em;
 }
 
 .StopPage .scheduledTripWarning {
@@ -21,52 +46,20 @@
 }
 
 
-.TripInStop {
-    border-radius: 12px;
-    padding: 8px 5px;
-    display: flex;
-    align-items: center;
-}
-.TripInStop .time {
-    width: 30px;
-    text-align: right;
-}
-
-.TripInStop .route {
-    width: 22px;
-    height: 22px;
-    margin: 0 5px;
-}
-
-.TripInStop .lastStop {
-    margin-left: 3px;
-    font-size: 0.9em;
-}
-
-.TripInStop.evenStop {
-
-    background: #E1F4F7;
-}
-
-
-.SiblingStop {
+.siblingStops .ListElement {
     border-radius: 12px;
     padding: 8px 5px;
     display: flex;
     align-items: center;
 }
 
-.SiblingStop:nth-child(odd) {
-
-    background: #E1F4F7;
-}
-
-.SiblingStop .ListOfRouteLogos > div {
+.siblingStops .ListElement .ListOfRouteLogos > div {
     width: 22px;
     height: 22px;
     margin: 0 2px;
 }
-.SiblingStop .name {
+
+.siblingStops .name {
     margin-left: 3px;
     font-size: 0.9em;
 }

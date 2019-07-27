@@ -1,33 +1,20 @@
-/* move somewhere generic */
+.RoutePage .RouteLogo {
+    margin: 0 auto;
+    display: block;
+    height: 100px;
+    width: 100px;
+}
 
-.pointer {
+
+.StatusSummary.pointer {
     cursor: pointer;
 }
-.noTextSelect {
-    -webkit-touch-callout: none;
-    -webkit-user-select: none;
-    -khtml-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-}
-
-
-
-
-.StatusSummary {
-
-
-}
-
 
 .StatusSummaryMessage {
     display: flex;
     align-items: center;
     justify-content: center;
     margin-bottom: 12px;
-
-
 }
 
 .StatusSummaryMessage .arrow {
@@ -38,35 +25,23 @@
 }
 
 .StatusSummaryMessage .arrowUp {
-  margin-bottom: 4px;
-  transform: rotate(45deg);
-  -webkit-transform: rotate(45deg);
+    margin-bottom: 4px;
+    transform: rotate(45deg);
+    -webkit-transform: rotate(45deg);
 }
+
 .StatusSummaryMessage .arrowDown {
-  margin-top: 4px;
-  transform: rotate(225deg);
-  -webkit-transform: rotate(225deg);
+    margin-top: 4px;
+    transform: rotate(225deg);
+    -webkit-transform: rotate(225deg);
 }
 
 .StatusSummaryMessage .message {
-  padding: 0px 3px;
+    padding: 0 3px;
     font-size: 0.9em;
     color: gray;
 
 }
-
-
-
-
-
-.RoutePage .RouteLogo {
-    margin: 0 auto;
-    display: block;
-    height: 120px;
-
-    width: 120px;
-}
-
 
 
 .StatusSummaryHeader {
@@ -79,6 +54,7 @@
 .Orange {
     color: orange;
 }
+
 .Red {
     color: #ee352e;
 }
@@ -88,14 +64,8 @@
 }
 
 
-
-
-
-
-
-
 .Alert {
-    margin: 0px 6px;
+    margin: 0 6px;
 }
 
 .Alert .header {
@@ -115,7 +85,7 @@ so that the line spacing is not affected.
  */
 .Alert .description .RouteLogo {
     width: 1.2em;
-height: 1.2em;
+    height: 1.2em;
     margin-top: -0.15em;
     margin-bottom: -0.1em;
     vertical-align: middle;

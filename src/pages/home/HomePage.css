@@ -1,6 +1,4 @@
 
-
-
 .routeGrid a {
     color: black;
     text-decoration: none;
@@ -9,48 +7,49 @@
 .routeGrid a:hover {
     opacity: 0.6;
 }
+
 .routeGrid {
     margin: 5%;
 }
 
 
 .routeGrid .row {
-  display: flex;
-  justify-content: center;
+    display: flex;
+    justify-content: center;
 }
 
 .routeGrid .cell {
 
-  width: 23%;
-  padding-bottom: 23%;
-  margin: 1%;
-  position: relative;
+    width: 23%;
+    padding-bottom: 23%;
+    margin: 1%;
+    position: relative;
 }
 
 .routeGrid .RouteLogo {
-  position: absolute;
+    position: absolute;
     left: 0;
     top: 0;
-  width: 100%;
+    width: 100%;
 }
 
 .routeGrid .statusCircle {
     transition: background-color 0.5s;
-   width: 15%;
-   height: 15%;
-   position: absolute;
-   border-radius: 100%;
-   right: 0;
-   top: 0;
+    width: 15%;
+    height: 15%;
+    position: absolute;
+    border-radius: 100%;
+    right: 0;
+    top: 0;
 }
 
 .routeGrid .description {
     text-align: center;
     padding-top: 5%;
     font-family: 'Roboto Condensed', sans-serif;
-  margin-top: 100%;
+    margin-top: 100%;
     font-size: 0.8em;
-  margin-bottom: -100%
+    margin-bottom: -100%
 }
 
 
@@ -68,7 +67,6 @@
     opacity: 0.7;
     transition: opacity 500ms;
 }
-
 
 
 /*

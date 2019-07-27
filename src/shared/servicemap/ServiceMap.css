@@ -1,15 +1,6 @@
 
-.ServiceMap .evenStop {
-    background: #E1F4F7;
-}
-
-
-.ServiceMap .startingTerminus {
-    border-radius: 10px 10px 0 0;
-}
-.ServiceMap .stop {
-    border-radius: 12px;
-  display: flex;
+.ServiceMap .ListElement {
+    display: flex;
     cursor: pointer;
 }
 
@@ -18,101 +9,91 @@
     text-decoration: none;
 }
 
-.ServiceMap .stop:hover {
-    background-color: lightseagreen;
+
+.ServiceMap .time {
+    flex-shrink: 0;
+    font-size: 0.9em;
+    text-align: right;
 }
 
 .ServiceMap.withTimes .time {
-    flex-shrink: 0;
-  width: 15%;
-    color: dimgray;
-    font-size: 0.9em;
- padding: 11px 4px 8px 4px;
- text-align: right;
+    width: 15%;
+    padding: 11px 4px 8px 4px;
 }
+
 .ServiceMap.noTimes .time {
-  width: 0;
-    font-size: 0.9em;
- padding:8px 4px;
+    width: 0;
+    padding: 8px 4px;
 }
 
 
-
-.ServiceMap .name {
-    padding: 10px 6px;
-    text-align: left;
-}
-
-
-.ServiceMap .inActive .name {
-    padding-top: 8px;
-    padding-bottom: 8px;
-    color: dimgray;
-    font-size: 0.9em;
-}
-
-.ServiceMap .marker {
+.ServiceMap .map {
     flex-shrink: 0;
-  width: 20px;
-  position:relative;
+    width: 20px;
+    position: relative;
 }
 
 
-.ServiceMap .line {
-  width: 4px;
-  left: 8px;
-  position:absolute;
-}
-
-.ServiceMap .regular .line {
-    top: 0px;
-    bottom: 0px;
-}
-
-.ServiceMap .endingTerminus .line {
-  top: 0px;
-  height: 15px;
-}
-.ServiceMap .startingTerminus .line {
-  top: 15px;
-  bottom: 0px;
-}
-
-.ServiceMap .inActive .point {
-  display: none;
-}
-
-
-
-.ServiceMap .point {
+.ServiceMap .ListElement .line {
+    width: 4px;
+    left: 8px;
     position: absolute;
 }
 
-.ServiceMap .regular .point {
-  left: 5px;
-  top: 14px;
- background: white;
- width: 6px;
- height: 6px;
- border: 2px solid black;
- border-radius: 50%;
+.ServiceMap .ListElement.regular .line {
+    top: 0;
+    bottom: 0;
 }
 
-.ServiceMap .startingTerminus .point, .endingTerminus .point {
-  left: 5px;
-  top: 14px;
- background: white;
- border: 2px solid black;
- width: 6px;
- height: 6px;
+.ServiceMap .ListElement.startingTerminus .line {
+    top: 15px;
+    bottom: 0;
 }
 
-.ServiceMap .startingTerminus.inActive .line {
+.ServiceMap .ListElement.startingTerminus.inActive .line {
     top: 12px;
     border-radius: 2px 2px 0 0;
 }
 
-.ServiceMap .endingTerminus.inActive .line {
+.ServiceMap .ListElement.endingTerminus .line {
+    top: 0;
+    height: 15px;
+}
+
+.ServiceMap .ListElement.endingTerminus.inActive .line {
     height: 20px;
     border-radius: 0 0 2px 2px;
 }
+
+
+.ServiceMap .point {
+    left: 5px;
+    top: 14px;
+    background: white;
+    width: 6px;
+    height: 6px;
+    border: 2px solid black;
+    position: absolute;
+}
+
+.ServiceMap .ListElement.inActive .point {
+    display: none;
+}
+
+.ServiceMap .ListElement.regular .point {
+    border-radius: 50%;
+}
+
+
+.ServiceMap .name {
+    font-size: 0.9em;
+    padding: 10px 6px;
+    text-align: left;
+}
+
+.ServiceMap .ListElement.inActive .name {
+    padding-top: 8px;
+    padding-bottom: 8px;
+    color: dimgray;
+}
+

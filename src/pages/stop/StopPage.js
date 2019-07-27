@@ -6,15 +6,16 @@ import ListOfRouteLogos from "../../shared/routelogo/ListOfRouteLogos";
 import RouteLogo from "../../shared/routelogo/RouteLogo";
 import {Header} from "../../util/Header";
 import {Link} from "react-router-dom";
+import {List, ListElement} from "../../util/List";
 
 
 function SiblingStop(props) {
   return (
     <Link to={{pathname: "/stops/" + props.stopId, state: {stopName: props.name}}}>
-    <div className="SiblingStop">
-      <ListOfRouteLogos routeIds={props.routeIds}/>
-      <div className="name">{props.name}</div>
-    </div>
+      <ListElement className="SiblingStop">
+        <ListOfRouteLogos routeIds={props.routeIds}/>
+        <div className="name">{props.name}</div>
+      </ListElement>
     </Link>
   )
 }
@@ -27,7 +28,7 @@ function TripStopTime(props) {
   } else if (props.time < 60) {
     displayTime = String.fromCharCode(189)
   } else {
-    displayTime = Math.floor(props.time/60)
+    displayTime = Math.floor(props.time / 60)
   }
 
   return (
@@ -36,33 +37,33 @@ function TripStopTime(props) {
         pathname: "/routes/" + props.routeId + "/" + props.tripId,
         state: {lastStopName: props.lastStopName}
       }}>
-    <div className={"TripInStop" + (props.evenStop ? " evenStop" : "")}>
-      <div className="time">
-        {displayTime}
-      </div>
-      <div className="route">
-        <RouteLogo route={props.routeId} />
-      </div>
-      <div className="lastStop">
-        {props.lastStopName}
-        {props.isAssigned ? "" : String.fromCharCode(160)
-          + String.fromCharCode(9734)}
-      </div>
-    </div>
+      <ListElement className={"TripStopTime" + (props.evenStop ? " evenStop" : "")}>
+        <div className="time">
+          {displayTime}
+        </div>
+        <div className="route">
+          <RouteLogo route={props.routeId}/>
+        </div>
+        <div className="lastStop">
+          {props.lastStopName}
+          {props.isAssigned ? "" : String.fromCharCode(160)
+            + String.fromCharCode(9734)}
+        </div>
+      </ListElement>
     </Link>
   )
 }
 
 
-
 class StopPage extends LazyLoadingPage {
 
-    stopId() {
+  stopId() {
     if (this.props.match != null) {
       return this.props.match.params.stopId;
     }
     return this.props.stopId;
   }
+
   // TODO: these should just be variables in the constructor
   className() {
     return "StopPage";
@@ -94,7 +95,6 @@ class StopPage extends LazyLoadingPage {
   }
 
   getStateFromTransiterResponse(stop) {
-    console.log(stop)
     let directionNameToTripStopTimes = new Map();
     for (const directionName of stop.direction_names) {
       directionNameToTripStopTimes.set(directionName, [])
@@ -126,11 +126,11 @@ class StopPage extends LazyLoadingPage {
   }
 
   stopName() {
-      return this.state.stopName != null ? this.state.stopName : (
-        this.props.location != null ?  this.props.location.state.stopName : (
-          this.props.stopName
-        )
+    return this.state.stopName != null ? this.state.stopName : (
+      this.props.location != null ? this.props.location.state.stopName : (
+        this.props.stopName
       )
+    )
   }
 
   header() {
@@ -140,10 +140,11 @@ class StopPage extends LazyLoadingPage {
       </div>
     )
   }
+
   componentWillReceiveProps(nextProps, nextContext) {
-      this.setState({
-        pageStatus: "LOADING"
-      })
+    this.setState({
+      pageStatus: "LOADING"
+    });
     this.pollTransiter()
   }
 
@@ -162,38 +163,41 @@ class StopPage extends LazyLoadingPage {
       );
       if (tripStopTimes.length === 0) {
         internalElements.push(
-          <div key="noTrainsScheduled">
-            No trains scheduled.
+          <div key="noTrainsScheduled" className="noTrainsScheduled">
+            No trains scheduled
           </div>
-        )
-      }
+        );
+      } else {
+        let tripStopTimeElements = [];
+        for (const tripStopTime of tripStopTimes) {
 
-      let position = 0;
-      for (const tripStopTime of tripStopTimes) {
+          let tripTime = tripStopTime.arrival_time;
+          if (tripTime == null) {
+            tripTime = tripStopTime.departure_time;
+          }
 
-        let tripTime = tripStopTime.arrival_time;
-        if (tripTime == null) {
-          tripTime = tripStopTime.departure_time;
+          let isAssigned = (
+            tripStopTime.trip.current_status != null ||
+            tripStopTime.trip.current_stop_sequence !== 0
+          );
+          allAssigned = allAssigned && isAssigned;
+
+          tripStopTimeElements.push(
+            <TripStopTime
+              key={"trip" + tripStopTime.trip.id}
+              lastStopName={tripStopTime.trip.last_stop.name}
+              routeId={tripStopTime.trip.route.id}
+              tripId={tripStopTime.trip.id}
+              time={tripTime - currentTime}
+              isAssigned={isAssigned}
+            />
+          );
         }
-
-        let isAssigned = (
-          tripStopTime.trip.current_status != null ||
-          tripStopTime.trip.current_stop_sequence !== 0
-        );
-        allAssigned = allAssigned && isAssigned;
-
         internalElements.push(
-          <TripStopTime
-            key={"trip" + tripStopTime.trip.id}
-            lastStopName={tripStopTime.trip.last_stop.name}
-            routeId={tripStopTime.trip.route.id}
-            tripId={tripStopTime.trip.id}
-            time={tripTime - currentTime}
-            evenStop={position % 2 === 0}
-            isAssigned={isAssigned}
-          />
+          <List key="tripStopTimes">
+            {tripStopTimeElements}
+          </List>
         );
-        position += 1
       }
       directionNameElements.push(internalElements)
     }
@@ -205,11 +209,10 @@ class StopPage extends LazyLoadingPage {
       )
     }
 
-    let siblingStopElements = [];
+    let siblingStopsPanel = null;
     if (this.state.siblingStops.length > 0) {
-      siblingStopElements.push(
-        <Header key="header">Other platforms at this station</Header>
-      );
+
+      let siblingStopElements = [];
       for (const siblingStop of this.state.siblingStops) {
         let routeIds = [];
         for (const serviceMap of siblingStop.service_maps) {
@@ -232,16 +235,25 @@ class StopPage extends LazyLoadingPage {
           />
         )
       }
+      siblingStopsPanel = (
+        <div>
+          <Header key="header">Other platforms at this station</Header>
+          <List className="siblingStops">
+            {siblingStopElements}
+          </List>
+        </div>
+      )
+
     }
 
     return (
       <div>
-      <div className="mainRoutes">
-        <ListOfRouteLogos
-          routeIds={this.state.usualRouteIds} />
-      </div>
+        <div className="mainRoutes">
+          <ListOfRouteLogos
+            routeIds={this.state.usualRouteIds}/>
+        </div>
         {directionNameElements}
-        {siblingStopElements}
+        {siblingStopsPanel}
       </div>
     )
   }
