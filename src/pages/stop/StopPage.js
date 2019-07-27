@@ -5,14 +5,17 @@ import LazyLoadingPage from "../LazyLoadingPage";
 import ListOfRouteLogos from "../../shared/routelogo/ListOfRouteLogos";
 import RouteLogo from "../../shared/routelogo/RouteLogo";
 import {Header} from "../../util/Header";
+import {Link} from "react-router-dom";
 
 
 function SiblingStop(props) {
   return (
+    <Link to={{pathname: "/stops/" + props.stopId, state: {stopName: props.name}}}>
     <div className="SiblingStop">
       <ListOfRouteLogos routeIds={props.routeIds}/>
       <div className="name">{props.name}</div>
     </div>
+    </Link>
   )
 }
 
@@ -28,6 +31,11 @@ function TripStopTime(props) {
   }
 
   return (
+    <Link
+      to={{
+        pathname: "/routes/" + props.routeId + "/" + props.tripId,
+        state: {lastStopName: props.lastStopName}
+      }}>
     <div className={"TripInStop" + (props.evenStop ? " evenStop" : "")}>
       <div className="time">
         {displayTime}
@@ -41,6 +49,7 @@ function TripStopTime(props) {
           + String.fromCharCode(9734)}
       </div>
     </div>
+    </Link>
   )
 }
 
@@ -48,6 +57,12 @@ function TripStopTime(props) {
 
 class StopPage extends LazyLoadingPage {
 
+    stopId() {
+    if (this.props.match != null) {
+      return this.props.match.params.stopId;
+    }
+    return this.props.stopId;
+  }
   // TODO: these should just be variables in the constructor
   className() {
     return "StopPage";
@@ -70,7 +85,7 @@ class StopPage extends LazyLoadingPage {
   transiterUrl() {
     return (
       "https://www.realtimerail.nyc/transiter/v1/systems/nycsubway/stops/" +
-      this.props.stopId
+      this.stopId()
     )
   }
 
@@ -79,7 +94,7 @@ class StopPage extends LazyLoadingPage {
   }
 
   getStateFromTransiterResponse(stop) {
-
+    console.log(stop)
     let directionNameToTripStopTimes = new Map();
     for (const directionName of stop.direction_names) {
       directionNameToTripStopTimes.set(directionName, [])
@@ -110,12 +125,26 @@ class StopPage extends LazyLoadingPage {
     }
   }
 
+  stopName() {
+      return this.state.stopName != null ? this.state.stopName : (
+        this.props.location != null ?  this.props.location.state.stopName : (
+          this.props.stopName
+        )
+      )
+  }
+
   header() {
     return (
       <div className="header">
-        {this.state.stopName == null ? this.props.name : this.state.stopName}
+        {this.stopName()}
       </div>
     )
+  }
+  componentWillReceiveProps(nextProps, nextContext) {
+      this.setState({
+        pageStatus: "LOADING"
+      })
+    this.pollTransiter()
   }
 
   body() {
@@ -158,6 +187,7 @@ class StopPage extends LazyLoadingPage {
             key={"trip" + tripStopTime.trip.id}
             lastStopName={tripStopTime.trip.last_stop.name}
             routeId={tripStopTime.trip.route.id}
+            tripId={tripStopTime.trip.id}
             time={tripTime - currentTime}
             evenStop={position % 2 === 0}
             isAssigned={isAssigned}
@@ -196,6 +226,7 @@ class StopPage extends LazyLoadingPage {
         siblingStopElements.push(
           <SiblingStop
             key={"siblingStop" + siblingStop.id}
+            stopId={siblingStop.id}
             name={siblingStop.name}
             routeIds={routeIds}
           />

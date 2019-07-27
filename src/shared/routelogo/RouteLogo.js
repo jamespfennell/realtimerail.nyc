@@ -8,6 +8,7 @@ import ImageFor4 from './images/4.svg'
 import ImageFor5 from './images/5.svg'
 import ImageFor6 from './images/6.svg'
 import ImageFor7 from './images/7.svg'
+import ImageFor7X from './images/7x.svg'
 import ImageForA from './images/a.svg'
 import ImageForB from './images/b.svg'
 import ImageForC from './images/c.svg'
@@ -37,13 +38,14 @@ let routeIdToImage = {
     '6': ImageFor6,
   '6X': ImageFor6, // TODO
   '7': ImageFor7,
-    '7X': ImageFor7,
+    '7X': ImageFor7X,
     'A': ImageForA,
     'B': ImageForB,
     'C': ImageForC,
     'D': ImageForD,
     'E': ImageForE,
     'F': ImageForF,
+  'FS': ImageForShuttle,
     'G': ImageForG,
     'GS': ImageForShuttle,
     'H': ImageForShuttle,

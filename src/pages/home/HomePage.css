@@ -1,8 +1,14 @@
 
 
 
+.routeGrid a {
+    color: black;
+    text-decoration: none;
+}
 
-
+.routeGrid a:hover {
+    opacity: 0.6;
+}
 .routeGrid {
     margin: 5%;
 }

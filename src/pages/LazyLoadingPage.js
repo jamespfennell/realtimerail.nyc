@@ -3,6 +3,9 @@ import axios from "axios";
 import AnimateHeight from "react-animate-height";
 import LoadingBar from "../shared/loadingbar/LoadingBar";
 
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
 
 class LazyLoadingPage extends React.Component {
 
@@ -60,7 +63,8 @@ class LazyLoadingPage extends React.Component {
     }
   }
 
-  pollTransiter = () => {
+  async pollTransiter() {
+    await sleep(0);
     axios.get(this.transiterUrl())
       .then(this.handleHttpSuccess)
       .catch(this.handleHttpError)

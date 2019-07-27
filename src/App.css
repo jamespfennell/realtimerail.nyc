@@ -22,3 +22,20 @@ border-radius: 12px;
 .footer a {
   color: black;
 }
+
+
+.header {
+}
+
+.header .home {
+  padding: 6px;
+  text-align: center;
+  margin: 0 20px;
+}
+.header a {
+  color: black;
+  text-decoration: none;
+}
+.header a:hover .home {
+  background: white;
+}

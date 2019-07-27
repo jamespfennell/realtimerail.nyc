@@ -155,6 +155,12 @@ class StatusPanel extends React.Component {
 
 class RoutePage extends LazyLoadingPage {
 
+  routeId() {
+    if (this.props.match != null) {
+      return this.props.match.params.routeId;
+    }
+    return this.props.routeId;
+  }
   className() {
     return "RoutePage"
   }
@@ -168,7 +174,8 @@ class RoutePage extends LazyLoadingPage {
   }
 
   transiterUrl() {
-    return "https://www.realtimerail.nyc/transiter/v1/systems/nycsubway/routes/" + this.props.routeId;
+    return "https://www.realtimerail.nyc/transiter/v1/systems/nycsubway/routes/"
+      + this.routeId();
   }
 
   transiterErrorMessage() {
@@ -205,8 +212,9 @@ class RoutePage extends LazyLoadingPage {
   }
 
   header() {
+    console.log(this.props)
     return (
-      <RouteLogo route={this.props.routeId}/>
+      <RouteLogo route={this.routeId()}/>
     )
   }
 

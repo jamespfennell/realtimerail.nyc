@@ -3,11 +3,10 @@ import PropTypes from 'prop-types';
 import axios from 'axios'
 import RouteLogo from '../../shared/routelogo/RouteLogo'
 
-import {timestampToTime, timestampToDateString} from '../../util/Time'
+import {timestampToDateString, timestampToTime} from '../../util/Time'
 import ServiceMap, {EnRouteData, StopData} from '../../shared/servicemap/ServiceMap'
 import {Header} from '../../util/Header'
 import './TripPage.css'
-import HomePage from "../home/HomePage";
 import LazyLoadingPage from "../LazyLoadingPage";
 
 
@@ -195,12 +194,18 @@ class TripPage extends LazyLoadingPage {
     };
   }
 
+  routeId() {
+    return this.props.match != null ? this.props.match.params.routeId : this.props.routeId
+  }
+  tripId() {
+    return this.props.match != null ? this.props.match.params.tripId : this.props.tripId
+  }
   transiterUrl() {
     return (
       "https://www.realtimerail.nyc/transiter/v1/systems/nycsubway/routes/" +
-      this.props.routeId +
+      this.routeId() +
       "/trips/" +
-      this.props.tripId
+      this.tripId()
     )
   }
 
@@ -222,7 +227,7 @@ class TripPage extends LazyLoadingPage {
         time = tripStopTime.departure_time;
       }
       let stop = new StopData(
-        tripStopTime.stop.id,
+        tripStopTime.stop.id.substr(0, tripStopTime.stop.id.length-1),
         tripStopTime.stop.name,
         timestampToTime(time),
         true
@@ -249,16 +254,21 @@ class TripPage extends LazyLoadingPage {
   }
 
   header() {
+    console.log(this.props)
     return (
       <TripPageHeader
-        routeId={this.props.routeId}
+        routeId={this.routeId()}
         firstStopName={
           this.state.stops == null
             ? null
             : this.state.stops[0].name}
         lastStopName={
           this.state.stops == null
-            ? this.props.lastStopName
+            ? (
+              this.props.location != null ? this.props.location.state.lastStopName : (
+                this.props.lastStopName
+              )
+            )
             : this.state.stops[this.state.stops.length - 1].name}
       />
     )
@@ -278,7 +288,7 @@ class TripPage extends LazyLoadingPage {
           showTimes={true}
         />
         <Header>Additional trip details</Header>
-        <TripData dataKey="Trip ID" value={this.props.tripId} code={true}/>
+        <TripData dataKey="Trip ID" value={this.tripId()} code={true}/>
         <TripData dataKey="Vehicle ID" value={this.state.vehicleId} code={true}/>
         <TripData dataKey="Start time"
                   value={timestampToTime(this.state.startTime) + ", " + timestampToDateString(this.state.startTime)}/>

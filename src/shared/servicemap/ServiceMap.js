@@ -1,6 +1,6 @@
 import React from "react";
 import './ServiceMap.css'
-
+import {Link} from "react-router-dom";
 
 export function StopData(id, name, time, isActive) {
     this.id = id;
@@ -31,6 +31,7 @@ function ServiceMapStop(props) {
     stopClasses += " evenStop"
   }
   return (
+    <Link to={{pathname: "/stops/" + props.stopId, state: {stopName: props.name}}}>
     <div className={stopClasses}>
       <div className="time">{props.time}</div>
       <div className="marker">
@@ -40,6 +41,7 @@ function ServiceMapStop(props) {
       <div className="name">
         {props.name}</div>
     </div>
+    </Link>
   )
 }
 
@@ -58,6 +60,7 @@ class ServiceMap extends React.Component {
         <ServiceMapStop
           color={this.props.color}
           key={stop.id}
+          stopId={stop.id}
           name={stop.name}
           time={this.props.showTimes ? stop.time : ""}
           isActive={stop.isActive}

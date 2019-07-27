@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import axios from 'axios'
 import _ from 'lodash'
 
+import {Link} from "react-router-dom";
 import RouteLogo from '../../shared/routelogo/RouteLogo'
 import './HomePage.css'
 
@@ -26,9 +27,11 @@ class RouteButton extends React.Component {
     }
     return (
       <div className={buttonClasses}>
+        <Link to={"/routes/" + this.props.route}>
         <div className={statusClasses}/>
         <RouteLogo route={this.props.route}/>
         {descriptionElement}
+        </Link>
       </div>
     )
   }
@@ -55,11 +58,11 @@ class HomePage extends React.Component {
       ["B", "D", "F", "M"],
       ["N", "Q", "R", "W"],
       ["J", "Z", "SI"],
-      ["H", "S", "GS"]
+      ["H", "FS", "GS"]
     ];
     this.routeIdToDescription = {
       "H": "Rockaways shuttle",
-      "S": "Franklin Av shuttle",
+      "FS": "Franklin Av shuttle",
       "GS": "42nd street shuttle"
     };
   }

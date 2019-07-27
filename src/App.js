@@ -4,6 +4,11 @@ import React from 'react';
 import './App.css';
 import StopPage from "./pages/stop/StopPage";
 
+import { BrowserRouter as Router, Route, Link } from "react-router-dom";
+import HomePage from "./pages/home/HomePage";
+import RoutePage from "./pages/route/RoutePage";
+import TripPage from "./pages/trip/TripPage";
+
 function App() {
   // <HomePage/>
   // <RoutePage routeId="A" />
@@ -11,9 +16,24 @@ function App() {
   // <RoutePage routeId="G" />
   // <TripPage tripId="095950_A..S" routeId="A" lastStopName="Ozone Park - Lefferts Blvd" />
   return (
+    <Router>
     <div className="App">
+      <div className="header">
+        <Link to="/">
+          <div className="home">
+            realtimerail.nyc
+          </div>
+        </Link>
+      </div>
       <div className="container">
-        <StopPage stopId="A27" name="14 St - Union Sq"/>
+
+
+
+
+        <Route exact path="/" component={HomePage} />
+        <Route exact path="/routes/:routeId" component={RoutePage} />
+        <Route exact path="/routes/:routeId/:tripId" component={TripPage} />
+        <Route exact path="/stops/:stopId" component={StopPage} />
       </div>
       <div className="footer">
         <p>
@@ -28,6 +48,7 @@ function App() {
         </p>
       </div>
     </div>
+    </Router>
   );
 }
 
