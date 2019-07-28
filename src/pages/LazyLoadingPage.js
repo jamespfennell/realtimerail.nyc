@@ -2,6 +2,7 @@ import React from 'react'
 import axios from "axios";
 import AnimateHeight from "react-animate-height";
 import LoadingBar from "../shared/loadingbar/LoadingBar";
+import ErrorMessage from "../shared/errormessage/ErrorMessage";
 
 function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
@@ -64,7 +65,7 @@ class LazyLoadingPage extends React.Component {
   }
 
   async pollTransiter() {
-    await sleep(0);
+    await sleep(100);
     axios.get(this.transiterUrl())
       .then(this.handleHttpSuccess)
       .catch(this.handleHttpError)
@@ -81,7 +82,7 @@ class LazyLoadingPage extends React.Component {
     if (error.response) {
       errorMessage = this.transiterErrorMessage(error.response)
     } else {
-      errorMessage = "Not connected to the internet"
+      errorMessage = "No internet"
     }
     this.setState({
       pageStatus: "ERROR",
@@ -94,7 +95,7 @@ class LazyLoadingPage extends React.Component {
     elements.push(<div key="header">{this.header()}</div>);
 
     if (this.state.pageStatus === "ERROR") {
-      elements.push(<div key="errorBar">Error</div>)
+      elements.push(<ErrorMessage>{this.state.errorMessage}</ErrorMessage>)
     } else if (this.state.pageStatus === "LOADING") {
       elements.push(<LoadingBar key="loadingBar "/>)
     }

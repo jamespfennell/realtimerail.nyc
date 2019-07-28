@@ -13,7 +13,7 @@ function SiblingStop(props) {
   return (
     <Link to={{pathname: "/stops/" + props.stopId, state: {stopName: props.name}}}>
       <ListElement className="SiblingStop">
-        <ListOfRouteLogos routeIds={props.routeIds}/>
+        <ListOfRouteLogos routeIds={props.routeIds} skipExpress={true}/>
         <div className="name">{props.name}</div>
       </ListElement>
     </Link>
@@ -70,7 +70,7 @@ class StopPage extends LazyLoadingPage {
   }
 
   pollTime() {
-    return -10000;
+    return -1000;
   }
 
   initialState() {
@@ -91,7 +91,7 @@ class StopPage extends LazyLoadingPage {
   }
 
   transiterErrorMessage(response) {
-    return "Unexpected error"
+    return "Error retrieving data"
   }
 
   getStateFromTransiterResponse(stop) {
@@ -218,9 +218,6 @@ class StopPage extends LazyLoadingPage {
         for (const serviceMap of siblingStop.service_maps) {
           if (serviceMap.group_id === "weekday_day") {
             for (const route of serviceMap.routes) {
-              if (route.id.substr(-1, 1) === 'X') {
-                continue
-              }
               routeIds.push(route.id)
             }
             break
@@ -250,7 +247,8 @@ class StopPage extends LazyLoadingPage {
       <div>
         <div className="mainRoutes">
           <ListOfRouteLogos
-            routeIds={this.state.usualRouteIds}/>
+            routeIds={this.state.usualRouteIds}
+            skipExpress={true}/>
         </div>
         {directionNameElements}
         {siblingStopsPanel}

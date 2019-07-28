@@ -2,7 +2,7 @@ import React from "react";
 import PropTypes from 'prop-types';
 import RouteLogo from '../../shared/routelogo/RouteLogo'
 
-import {timestampToDateString, timestampToTime} from '../../util/Time'
+import {timestampToDateString, timestampToTime, timestampToTimeElapsed} from '../../util/Time'
 import ServiceMap, {StopData} from '../../shared/servicemap/ServiceMap'
 import {Header} from '../../util/Header'
 import './TripPage.css'
@@ -115,7 +115,6 @@ class TripPage extends LazyLoadingPage {
   }
 
   header() {
-    console.log(this.props)
     return (
       <TripPageHeader
         routeId={this.routeId()}
@@ -140,7 +139,7 @@ class TripPage extends LazyLoadingPage {
       <div>
         <TripData
           dataKey="Last updated"
-          value={timestampToTime(this.state.lastUpdated) + ", " + timestampToDateString(this.state.lastUpdated)}
+          value={timestampToTimeElapsed(this.state.lastUpdated)}
         />
         <TripData dataKey="Next stop" value={this.state.nextStop.name}/>
         <ServiceMap
