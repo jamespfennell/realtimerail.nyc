@@ -70,7 +70,7 @@ class StopPage extends LazyLoadingPage {
   }
 
   pollTime() {
-    return -1000;
+    return 5000;
   }
 
   initialState() {
