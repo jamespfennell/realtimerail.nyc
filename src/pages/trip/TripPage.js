@@ -75,7 +75,10 @@ class TripPage extends LazyLoadingPage {
   }
 
   transiterErrorMessage(response) {
-    return "This trip no longer exists"
+    if (response.status === 404) {
+      return "this trip no longer exists"
+    }
+    return "error retrieving data"
   }
 
   getStateFromTransiterResponse(response) {

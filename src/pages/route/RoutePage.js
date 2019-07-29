@@ -179,10 +179,6 @@ class RoutePage extends LazyLoadingPage {
       + this.routeId();
   }
 
-  transiterErrorMessage() {
-    return "Unexpected error"
-  }
-
   getStateFromTransiterResponse(response) {
     // for (const route of response) {
     //  routeIdToStatus[route.id] = route.status

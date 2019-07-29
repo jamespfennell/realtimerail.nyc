@@ -36,7 +36,7 @@ class LazyLoadingPage extends React.Component {
   };
 
   transiterErrorMessage(response) {
-    return ""
+    return "error retrieving data"
   };
 
   getStateFromTransiterResponse(response) {
@@ -70,7 +70,7 @@ class LazyLoadingPage extends React.Component {
         pageStatus: "LOADING"
       })
     }
-    await sleep(1000);
+    await sleep(0);
     axios.get(this.transiterUrl())
       .then(this.handleHttpSuccess)
       .catch(this.handleHttpError)

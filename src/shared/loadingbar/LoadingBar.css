@@ -24,13 +24,18 @@
 }
 
 .spinner .bounce1 {
-    -webkit-animation-delay: -0.32s;
-    animation-delay: -0.32s;
+    -webkit-animation-delay: 0.48s;
+    animation-delay: 0.48s;
 }
 
 .spinner .bounce2 {
-    -webkit-animation-delay: -0.16s;
-    animation-delay: -0.16s;
+    -webkit-animation-delay: 0.64s;
+    animation-delay: 0.64s;
+}
+
+.spinner .bounce3 {
+    -webkit-animation-delay: 0.8s;
+    animation-delay: 0.8s;
 }
 
 @-webkit-keyframes sk-bouncedelay {

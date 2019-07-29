@@ -90,10 +90,6 @@ class StopPage extends LazyLoadingPage {
     )
   }
 
-  transiterErrorMessage(response) {
-    return "Error retrieving data"
-  }
-
   getStateFromTransiterResponse(stop) {
     let directionNameToTripStopTimes = new Map();
     for (const directionName of stop.direction_names) {
@@ -142,9 +138,9 @@ class StopPage extends LazyLoadingPage {
   }
 
   componentWillReceiveProps(nextProps, nextContext) {
-    this.setState({
-      pageStatus: "LOADING"
-    });
+    let state = this.initialState();
+    state.pageStatus = "LOADING";
+    this.setState(state);
     this.pollTransiter()
   }
 
@@ -248,7 +244,9 @@ class StopPage extends LazyLoadingPage {
         <div className="mainRoutes">
           <ListOfRouteLogos
             routeIds={this.state.usualRouteIds}
-            skipExpress={true}/>
+            skipExpress={true}
+            addLinks={true}
+          />
         </div>
         {directionNameElements}
         {siblingStopsPanel}

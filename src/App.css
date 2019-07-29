@@ -27,9 +27,20 @@
 }
 
 .header .home {
-    padding: 6px;
+    border-radius: 12px 12px 0 0 ;
+    padding: 10px;
     text-align: center;
     margin: 0 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.header .home img {
+    margin-left: 5px;
+    display: block;
+    width: 20px;
+    height: 20px;
 }
 
 .header a {
@@ -38,5 +49,5 @@
 }
 
 .header a:hover .home {
-    background: white;
+    background: #E1F4F7;
 }

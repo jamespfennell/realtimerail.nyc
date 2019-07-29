@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 
 import './ListOfRouteLogos.css'
 import RouteLogo from "./RouteLogo";
+import {Link} from "react-router-dom";
 
 
 export default function ListOfRouteLogos(props) {
@@ -11,11 +12,21 @@ export default function ListOfRouteLogos(props) {
     if (props.skipExpress && routeId.substr(-1, 1) === 'X') {
       continue
     }
-    routeLogos.push(
-      <div key={routeId}>
-        <RouteLogo route={routeId}/>
-      </div>
-    )
+    if (props.addLinks) {
+      routeLogos.push(
+        <div key={routeId}>
+          <Link to={"/routes/" + routeId}>
+            <RouteLogo route={routeId}/>
+          </Link>
+        </div>
+      )
+    } else {
+      routeLogos.push(
+        <div key={routeId}>
+          <RouteLogo route={routeId}/>
+        </div>
+      )
+    }
   }
   return (
 
@@ -27,5 +38,6 @@ export default function ListOfRouteLogos(props) {
 
 ListOfRouteLogos.Props = {
   routeIds: PropTypes.array,
-  skipExpress: PropTypes.bool
+  skipExpress: PropTypes.bool,
+  addLinks: PropTypes.bool
 };
