@@ -54,7 +54,7 @@ class LazyLoadingPage extends React.Component {
   componentDidMount() {
     this.pollTransiter();
     if (this.pollTime() > 0) {
-      this.interval = setInterval(this.pollTransiter, this.pollTime());
+      this.interval = setInterval(() => this.pollTransiter(), this.pollTime());
     }
   }
 
@@ -65,7 +65,12 @@ class LazyLoadingPage extends React.Component {
   }
 
   async pollTransiter() {
-    await sleep(100);
+    if (this.state.pageStatus === "ERROR") {
+      this.setState({
+        pageStatus: "LOADING"
+      })
+    }
+    await sleep(1000);
     axios.get(this.transiterUrl())
       .then(this.handleHttpSuccess)
       .catch(this.handleHttpError)
@@ -82,7 +87,7 @@ class LazyLoadingPage extends React.Component {
     if (error.response) {
       errorMessage = this.transiterErrorMessage(error.response)
     } else {
-      errorMessage = "No internet"
+      errorMessage = "no internet connection"
     }
     this.setState({
       pageStatus: "ERROR",
@@ -95,7 +100,9 @@ class LazyLoadingPage extends React.Component {
     elements.push(<div key="header">{this.header()}</div>);
 
     if (this.state.pageStatus === "ERROR") {
-      elements.push(<ErrorMessage>{this.state.errorMessage}</ErrorMessage>)
+      elements.push(
+        <ErrorMessage tryAgainFunction={() => this.pollTransiter()}>{this.state.errorMessage}</ErrorMessage>
+      )
     } else if (this.state.pageStatus === "LOADING") {
       elements.push(<LoadingBar key="loadingBar "/>)
     }

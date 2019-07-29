@@ -1,26 +1,25 @@
 .App {
-  width: 300px;
-  margin: 10px auto 0 auto;
+    width: 300px;
+    margin: 10px auto 0 auto;
 
 }
 
 .container {
-  padding: 10px;
-border-radius: 12px;
-  background-color: aliceblue;
-  min-height: 400px;
-
+    padding: 10px;
+    border-radius: 12px;
+    background-color: aliceblue;
+    min-height: 400px;
 }
 
 .footer {
-  margin: 0px 10px;
-  font-size: 0.8em;
-  line-height: 1.4em;
-  color: black;
+    margin: 0px 10px;
+    font-size: 0.8em;
+    line-height: 1.4em;
+    color: black;
 }
 
 .footer a {
-  color: black;
+    color: black;
 }
 
 
@@ -28,14 +27,16 @@ border-radius: 12px;
 }
 
 .header .home {
-  padding: 6px;
-  text-align: center;
-  margin: 0 20px;
+    padding: 6px;
+    text-align: center;
+    margin: 0 20px;
 }
+
 .header a {
-  color: black;
-  text-decoration: none;
+    color: black;
+    text-decoration: none;
 }
+
 .header a:hover .home {
-  background: white;
+    background: white;
 }

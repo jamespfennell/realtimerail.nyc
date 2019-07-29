@@ -161,6 +161,7 @@ class RoutePage extends LazyLoadingPage {
     }
     return this.props.routeId;
   }
+
   className() {
     return "RoutePage"
   }
@@ -223,10 +224,10 @@ class RoutePage extends LazyLoadingPage {
         <StatusPanel
           status={this.state.routeStatus}
           alerts={this.state.alerts}
-          periodicity={this.state.periodicity} />
+          periodicity={this.state.periodicity}/>
         <ServiceMap
           stops={this.state.stops}
-          color={this.state.color} />
+          color={this.state.color}/>
       </div>
     )
   }
