@@ -20,6 +20,10 @@
     color: black;
 }
 
+.footer p {
+    margin: 0 auto 10px auto;
+}
+
 .footer a {
     color: black;
 }
@@ -52,18 +56,21 @@
 
 
 @media only screen and (max-width: 425px) {
-    body {
-    }
 
     .App {
-        width: 100%;
+        width: auto;
+        padding: 0 10px;
         margin: 0;
-        background: aliceblue;
+    }
+
+
+    .innerContainer {
+        max-width: 300px;
+        margin: 0 auto;
     }
 
     .appHeader {
         background: lightseagreen;
-        margin-bottom: 10px;
     }
 
     .appHeader .home {
@@ -72,20 +79,12 @@
 
     .footer {
         background: lightseagreen;
-        margin-top: 10px;
     }
 
     .footer p {
-        margin-left: auto;
-        margin-right: auto;
         padding-left: 0;
         padding-right: 0;
         max-width: 300px;
     }
 
-    .container {
-        max-width: 300px;
-
-        margin: 0 auto;
-    }
 }

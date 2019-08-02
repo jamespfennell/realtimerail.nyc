@@ -24,19 +24,22 @@ function App() {
           </Link>
         </div>
         <div className="container">
-          <Route exact path="/" component={HomePage}/>
-          <Route exact path="/routes/:routeId" component={RoutePage}/>
-          <Route exact path="/routes/:routeId/:tripId" component={TripPage}/>
-          <Route exact path="/stops/:stopId" component={StopPage}/>
+          <div className="innerContainer">
+            <Route exact path="/" component={HomePage}/>
+            <Route exact path="/routes/:routeId" component={RoutePage}/>
+            <Route exact path="/routes/:routeId/:tripId" component={TripPage}/>
+            <Route exact path="/stops/:stopId" component={StopPage}/>
+          </div>
         </div>
         <div className="footer">
           <p>
             realtimerail.nyc is
             a <a href="https://github.com/jamespfennell/realtimerail.nyc-react">Javascript/React app</a> that
             uses the <a href="https://github.com/jamespfennell/transiter">open source software Transiter</a> to
-            access New York City Transit's realtime data. <a href="https://github.com/jamespfennell/realtimerail.nyc-react/issues/new">Bug reports or feature requests
-              are welcome
-            </a>!
+            access New York City Transit's realtime data. <a
+            href="https://github.com/jamespfennell/realtimerail.nyc-react/issues/new">Bug reports or feature requests
+            are welcome
+          </a>!
           </p>
           <p>
             All subway symbols are trademarked
