@@ -32,9 +32,11 @@ function App() {
         <div className="footer">
           <p>
             realtimerail.nyc is
-            a <a href="https://github.com/jamespfennell/react-sandbox">Javascript/React app</a> that
+            a <a href="https://github.com/jamespfennell/realtimerail.nyc-react">Javascript/React app</a> that
             uses the <a href="https://github.com/jamespfennell/transiter">open source software Transiter</a> to
-            access New York City Transit's realtime data.
+            access New York City Transit's realtime data. <a href="https://github.com/jamespfennell/realtimerail.nyc-react/issues/new">Bug reports or feature requests
+              are welcome
+            </a>!
           </p>
           <p>
             All subway symbols are trademarked
