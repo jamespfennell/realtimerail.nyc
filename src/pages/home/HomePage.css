@@ -9,7 +9,7 @@
 }
 
 .routeGrid {
-    margin: 5%;
+    margin: 0;
 }
 
 
@@ -36,7 +36,8 @@
 .routeGrid .statusCircle {
     transition: background-color 0.5s;
     width: 15%;
-    height: 15%;
+    height: 0;
+    padding: 15% 0 0 0;
     position: absolute;
     border-radius: 100%;
     right: 0;

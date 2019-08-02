@@ -28,9 +28,9 @@ class RouteButton extends React.Component {
     return (
       <div className={buttonClasses}>
         <Link to={"/routes/" + this.props.route}>
-        <div className={statusClasses}/>
-        <RouteLogo route={this.props.route}/>
-        {descriptionElement}
+          <div className={statusClasses}/>
+          <RouteLogo route={this.props.route}/>
+          {descriptionElement}
         </Link>
       </div>
     )
@@ -90,7 +90,7 @@ class HomePage extends React.Component {
     return (
       <div className="HomePage">
         <div className="routeGrid">
-        {grid}
+          {grid}
         </div>
       </div>
     );

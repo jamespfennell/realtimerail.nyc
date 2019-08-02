@@ -15,7 +15,7 @@ function App() {
   return (
     <Router>
       <div className="App">
-        <div className="header">
+        <div className="appHeader">
           <Link to="/">
             <div className="home">
               <div className="text">realtimerail.nyc</div>

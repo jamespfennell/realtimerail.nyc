@@ -1,8 +1,9 @@
 .App {
-    width: 300px;
+    width: 330px;
     margin: 10px auto 0 auto;
 
 }
+
 
 .container {
     padding: 10px;
@@ -12,7 +13,8 @@
 }
 
 .footer {
-    margin: 0px 10px;
+    margin: 0 auto;
+    padding: 10px;
     font-size: 0.8em;
     line-height: 1.4em;
     color: black;
@@ -23,11 +25,11 @@
 }
 
 
-.header {
+.appHeader {
 }
 
-.header .home {
-    border-radius: 12px 12px 0 0 ;
+.appHeader .home {
+    border-radius: 12px 12px 0 0;
     padding: 10px;
     text-align: center;
     margin: 0 20px;
@@ -36,18 +38,54 @@
     align-items: center;
 }
 
-.header .home img {
+.appHeader .home img {
     margin-left: 5px;
     display: block;
     width: 20px;
     height: 20px;
 }
 
-.header a {
+.appHeader a {
     color: black;
     text-decoration: none;
 }
 
-.header a:hover .home {
-    background: #E1F4F7;
+
+@media only screen and (max-width: 425px) {
+    body {
+    }
+
+    .App {
+        width: 100%;
+        margin: 0;
+        background: aliceblue;
+    }
+
+    .appHeader {
+        background: lightseagreen;
+        margin-bottom: 10px;
+    }
+
+    .appHeader .home {
+        padding: 15px;
+    }
+
+    .footer {
+        background: lightseagreen;
+        margin-top: 10px;
+    }
+
+    .footer p {
+        margin-left: auto;
+        margin-right: auto;
+        padding-left: 0;
+        padding-right: 0;
+        max-width: 300px;
+    }
+
+    .container {
+        max-width: 300px;
+
+        margin: 0 auto;
+    }
 }

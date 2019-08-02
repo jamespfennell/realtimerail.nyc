@@ -1,13 +1,13 @@
 
 .StopPage .header {
     font-size: 1.3em;
-    margin: 20px 0 10px 0;
+    margin: 10px 0 10px 0;
     text-align: center;
 }
 
 .StopPage .mainRoutes .ListOfRouteLogos > div {
-    width: 25px;
-    height: 25px;
+    width: 35px;
+    height: 35px;
     margin: 0 2px;
 }
 
