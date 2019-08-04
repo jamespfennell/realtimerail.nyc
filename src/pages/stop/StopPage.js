@@ -122,11 +122,13 @@ class StopPage extends LazyLoadingPage {
   }
 
   stopName() {
-    return this.state.stopName != null ? this.state.stopName : (
-      this.props.location != null ? this.props.location.state.stopName : (
-        this.props.stopName
-      )
-    )
+    if (this.state.stopName != null) {
+      return this.state.stopName
+    }
+    if (this.props.location != null && this.props.location.state != null) {
+      return this.props.location.state.stopName
+    }
+    return this.props.stopName
   }
 
   header() {
