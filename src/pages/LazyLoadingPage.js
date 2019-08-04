@@ -52,17 +52,29 @@ class LazyLoadingPage extends React.Component {
   };
 
   componentDidMount() {
+    window.addEventListener("focus", this.startPollingTransiter);
+    window.addEventListener("blur", this.stopPollingTransiter);
+    this.startPollingTransiter()
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener("focus", this.startPollingTransiter);
+    window.removeEventListener("blur", this.stopPollingTransiter);
+    this.stopPollingTransiter()
+  }
+
+  startPollingTransiter = () => {
     this.pollTransiter();
     if (this.pollTime() > 0) {
       this.interval = setInterval(() => this.pollTransiter(), this.pollTime());
     }
-  }
+  };
 
-  componentWillUnmount() {
+  stopPollingTransiter = () => {
     if (this.interval != null) {
       clearInterval(this.interval);
     }
-  }
+  };
 
   async pollTransiter() {
     if (this.state.pageStatus === "ERROR") {
