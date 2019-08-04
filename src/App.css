@@ -40,6 +40,8 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    color:white;
+    font-size: 1.1em;
 }
 
 .appHeader .home img {
