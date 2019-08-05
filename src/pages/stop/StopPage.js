@@ -143,7 +143,7 @@ class StopPage extends LazyLoadingPage {
     let state = this.initialState();
     state.pageStatus = "LOADING";
     this.setState(state);
-    this.pollTransiter()
+    this.startPollingTransiter()
   }
 
   body() {
