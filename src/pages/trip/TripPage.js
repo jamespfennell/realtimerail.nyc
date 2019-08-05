@@ -58,11 +58,27 @@ class TripPage extends LazyLoadingPage {
   }
 
   routeId() {
-    return this.props.match != null ? this.props.match.params.routeId : this.props.routeId
+    if (this.props.match != null && this.props.match.params != null) {
+      return this.props.match.params.routeId
+    }
+    return this.props.routeId
   }
 
   tripId() {
-    return this.props.match != null ? this.props.match.params.tripId : this.props.tripId
+    if (this.props.match != null && this.props.match.params != null) {
+      return this.props.match.params.tripId
+    }
+    return this.props.tripId
+  }
+
+  lastStopName() {
+    if (this.state.stops != null) {
+      return this.state.stops[this.state.stops.length - 1].name
+    }
+    if (this.props.location != null && this.props.location.state != null) {
+      return this.props.location.state.lastStopName
+    }
+    return this.props.lastStopName
   }
 
   transiterUrl() {
@@ -125,14 +141,7 @@ class TripPage extends LazyLoadingPage {
           this.state.stops == null
             ? null
             : this.state.stops[0].name}
-        lastStopName={
-          this.state.stops == null
-            ? (
-              this.props.location != null ? this.props.location.state.lastStopName : (
-                this.props.lastStopName
-              )
-            )
-            : this.state.stops[this.state.stops.length - 1].name}
+        lastStopName={this.lastStopName()}
       />
     )
   }
