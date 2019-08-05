@@ -64,6 +64,7 @@ class LazyLoadingPage extends React.Component {
   }
 
   startPollingTransiter = () => {
+    this.stopPollingTransiter();
     this.pollTransiter();
     if (this.pollTime() > 0) {
       this.interval = setInterval(() => this.pollTransiter(), this.pollTime());
