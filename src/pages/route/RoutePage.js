@@ -223,7 +223,9 @@ class RoutePage extends LazyLoadingPage {
           periodicity={this.state.periodicity}/>
         <ServiceMap
           stops={this.state.stops}
-          color={this.state.color}/>
+          color={this.state.color}
+          type="Route"
+        />
       </div>
     )
   }

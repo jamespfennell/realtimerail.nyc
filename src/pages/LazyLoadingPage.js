@@ -110,6 +110,7 @@ class LazyLoadingPage extends React.Component {
 
   render() {
     let elements = [];
+    // elements.push(<div key="noInternet" className="noInternet">no  internet</div>);
     elements.push(<div key="header">{this.header()}</div>);
 
     if (this.state.pageStatus === "ERROR") {

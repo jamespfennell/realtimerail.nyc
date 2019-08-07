@@ -114,7 +114,7 @@ class TripPage extends LazyLoadingPage {
         tripStopTime.stop.id.substr(0, tripStopTime.stop.id.length - 1),
         tripStopTime.stop.name,
         timestampToTime(time),
-        true
+        tripStopTime.future
       );
       if (tripStopTime.future === true && future === false) {
         future = true;
@@ -158,6 +158,7 @@ class TripPage extends LazyLoadingPage {
           stops={this.state.stops}
           color={this.state.color}
           showTimes={true}
+          type="Trip"
         />
         <Header>Additional trip details</Header>
         <TripData dataKey="Trip ID" value={this.tripId()} code={true}/>

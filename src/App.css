@@ -90,3 +90,10 @@
     }
 
 }
+
+.noInternet {
+    padding: 10px;
+    border-radius: 12px;
+    text-align: center;
+    background: lightblue;
+}

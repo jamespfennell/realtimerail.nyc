@@ -65,6 +65,24 @@
     border-radius: 0 0 2px 2px;
 }
 
+.ServiceMap .ListElement.intermediateEnRoute {
+}
+
+.ServiceMap .ListElement.intermediateEnRoute .name {
+    font-style: italic;
+    padding-top: 30px;
+    padding-bottom: 30px;
+}
+
+.ServiceMap .arrow {
+    left: 2px;
+    top: 32px;
+    border: 10px solid transparent;
+    border-width: 16px 8px;
+    width: 0px;
+    height: 0px;
+    position: absolute;
+}
 
 .ServiceMap .point {
     left: 5px;
@@ -97,3 +115,6 @@
     color: dimgray;
 }
 
+.ServiceMap .ListElement.past {
+    color: dimgrey;
+}

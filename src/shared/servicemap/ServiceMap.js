@@ -11,6 +11,20 @@ export function StopData(id, name, time, isActive) {
   this.isActive = isActive;
 }
 
+function IntermediateEnRouteElement(props) {
+  return (
+    <ListElement className="regular intermediateEnRoute">
+      <div className="time"></div>
+      <div className="map">
+        <div className="line" style={{backgroundColor: props.color}}/>
+        <div className="arrow" style={{borderTopColor: props.color}}/>
+      </div>
+      <div className="name">
+        En route to {props.name}
+      </div>
+    </ListElement>
+  )
+}
 
 function ServiceMapStop(props) {
   let stopClasses = "";
@@ -21,8 +35,11 @@ function ServiceMapStop(props) {
   } else {
     stopClasses += " regular"
   }
-  if (!props.isActive) {
+  if (!props.isActive && props.type === "Route") {
     stopClasses += " inActive"
+  }
+  if (!props.isActive && props.type === "Trip") {
+    stopClasses += " past"
   }
   return (
     <Link to={{pathname: "/stops/" + props.stopId, state: {stopName: props.name}}}>
@@ -46,7 +63,19 @@ class ServiceMap extends React.Component {
   render() {
     let stopElements = [];
     let position = 0;
+    let future = false;
+    let firstStop = true;
     for (const stop of this.props.stops) {
+      if (!future && stop.isActive && this.props.type === "Trip" && !firstStop) {
+        stopElements.push(
+          <IntermediateEnRouteElement
+            color={this.props.color}
+            name={stop.name}
+          />
+        );
+        future = true
+      }
+      firstStop = false;
       stopElements.push(
         <ServiceMapStop
           color={this.props.color}
@@ -57,6 +86,7 @@ class ServiceMap extends React.Component {
           isActive={stop.isActive}
           isStartingTerminus={position === 0}
           isEndingTerminus={position === this.props.stops.length - 1}
+          type={this.props.type}
         />
       );
       position += 1;
