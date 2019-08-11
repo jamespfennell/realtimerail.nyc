@@ -66,14 +66,17 @@ class ServiceMap extends React.Component {
     let future = false;
     let firstStop = true;
     for (const stop of this.props.stops) {
-      if (!future && stop.isActive && this.props.type === "Trip" && !firstStop) {
-        stopElements.push(
-          <IntermediateEnRouteElement
-            color={this.props.color}
-            name={stop.name}
-          />
-        );
-        future = true
+      if (!future && stop.isActive && this.props.type === "Trip") {
+        future = true;
+        if (!firstStop) {
+          stopElements.push(
+            <IntermediateEnRouteElement
+              key="nextStop"
+              color={this.props.color}
+              name={stop.name}
+            />
+          )
+        }
       }
       firstStop = false;
       stopElements.push(
