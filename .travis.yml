@@ -1,0 +1,6 @@
+services:
+  - docker
+script:
+  - docker build -f docker/Dockerfile -t jamespfennell/realtimerail.nyc:latest .
+after_success:
+  - docker push jamespfennell/public:realtimerail.nyc
