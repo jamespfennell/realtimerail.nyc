@@ -4,4 +4,4 @@ script:
   - docker build -f docker/Dockerfile -t jamespfennell/realtimerail.nyc:latest .
 after_success:
   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-  - docker push jamespfennell/public:realtimerail.nyc
+  - docker push jamespfennell/realtimerail.nyc:latest
