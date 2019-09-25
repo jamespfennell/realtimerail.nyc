@@ -175,7 +175,7 @@ class RoutePage extends LazyLoadingPage {
   }
 
   transiterUrl() {
-    return "https://www.realtimerail.nyc/transiter/v1/systems/nycsubway/routes/"
+    return "/transiter/v1/systems/nycsubway/routes/"
       + this.routeId();
   }
 

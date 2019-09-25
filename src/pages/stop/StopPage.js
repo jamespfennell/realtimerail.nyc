@@ -85,7 +85,7 @@ class StopPage extends LazyLoadingPage {
 
   transiterUrl() {
     return (
-      "https://www.realtimerail.nyc/transiter/v1/systems/nycsubway/stops/" +
+      "/transiter/v1/systems/nycsubway/stops/" +
       this.stopId()
     )
   }

@@ -83,7 +83,7 @@ class TripPage extends LazyLoadingPage {
 
   transiterUrl() {
     return (
-      "https://www.realtimerail.nyc/transiter/v1/systems/nycsubway/routes/" +
+      "/transiter/v1/systems/nycsubway/routes/" +
       this.routeId() +
       "/trips/" +
       this.tripId()
