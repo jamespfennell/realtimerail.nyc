@@ -106,9 +106,9 @@ class TripPage extends LazyLoadingPage {
     let stops = [];
     for (const tripStopTime of response.stop_time_updates) {
 
-      let time = tripStopTime.arrival_time;
+      let time = tripStopTime.arrival.time;
       if (time == null) {
-        time = tripStopTime.departure_time;
+        time = tripStopTime.departure.time;
       }
       let stop = new StopData(
         tripStopTime.stop.id.substr(0, tripStopTime.stop.id.length - 1),

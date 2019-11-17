@@ -92,11 +92,11 @@ class StopPage extends LazyLoadingPage {
 
   getStateFromTransiterResponse(stop) {
     let directionNameToTripStopTimes = new Map();
-    for (const directionName of stop.direction_names) {
+    for (const directionName of stop.directions) {
       directionNameToTripStopTimes.set(directionName, [])
     }
     for (const tripStopTime of stop.stop_time_updates) {
-      directionNameToTripStopTimes.get(tripStopTime.direction_name).push(tripStopTime)
+      directionNameToTripStopTimes.get(tripStopTime.direction).push(tripStopTime)
     }
 
     let usualRouteIds = [];
@@ -169,9 +169,9 @@ class StopPage extends LazyLoadingPage {
         let tripStopTimeElements = [];
         for (const tripStopTime of tripStopTimes) {
 
-          let tripTime = tripStopTime.arrival_time;
+          let tripTime = tripStopTime.arrival.time;
           if (tripTime == null) {
-            tripTime = tripStopTime.departure_time;
+            tripTime = tripStopTime.departure.time;
           }
 
           let isAssigned = (
