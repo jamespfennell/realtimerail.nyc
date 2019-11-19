@@ -88,7 +88,7 @@ class StopPage extends LazyLoadingPage {
       "/transiter/v1/systems/nycsubway/stops/" +
       this.stopId() +
       "?exclude_trips_before=1" +
-      "&minimum_number_of_trips=6" +
+      "&minimum_number_of_trips=4" +
       "&include_all_trips_within=12"
     )
   }
