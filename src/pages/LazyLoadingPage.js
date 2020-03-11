@@ -1,8 +1,10 @@
 import React from 'react'
 import axios from "axios";
 import AnimateHeight from "react-animate-height";
+
 import LoadingBar from "../shared/loadingbar/LoadingBar";
 import ErrorMessage from "../shared/errormessage/ErrorMessage";
+import BASE_URL from "../shared/BaseUrl";
 
 function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
@@ -84,7 +86,7 @@ class LazyLoadingPage extends React.Component {
       })
     }
     await sleep(0);
-    axios.get(this.transiterUrl())
+    axios.get(BASE_URL + this.transiterUrl())
       .then(this.handleHttpSuccess)
       .catch(this.handleHttpError)
   };

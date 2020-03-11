@@ -1,5 +1,6 @@
 import React from "react";
 import PropTypes from 'prop-types';
+
 import './StopPage.css'
 import LazyLoadingPage from "../LazyLoadingPage";
 import ListOfRouteLogos from "../../shared/routelogo/ListOfRouteLogos";
@@ -85,7 +86,7 @@ class StopPage extends LazyLoadingPage {
 
   transiterUrl() {
     return (
-      "/transiter/v1/systems/nycsubway/stops/" +
+      "systems/nycsubway/stops/" +
       this.stopId() +
       "?exclude_trips_before=1" +
       "&minimum_number_of_trips=4" +
@@ -98,7 +99,7 @@ class StopPage extends LazyLoadingPage {
     for (const directionName of stop.directions) {
       directionNameToTripStopTimes.set(directionName, [])
     }
-    for (const tripStopTime of stop.stop_time_updates) {
+    for (const tripStopTime of stop.stop_times) {
       directionNameToTripStopTimes.get(tripStopTime.direction).push(tripStopTime)
     }
 

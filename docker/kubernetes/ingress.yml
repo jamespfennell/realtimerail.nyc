@@ -25,7 +25,7 @@ spec:
           - backend:
               serviceName: transiter-webservice
               servicePort: 80
-            path: /transiter/v1(/|$)(.*)
+            path: /transiter/v0.4(/|$)(.*)
 
 ---
 

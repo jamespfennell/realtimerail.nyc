@@ -29,80 +29,75 @@ import ImageForZ from './images/z.svg'
 
 
 let routeIdToImage = {
-    '1': ImageFor1,
-    '2': ImageFor2,
-    '3': ImageFor3,
-    '4': ImageFor4,
-    '5': ImageFor5,
+  '1': ImageFor1,
+  '2': ImageFor2,
+  '3': ImageFor3,
+  '4': ImageFor4,
+  '5': ImageFor5,
   '5X': ImageFor5,
-    '6': ImageFor6,
+  '6': ImageFor6,
   '6X': ImageFor6, // TODO
   '7': ImageFor7,
-    '7X': ImageFor7X,
-    'A': ImageForA,
-    'B': ImageForB,
-    'C': ImageForC,
-    'D': ImageForD,
-    'E': ImageForE,
-    'F': ImageForF,
+  '7X': ImageFor7X,
+  'A': ImageForA,
+  'B': ImageForB,
+  'C': ImageForC,
+  'D': ImageForD,
+  'E': ImageForE,
+  'F': ImageForF,
   'FS': ImageForShuttle,
-    'G': ImageForG,
-    'GS': ImageForShuttle,
-    'H': ImageForShuttle,
-    'J': ImageForJ,
-    'L': ImageForL,
-    'M': ImageForM,
-    'N': ImageForN,
-    'Q': ImageForQ,
-    'R': ImageForR,
-    'S': ImageForShuttle,
-    'SIR': ImageForSIR,
-    'SI': ImageForSIR,
-    'W': ImageForW,
-    'Z': ImageForZ,
+  'G': ImageForG,
+  'GS': ImageForShuttle,
+  'H': ImageForShuttle,
+  'J': ImageForJ,
+  'L': ImageForL,
+  'M': ImageForM,
+  'N': ImageForN,
+  'Q': ImageForQ,
+  'R': ImageForR,
+  'S': ImageForShuttle,
+  'SIR': ImageForSIR,
+  'SI': ImageForSIR,
+  'W': ImageForW,
+  'Z': ImageForZ,
 };
 
 
 class RouteLogo extends React.Component {
-    render() {
-        return (
-            <img className="RouteLogo" alt={"Logo for the " + this.props.route} src={routeIdToImage[this.props.route]} />
-        )
-    }
+  render() {
+    return (
+      <img className="RouteLogo" alt={"Logo for the " + this.props.route} src={routeIdToImage[this.props.route]}/>
+    )
+  }
 }
 
 //TODO: rename route routeId
 RouteLogo.propTypes = {
-    route: PropTypes.string
+  route: PropTypes.string
 };
 
 
-
-export function replaceRouteIdsWithImages(message)
-{
+export function replaceRouteIdsWithImages(message) {
   // Replace route markers of the form [L] in a service message with the relevant image.
-	// The function works recursively. It finds the first occurrence of [<route_id>]. What comes before is left intact,
-	// the [<route_id>] string is replaced by an image, and the remainder of the message is processed by the same function
-	// to see if there another [<route_id>] string.
-	let a = message.indexOf('[');
-	let b = message.indexOf(']', a);
-	if (a<0 || b<0) {
-		return message
-	}
-	let pre = message.substring(0,a);
-	let route_id = message.substring(a+1,b);
-	let post =replaceRouteIdsWithImages(message.substring(b+1));
-	let answer = [
-	  <span key={post.length-1}>{pre}</span>,
+  // The function works recursively. It finds the first occurrence of [<route_id>]. What comes before is left intact,
+  // the [<route_id>] string is replaced by an image, and the remainder of the message is processed by the same function
+  // to see if there another [<route_id>] string.
+  let a = message.indexOf('[');
+  let b = message.indexOf(']', a);
+  if (a < 0 || b < 0) {
+    return message
+  }
+  let pre = message.substring(0, a);
+  let route_id = message.substring(a + 1, b);
+  let post = replaceRouteIdsWithImages(message.substring(b + 1));
+  let answer = [
+    <span key={post.length - 1}>{pre}</span>,
     <RouteLogo route={route_id.toUpperCase()} key={post.length}/>
   ];
   answer.push(post);
-	return answer;
+  return answer;
 
 }
-
-
-
 
 
 export default RouteLogo

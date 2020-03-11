@@ -6,6 +6,7 @@ import _ from 'lodash'
 import {Link} from "react-router-dom";
 import RouteLogo from '../../shared/routelogo/RouteLogo'
 import './HomePage.css'
+import BASE_URL from "../../shared/BaseUrl";
 
 
 class RouteButton extends React.Component {
@@ -101,7 +102,7 @@ class HomePage extends React.Component {
     // Maybe something that can return generic 'no internet' messages?
     // TODO: what about failures?
     // TODO: what about a timer?
-    axios.get("/transiter/v1/systems/nycsubway/routes").then(
+    axios.get(BASE_URL + "systems/nycsubway/routes").then(
       response => this.loadStatuses(response.data)
     )
   }
