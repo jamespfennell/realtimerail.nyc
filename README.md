@@ -26,9 +26,7 @@ The `docker` subdirectory contains files that are used
 to produce a Docker image for the app.
 The image is basically an Nginx image.
 Nginx listens on port 80 *within the container*.
-It serves the web app's production build static files at the root,
-and proxies requests to `/transiter/` to a Transiter web server
-which is assumed to be listening on port 8000 (the Gunicorn default).
+It serves the web app's production build static files at the root.
 
 As part of the continuous integration pipeline for this
 repository, Docker images are automatically built on

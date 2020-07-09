@@ -2,7 +2,7 @@ import React from "react";
 import PropTypes from 'prop-types';
 import RouteLogo from '../../shared/routelogo/RouteLogo'
 
-import {timestampToDateString, timestampToTime, timestampToTimeElapsed} from '../../util/Time'
+import {timestampToDateTime, timestampToTime, timestampToTimeElapsed} from '../../util/Time'
 import ServiceMap, {StopData} from '../../shared/servicemap/ServiceMap'
 import {Header} from '../../util/Header'
 import './TripPage.css'
@@ -34,6 +34,9 @@ function TripData(props) {
   let valueClasses = "value";
   if (props.code === true) {
     valueClasses += " code";
+  }
+  if (props.value === "") {
+    return null
   }
   return (
     <div className="TripData">
@@ -120,12 +123,16 @@ class TripPage extends LazyLoadingPage {
       stops.push(stop);
     }
 
+    let vehicleId = ""
+    if (response.vehicle != null) {
+      vehicleId = response.vehicle.id
+    }
     return {
       stops: stops,
       color: "#" + response.route.color,
       lastUpdated: response.last_update_time,
-      vehicleId: response.vehicle_id,
-      startTime: response.start_time,
+      vehicleId: vehicleId,
+      startTime: response.started_at,
       nextStop: nextStop
     }
   }
@@ -160,8 +167,7 @@ class TripPage extends LazyLoadingPage {
         <Header>Additional trip details</Header>
         <TripData dataKey="Trip ID" value={this.tripId()} code={true}/>
         <TripData dataKey="Vehicle ID" value={this.state.vehicleId} code={true}/>
-        <TripData dataKey="Start time"
-                  value={timestampToTime(this.state.startTime) + ", " + timestampToDateString(this.state.startTime)}/>
+        <TripData dataKey="Start time" value={timestampToDateTime(this.state.startTime)} />
       </div>
     )
   }

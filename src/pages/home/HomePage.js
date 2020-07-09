@@ -7,25 +7,26 @@ import {Link} from "react-router-dom";
 import RouteLogo from '../../shared/routelogo/RouteLogo'
 import './HomePage.css'
 import BASE_URL from "../../shared/BaseUrl";
-
+import {buildStatusFromAlerts} from '../../util/Alert'
 
 class RouteButton extends React.Component {
   render() {
     let statusToColorClass = {
-      "PLANNED_SERVICE_CHANGE": "Orange",
-      "UNPLANNED_SERVICE_CHANGE": "Orange",
+      "SERVICE_CHANGE": "Orange",
       "DELAYS": "Red",
     };
-    let statusClasses = "statusCircle " + _.get(statusToColorClass, this.props.status, "");
+    let status = buildStatusFromAlerts(this.props.alerts)
+    let statusClasses = "statusCircle " + _.get(statusToColorClass, status, "");
     let buttonClasses = "cell";
-    if (this.props.status === "NO_SERVICE") {
-      buttonClasses += " NoService"
-    }
+    //if (this.props.status === "NO_SERVICE") {
+    //  buttonClasses += " NoService"
+    //}
 
     let descriptionElement = null;
     if (this.props.description !== "") {
       descriptionElement = <div className="description">{this.props.description}</div>
     }
+
     return (
       <div className={buttonClasses}>
         <Link to={"/routes/" + this.props.route}>
@@ -49,7 +50,7 @@ class HomePage extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      routeIdToStatus: {}
+      routeIdToAlerts: {}
     };
     this.layout = [
       ["1", "2", "3"],
@@ -77,7 +78,7 @@ class HomePage extends React.Component {
           <RouteButton
             route={routeId}
             key={routeId}
-            status={_.get(this.state.routeIdToStatus, routeId, "")}
+            alerts={_.get(this.state.routeIdToAlerts, routeId, "")}
             description={_.get(this.routeIdToDescription, routeId, "")}
           />
         )
@@ -103,17 +104,17 @@ class HomePage extends React.Component {
     // TODO: what about failures?
     // TODO: what about a timer?
     axios.get(BASE_URL + "systems/nycsubway/routes").then(
-      response => this.loadStatuses(response.data)
+      response => this.loadAlerts(response.data)
     )
   }
 
-  loadStatuses(response) {
-    let routeIdToStatus = {};
+  loadAlerts(response) {
+    let routeIdToAlerts = {};
     for (const route of response) {
-      routeIdToStatus[route.id] = route.status
+      routeIdToAlerts[route.id] = route.alerts
     }
     this.setState({
-      routeIdToStatus: routeIdToStatus
+      routeIdToAlerts: routeIdToAlerts
     })
   }
 }
