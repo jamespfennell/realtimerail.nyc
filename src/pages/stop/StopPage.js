@@ -270,6 +270,7 @@ class StopPage extends LazyLoadingPage {
         {directionNameElements}
         {buildLinkedStops(this.state.siblingStops, "Other platforms at this station")}
         {buildLinkedStops(this.state.inSystemTransfers, "Out of system transfers")}
+        {buildConnections(this.state.otherSystemTransfers)}
       </div>
     )
   }
@@ -314,6 +315,30 @@ function buildLinkedStops(stops, title) {
     </div>
   )
 }
+
+function buildConnections(stops) {
+  if (stops.length === 0) {
+    return null
+  }
+  let stopIds = new Set();
+  let elements = []
+  for (const siblingStop of stops) {
+    if (stopIds.has(siblingStop.id)) {
+      continue
+    }
+    stopIds.add(siblingStop.id)
+    elements.push(
+      <ListElement key={siblingStop.id}>{siblingStop.system.name} at {siblingStop.name}</ListElement>
+    )
+  }
+  return (
+    <div>
+      <Header key="header">Connections</Header>
+      <List className="siblingStops">{elements}</List>
+    </div>
+  )
+}
+
 
 StopPage.propTypes = {
   stopId: PropTypes.string,
