@@ -80,7 +80,9 @@ class StopPage extends LazyLoadingPage {
       directionNameToTripStopTimes: null,
       usualRouteIds: null,
       currentRouteIds: null,
-      siblingStops: null
+      siblingStops: null,
+      inSystemTransfers: null,
+      otherSystemTransfers: null
     };
   }
 
@@ -116,12 +118,23 @@ class StopPage extends LazyLoadingPage {
     if (stop.parent_stop != null) {
       siblingStops = stop.parent_stop.child_stops;
     }
+    let inSystemTransfers = [];
+    let otherSystemTransfers = [];
+    for (const transfer of stop.transfers) {
+      if (transfer.to_stop.system == null) {
+        inSystemTransfers.push(transfer.to_stop)
+      } else {
+        otherSystemTransfers.push(transfer.to_stop);
+      }
+    }
 
     return {
       stopName: stop.name,
       directionNameToTripStopTimes: directionNameToTripStopTimes,
       usualRouteIds: usualRouteIds,
-      siblingStops: siblingStops
+      siblingStops: siblingStops,
+      inSystemTransfers: inSystemTransfers,
+      otherSystemTransfers: otherSystemTransfers
     }
   }
 
@@ -255,13 +268,52 @@ class StopPage extends LazyLoadingPage {
           />
         </div>
         {directionNameElements}
-        {siblingStopsPanel}
+        {buildLinkedStops(this.state.siblingStops, "Other platforms at this station")}
+        {buildLinkedStops(this.state.inSystemTransfers, "Out of system transfers")}
       </div>
     )
   }
 
 }
 
+function buildLinkedStops(stops, title) {
+  if (stops.length === 0) {
+    return null
+  }
+  let stopIds = new Set();
+  let siblingStopElements = [];
+  for (const siblingStop of stops) {
+    if (stopIds.has(siblingStop.id)) {
+      continue
+    }
+    stopIds.add(siblingStop.id)
+    let routeIds = [];
+    for (const serviceMap of siblingStop.service_maps) {
+      if (serviceMap.group_id === "weekday_day") {
+        for (const route of serviceMap.routes) {
+          routeIds.push(route.id)
+        }
+        break
+      }
+    }
+    siblingStopElements.push(
+      <SiblingStop
+        key={"siblingStop" + siblingStop.id}
+        stopId={siblingStop.id}
+        name={siblingStop.name}
+        routeIds={routeIds}
+      />
+    )
+  }
+  return (
+    <div>
+      <Header key="header">{title}</Header>
+      <List className="siblingStops">
+        {siblingStopElements}
+      </List>
+    </div>
+  )
+}
 
 StopPage.propTypes = {
   stopId: PropTypes.string,

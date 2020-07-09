@@ -4,8 +4,8 @@ import AnimateHeight from 'react-animate-height'
 
 import _ from 'lodash'
 import RouteLogo, {replaceRouteIdsWithImages} from '../../shared/routelogo/RouteLogo'
-import {timestampToDateString, timestampToDateTime, timestampToTime} from "../../util/Time";
-import {buildStatusFromAlerts, getDescription, getHeader} from '../../util/Alert'
+import {timestampToDateString, timestampToDateTime} from "../../util/Time";
+import parseAlert, {buildStatusFromAlerts} from '../../util/Alert'
 
 import './RoutePage.css'
 
@@ -27,11 +27,11 @@ function Alerts(props) {
     }
     timeMessage += ".";
 
-
+    const parsedAlert = parseAlert(alert);
     alertElements.push(
       <div key={alert.id} className="Alert">
-        <div className="header">{getHeader(alert)}</div>
-        <div className="description">{replaceRouteIdsWithImages(getDescription(alert))}</div>
+        <div className="header">{parsedAlert.header}</div>
+        <div className="description">{replaceRouteIdsWithImages(parsedAlert.description)}</div>
         <div className="timeMessage">{timeMessage}</div>
       </div>
     )

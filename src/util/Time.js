@@ -15,7 +15,11 @@ export function timestampToDateTime(timestamp) {
   if (timestamp == null) {
     return ""
   }
-  return timestampToTime(timestamp) + ", " + timestampToDateString(timestamp)
+  const time = timestampToTime(timestamp)
+  if (time === "0:00") {
+    return timestampToDateString(timestamp)
+  }
+  return time + ", " + timestampToDateString(timestamp)
 }
 
 export function timestampToTime(timestamp) {

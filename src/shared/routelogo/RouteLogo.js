@@ -26,6 +26,7 @@ import ImageForShuttle from './images/s.svg'
 import ImageForSIR from './images/sir.svg'
 import ImageForW from './images/w.svg'
 import ImageForZ from './images/z.svg'
+import ImageForAccesible from './images/acc.svg'
 
 
 let routeIdToImage = {
@@ -60,6 +61,7 @@ let routeIdToImage = {
   'SI': ImageForSIR,
   'W': ImageForW,
   'Z': ImageForZ,
+  'AD': ImageForAccesible
 };
 
 
