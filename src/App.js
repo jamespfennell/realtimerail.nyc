@@ -39,6 +39,10 @@ function App() {
             access New York City Transit's realtime data.
           </p>
           <p>
+            No cookies, no tracking, no ads.
+            You ask for the train times, we send them back, and that's as far as our relationship goes.
+          </p>
+          <p>
             All subway symbols are trademarked
             and are used pursuant to a license from the <a href="http://www.mta.info">MTA</a>.
           </p>
