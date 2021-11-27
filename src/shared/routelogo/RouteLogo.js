@@ -47,6 +47,7 @@ let routeIdToImage = {
   'E': ImageForE,
   'F': ImageForF,
   'FS': ImageForShuttle,
+  'FX': ImageForF,
   'G': ImageForG,
   'GS': ImageForShuttle,
   'H': ImageForShuttle,
