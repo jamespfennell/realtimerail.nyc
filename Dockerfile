@@ -1,9 +1,9 @@
-FROM node:16.8 as build-deps
+FROM node:18.2 as build-deps
 WORKDIR /usr/src/app
 
 COPY package.json .
 COPY package-lock.json .
-RUN npm install --only=prod
+RUN npm install
 
 COPY tsconfig.json .
 COPY ./public ./public
