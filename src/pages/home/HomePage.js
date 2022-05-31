@@ -103,14 +103,14 @@ class HomePage extends React.Component {
     // Maybe something that can return generic 'no internet' messages?
     // TODO: what about failures?
     // TODO: what about a timer?
-    axios.get(BASE_URL + "systems/nycsubway/routes?alerts_detail=all").then(
+    axios.get(BASE_URL + "systems/us-ny-subway/routes?alerts_detail=all").then(
       response => this.loadAlerts(response.data)
     )
   }
 
   loadAlerts(response) {
     let routeIdToAlerts = {};
-    for (const route of response) {
+    for (const route of response.routes) {
       routeIdToAlerts[route.id] = route.alerts
     }
     this.setState({

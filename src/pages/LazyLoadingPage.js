@@ -11,7 +11,8 @@ function sleep(ms) {
 }
 
 class LazyLoadingPage extends React.Component {
-
+  state: any;
+  
   constructor(props) {
     super(props);
     this.state = this.initialState();

@@ -9,7 +9,7 @@ It accesses NYC subway data using
 
 The codebase was started using `create-react-app`.
 Assuming that you have `node` installed,
-the development server can be launched using:
+the development server listing on port 3000 can be launched using:
 ```
 npm start
 ```

@@ -1,23 +1,19 @@
 import React from "react";
-import PropTypes from 'prop-types';
-import AnimateHeight from 'react-animate-height'
-
+import AnimateHeight, { Height } from 'react-animate-height'
 import _ from 'lodash'
+
 import RouteLogo, {replaceRouteIdsWithImages} from '../../shared/routelogo/RouteLogo'
 import {timestampToDateString, timestampToDateTime} from "../../util/Time";
 import parseAlert, {buildStatusFromAlerts} from '../../util/Alert'
-
 import './RoutePage.css'
-
 import ServiceMap from '../../shared/servicemap/ServiceMap'
 import LazyLoadingPage from "../LazyLoadingPage";
+import { Route } from "../../api/types";
 
 
-function Alerts(props) {
+function Alerts(props: any) {
   let alertElements = [];
   for (const alert of props.alerts) {
-
-
     let timeMessage = "";
     if (alert.active_period.ends_time != null) {
       timeMessage += "In effect from " + timestampToDateString(alert.active_period.starts_at) + " to "
@@ -45,7 +41,7 @@ function Alerts(props) {
 }
 
 
-function StatusSummaryHeader(props) {
+function StatusSummaryHeader(props: any) {
   let statusToColorClass = {
     "SERVICE_CHANGE": "Orange",
     "DELAYS": "Red",
@@ -66,7 +62,7 @@ function StatusSummaryHeader(props) {
   );
 }
 
-function StatusSummaryMessage(props) {
+function StatusSummaryMessage(props: any) {
 
   let messageText = "";
   if (props.numberOfAlerts > 0) {
@@ -75,7 +71,10 @@ function StatusSummaryMessage(props) {
       messageText += "s";
     }
   } else if (props.status === "GOOD_SERVICE") {
-    messageText = "Trains running about every " + Math.round(props.periodicity) + " minutes"
+    let p = Math.round(props.periodicity);
+    if (!isNaN(p)) {
+      messageText = "Trains running about every " + p + " minutes"
+    }
   } else if (props.status === "NO_SERVICE") {
     messageText = "Find alternative trains below"
   }
@@ -97,9 +96,20 @@ function StatusSummaryMessage(props) {
   )
 }
 
+type StatusPanelProps = {
+  alerts: any;
+  realtimeService: boolean;
+  periodicity: number;
+}
 
-class StatusPanel extends React.Component {
-  constructor(props) {
+type StatusPanelState = {
+  alertsVisible: boolean;
+}
+
+class StatusPanel extends React.Component<StatusPanelProps> {
+  state: StatusPanelState;
+
+  constructor(props: StatusPanelProps) {
     super(props);
     this.state = {
       alertsVisible: false
@@ -110,7 +120,7 @@ class StatusPanel extends React.Component {
     return (this.props.alerts.length > 0);
   };
 
-  toggleAlerts = (event) => {
+  toggleAlerts = (event: any) => {
     if (!this.canToggleAlerts()) {
       return;
     }
@@ -125,7 +135,7 @@ class StatusPanel extends React.Component {
       statusSummaryClasses += " pointer"
     }
 
-    let height = this.state.alertsVisible ? 'auto' : 0;
+    let height: Height = this.state.alertsVisible ? 'auto' : 0;
 
     let status = buildStatusFromAlerts(this.props.alerts)
     if (status === "GOOD_SERVICE" && !this.props.realtimeService) {
@@ -157,7 +167,6 @@ class StatusPanel extends React.Component {
   }
 }
 
-
 class RoutePage extends LazyLoadingPage {
 
   routeId() {
@@ -181,27 +190,25 @@ class RoutePage extends LazyLoadingPage {
   }
 
   transiterUrl() {
-    return "systems/nycsubway/routes/"
+    return "systems/us-ny-subway/routes/"
       + this.routeId();
   }
-
-  getStateFromTransiterResponse(response) {
-    // for (const route of response) {
-    //  routeIdToStatus[route.id] = route.status
-    //}
-    let groupIdToServiceMap = {};
-    for (const serviceMap of response.service_maps) {
-      groupIdToServiceMap[serviceMap.group_id] = serviceMap.stops
+  
+  // TODO: this should all be on the render
+  getStateFromTransiterResponse(response: Route) {
+    let configIdToServiceMap = new Map();
+    for (const serviceMap of response.serviceMaps) {
+      configIdToServiceMap.set(serviceMap.configId, serviceMap.stops)
     }
 
     let activeStopIds = new Set();
-    for (const stop of groupIdToServiceMap['realtime']) {
+    for (const stop of configIdToServiceMap.get('realtime')) {
       activeStopIds.add(stop.id)
     }
     let realtimeService = activeStopIds.size > 0
 
     let stops = [];
-    for (const stop of groupIdToServiceMap['any_time']) {
+    for (const stop of configIdToServiceMap.get('alltimes')) {
       stop.isActive = activeStopIds.has(stop.id);
       stops.push(stop)
     }
@@ -237,9 +244,5 @@ class RoutePage extends LazyLoadingPage {
     )
   }
 }
-
-RoutePage.propTypes = {
-  routeId: PropTypes.string
-};
 
 export default RoutePage;

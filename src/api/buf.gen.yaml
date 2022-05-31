@@ -1,0 +1,10 @@
+version: v1
+plugins:
+  - name: ts
+    out: ./
+    strategy: all
+    opt:
+      - outputEncodeMethods=false
+      - outputPartialMethods=false
+      - esModuleInterop=true
+    path: ../../node_modules/ts-proto/protoc-gen-ts_proto

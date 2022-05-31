@@ -86,7 +86,7 @@ class TripPage extends LazyLoadingPage {
 
   transiterUrl() {
     return (
-      "systems/nycsubway/routes/" +
+      "systems/us-ny-subway/routes/" +
       this.routeId() +
       "/trips/" +
       this.tripId()
@@ -104,7 +104,7 @@ class TripPage extends LazyLoadingPage {
     let nextStop = null;
     let future = false;
     let stops = [];
-    for (const tripStopTime of response.stop_times) {
+    for (const tripStopTime of response.stopTimes) {
 
       let time = tripStopTime.arrival.time;
       if (time == null) {

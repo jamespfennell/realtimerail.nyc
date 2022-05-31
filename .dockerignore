@@ -1,2 +1,7 @@
-build
-node_modules
+*
+!package-lock.json
+!package.json
+!tsconfig.json
+!src
+!public
+!nginx.conf

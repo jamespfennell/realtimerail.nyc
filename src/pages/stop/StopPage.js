@@ -88,7 +88,7 @@ class StopPage extends LazyLoadingPage {
 
   transiterUrl() {
     return (
-      "systems/nycsubway/stops/" +
+      "systems/us-ny-subway/stops/" +
       this.stopId() +
       "?exclude_trips_before=1" +
       "&minimum_number_of_trips=4" +
@@ -98,16 +98,17 @@ class StopPage extends LazyLoadingPage {
 
   getStateFromTransiterResponse(stop) {
     let directionNameToTripStopTimes = new Map();
-    for (const directionName of stop.directions) {
+    for (const directionName of stop.stopHeadsigns) {
       directionNameToTripStopTimes.set(directionName, [])
     }
-    for (const tripStopTime of stop.stop_times) {
-      directionNameToTripStopTimes.get(tripStopTime.direction).push(tripStopTime)
+    for (const tripStopTime of stop.stopTimes) {
+      directionNameToTripStopTimes.get(tripStopTime.headsign).push(tripStopTime)
     }
 
     let usualRouteIds = [];
-    for (const serviceMap of stop.service_maps) {
-      if (serviceMap.group_id === 'weekday_day') {
+    for (const serviceMap of stop.serviceMaps) {
+      // TODO: weekday
+      if (serviceMap.configId === 'alltimes') {
         serviceMap.routes.forEach(
           route => usualRouteIds.push(route.id)
         )
@@ -115,16 +116,16 @@ class StopPage extends LazyLoadingPage {
     }
 
     let siblingStops = [];
-    if (stop.parent_stop != null) {
-      siblingStops = stop.parent_stop.child_stops;
+    if (stop.parentStop != null) {
+      siblingStops = stop.parentStop.childStops;
     }
     let inSystemTransfers = [];
     let otherSystemTransfers = [];
     for (const transfer of stop.transfers) {
-      if (transfer.to_stop.system == null) {
-        inSystemTransfers.push(transfer.to_stop)
+      if (transfer.toStop.system == null) {
+        inSystemTransfers.push(transfer.toStop)
       } else {
-        otherSystemTransfers.push(transfer.to_stop);
+        otherSystemTransfers.push(transfer.toStop);
       }
     }
 
@@ -191,16 +192,17 @@ class StopPage extends LazyLoadingPage {
             tripTime = tripStopTime.departure.time;
           }
 
+          // TODO
           let isAssigned = (
-            tripStopTime.trip.current_status != null ||
-            tripStopTime.trip.current_stop_sequence !== 0
+            tripStopTime.trip.currentStatus != null ||
+            tripStopTime.trip.currentStopSequence !== 0
           );
           allAssigned = allAssigned && isAssigned;
 
           tripStopTimeElements.push(
             <TripStopTime
               key={"trip" + tripStopTime.trip.id}
-              lastStopName={tripStopTime.trip.last_stop.name}
+              lastStopName={tripStopTime.trip.lastStop.name}
               routeId={tripStopTime.trip.route.id}
               tripId={tripStopTime.trip.id}
               time={tripTime - currentTime}
@@ -230,8 +232,8 @@ class StopPage extends LazyLoadingPage {
       let siblingStopElements = [];
       for (const siblingStop of this.state.siblingStops) {
         let routeIds = [];
-        for (const serviceMap of siblingStop.service_maps) {
-          if (serviceMap.group_id === "weekday_day") {
+        for (const serviceMap of siblingStop.serviceMaps) {
+          if (serviceMap.configId === "weekday_day") {
             for (const route of serviceMap.routes) {
               routeIds.push(route.id)
             }
@@ -289,8 +291,8 @@ function buildLinkedStops(stops, title) {
     }
     stopIds.add(siblingStop.id)
     let routeIds = [];
-    for (const serviceMap of siblingStop.service_maps) {
-      if (serviceMap.group_id === "weekday_day") {
+    for (const serviceMap of siblingStop.serviceMaps) {
+      if (serviceMap.configId === "weekday_day") {
         for (const route of serviceMap.routes) {
           routeIds.push(route.id)
         }
