@@ -39,6 +39,7 @@
   "proxy": "https://www.realtimerail.nyc",
   "devDependencies": {
     "@types/lodash": "^4.14.182",
-    "@types/react": "^18.0.10"
+    "@types/react": "^18.0.10",
+    "@types/react-router-dom": "^5.3.3"
   }
 }

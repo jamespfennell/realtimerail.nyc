@@ -1,3 +1,29 @@
+.ErrorMessage {
+
+    height: 200px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: dimgray;
+}
+
+.ErrorMessage > div {
+    margin: 10px;
+}
+
+.ErrorMessage .tryAgain {
+    min-width: 120px;
+    padding: 12px;
+    text-align: center;
+    border-radius: 12px;
+    background: lightseagreen;
+    cursor: pointer;
+    color: white;
+}
+
+
+
 
 .LoadingBar {
     height: 200px;

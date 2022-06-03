@@ -2,14 +2,77 @@ import React from "react";
 import AnimateHeight, { Height } from 'react-animate-height'
 import _ from 'lodash'
 
-import RouteLogo, {replaceRouteIdsWithImages} from '../../shared/routelogo/RouteLogo'
-import {timestampToDateString, timestampToDateTime} from "../../util/Time";
-import parseAlert, {buildStatusFromAlerts} from '../../util/Alert'
 import './RoutePage.css'
-import ServiceMap from '../../shared/servicemap/ServiceMap'
-import LazyLoadingPage from "../LazyLoadingPage";
-import { Route } from "../../api/types";
 
+import RouteLogo, { replaceRouteIdsWithImages } from '../../shared/routelogo/RouteLogo'
+import { timestampToDateString, timestampToDateTime } from "../../util/Time";
+import parseAlert, { buildStatusFromAlerts } from '../../util/Alert'
+import ServiceMap from '../../shared/servicemap/ServiceMap'
+import { Route } from "../../api/types";
+import withHttpData from "../http";
+import { routeURL } from "../../api/api";
+import BasicPage from "../../shared/basicpage/BasicPage";
+
+
+function RoutePage(props: any) {
+  let routeId = props.routeId;
+  if (props.match != null) {
+    routeId = props.match.params.routeId;
+  }
+  return (
+    <div className="RoutePage">
+      <BasicPageForRoute
+        httpUrl={routeURL(routeId)}
+        httpPollInternal={null}
+        routeId={routeId}
+        header={Header}
+        body={Body} />
+    </div>
+  )
+}
+
+let BasicPageForRoute = withHttpData(BasicPage, Route.fromJSON)
+
+function Header(props: any) {
+  return (
+    <div key="header">
+      <RouteLogo route={props.routeId} />
+    </div>
+  )
+}
+
+function Body(route: Route) {
+  let configIdToServiceMap = new Map();
+  for (const serviceMap of route.serviceMaps) {
+    configIdToServiceMap.set(serviceMap.configId, serviceMap.stops)
+  }
+
+  let activeStopIds = new Set();
+  for (const stop of configIdToServiceMap.get('realtime')) {
+    activeStopIds.add(stop.id)
+  }
+  let realtimeService = activeStopIds.size > 0
+
+  let stops = [];
+  for (const stop of configIdToServiceMap.get('alltimes')) {
+    stop.isActive = activeStopIds.has(stop.id);
+    stops.push(stop)
+  }
+
+  return (
+    <div>
+      <StatusPanel
+        realtimeService={realtimeService}
+        alerts={route.alerts}
+        periodicity={route.periodicity} />
+      <ServiceMap
+        stops={stops}
+        color={"#" + route.color}
+        type="Route"
+      />
+    </div>
+  )
+}
 
 function Alerts(props: any) {
   let alertElements = [];
@@ -39,7 +102,6 @@ function Alerts(props: any) {
     </div>
   );
 }
-
 
 function StatusSummaryHeader(props: any) {
   let statusToColorClass = {
@@ -79,12 +141,12 @@ function StatusSummaryMessage(props: any) {
     messageText = "Find alternative trains below"
   }
 
-  let arrow = <div/>;
+  let arrow = <div />;
   if (props.canToggleAlerts) {
     if (props.alertsVisible) {
-      arrow = <div className="arrow arrowUp"/>
+      arrow = <div className="arrow arrowUp" />
     } else {
-      arrow = <div className="arrow arrowDown"/>
+      arrow = <div className="arrow arrowDown" />
     }
   }
 
@@ -99,7 +161,7 @@ function StatusSummaryMessage(props: any) {
 type StatusPanelProps = {
   alerts: any;
   realtimeService: boolean;
-  periodicity: number;
+  periodicity: number | undefined;
 }
 
 type StatusPanelState = {
@@ -145,7 +207,7 @@ class StatusPanel extends React.Component<StatusPanelProps> {
     return (
       <div>
         <div onClick={this.toggleAlerts} className={statusSummaryClasses}>
-          <StatusSummaryHeader status={status}/>
+          <StatusSummaryHeader status={status} />
           <StatusSummaryMessage
             canToggleAlerts={this.canToggleAlerts()}
             status={status}
@@ -162,84 +224,6 @@ class StatusPanel extends React.Component<StatusPanelProps> {
             alerts={this.props.alerts}
             alertsVisible={this.state.alertsVisible}
           /></AnimateHeight>
-      </div>
-    )
-  }
-}
-
-class RoutePage extends LazyLoadingPage {
-
-  routeId() {
-    if (this.props.match != null) {
-      return this.props.match.params.routeId;
-    }
-    return this.props.routeId;
-  }
-
-  className() {
-    return "RoutePage"
-  }
-
-  initialState() {
-    return {
-      realtimeService: false,
-      alerts: [],
-      stops: [],
-      periodicity: null
-    }
-  }
-
-  transiterUrl() {
-    return "systems/us-ny-subway/routes/"
-      + this.routeId();
-  }
-  
-  // TODO: this should all be on the render
-  getStateFromTransiterResponse(response: Route) {
-    let configIdToServiceMap = new Map();
-    for (const serviceMap of response.serviceMaps) {
-      configIdToServiceMap.set(serviceMap.configId, serviceMap.stops)
-    }
-
-    let activeStopIds = new Set();
-    for (const stop of configIdToServiceMap.get('realtime')) {
-      activeStopIds.add(stop.id)
-    }
-    let realtimeService = activeStopIds.size > 0
-
-    let stops = [];
-    for (const stop of configIdToServiceMap.get('alltimes')) {
-      stop.isActive = activeStopIds.has(stop.id);
-      stops.push(stop)
-    }
-
-    return {
-      realtimeService: realtimeService,
-      alerts: response.alerts,
-      stops: stops,
-      periodicity: response.periodicity,
-      color: "#" + response.color
-    }
-  }
-
-  header() {
-    return (
-      <RouteLogo route={this.routeId()}/>
-    )
-  }
-
-  body() {
-    return (
-      <div>
-        <StatusPanel
-          realtimeService={this.state.realtimeService}
-          alerts={this.state.alerts}
-          periodicity={this.state.periodicity}/>
-        <ServiceMap
-          stops={this.state.stops}
-          color={this.state.color}
-          type="Route"
-        />
       </div>
     )
   }

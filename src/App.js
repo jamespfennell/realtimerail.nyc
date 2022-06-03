@@ -1,6 +1,4 @@
 import React from 'react';
-// import HomePage from './home/HomePage.js'
-// import LoadingBar from './shared/loadingbar/LoadingBar.js'
 import './App.css';
 import StopPage from "./pages/stop/StopPage";
 
@@ -34,13 +32,12 @@ function App() {
         <div className="footer">
           <p>
             realtimerail.nyc is
-            a <a href="https://github.com/jamespfennell/realtimerail.nyc-react">Javascript/React app</a> that
+            a <a href="https://github.com/jamespfennell/realtimerail.nyc-react">Typescript/React app</a> that
             uses the <a href="https://github.com/jamespfennell/transiter">open source software Transiter</a> to
             access New York City Transit's realtime data.
           </p>
           <p>
             No cookies, no tracking, no ads.
-            You ask for the train times, we send them back, and that's as far as our relationship goes.
           </p>
           <p>
             All subway symbols are trademarked

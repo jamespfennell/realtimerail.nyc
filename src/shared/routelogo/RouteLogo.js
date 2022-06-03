@@ -1,32 +1,32 @@
 import React from "react";
 import PropTypes from 'prop-types';
 
-import ImageFor1 from './images/1.svg'
-import ImageFor2 from './images/2.svg'
-import ImageFor3 from './images/3.svg'
-import ImageFor4 from './images/4.svg'
-import ImageFor5 from './images/5.svg'
-import ImageFor6 from './images/6.svg'
-import ImageFor7 from './images/7.svg'
-import ImageFor7X from './images/7x.svg'
-import ImageForA from './images/a.svg'
-import ImageForB from './images/b.svg'
-import ImageForC from './images/c.svg'
-import ImageForD from './images/d.svg'
-import ImageForE from './images/e.svg'
-import ImageForF from './images/f.svg'
-import ImageForG from './images/g.svg'
-import ImageForJ from './images/j.svg'
-import ImageForL from './images/l.svg'
-import ImageForM from './images/m.svg'
-import ImageForN from './images/n.svg'
-import ImageForQ from './images/q.svg'
-import ImageForR from './images/r.svg'
-import ImageForShuttle from './images/s.svg'
-import ImageForSIR from './images/sir.svg'
-import ImageForW from './images/w.svg'
-import ImageForZ from './images/z.svg'
-import ImageForAccesible from './images/acc.svg'
+import { ReactComponent as ImageFor1 } from './images/1.svg'
+import { ReactComponent as ImageFor2 } from './images/2.svg'
+import { ReactComponent as ImageFor3 } from './images/3.svg'
+import { ReactComponent as ImageFor4 } from './images/4.svg'
+import { ReactComponent as ImageFor5 } from './images/5.svg'
+import { ReactComponent as ImageFor6 } from './images/6.svg'
+import { ReactComponent as ImageFor7 } from './images/7.svg'
+import { ReactComponent as ImageFor7X } from './images/7x.svg'
+import { ReactComponent as ImageForA } from './images/a.svg'
+import { ReactComponent as ImageForB } from './images/b.svg'
+import { ReactComponent as ImageForC } from './images/c.svg'
+import { ReactComponent as ImageForD } from './images/d.svg'
+import { ReactComponent as ImageForE } from './images/e.svg'
+import { ReactComponent as ImageForF } from './images/f.svg'
+import { ReactComponent as ImageForG } from './images/g.svg'
+import { ReactComponent as ImageForJ } from './images/j.svg'
+import { ReactComponent as ImageForL } from './images/l.svg'
+import { ReactComponent as ImageForM } from './images/m.svg'
+import { ReactComponent as ImageForN } from './images/n.svg'
+import { ReactComponent as ImageForQ } from './images/q.svg'
+import { ReactComponent as ImageForR } from './images/r.svg'
+import { ReactComponent as ImageForShuttle } from './images/s.svg'
+import { ReactComponent as ImageForSIR } from './images/sir.svg'
+import { ReactComponent as ImageForW } from './images/w.svg'
+import { ReactComponent as ImageForZ } from './images/z.svg'
+import { ReactComponent as ImageForAccesible } from './images/acc.svg'
 
 
 let routeIdToImage = {
@@ -68,8 +68,12 @@ let routeIdToImage = {
 
 class RouteLogo extends React.Component {
   render() {
+    let Image = routeIdToImage[this.props.route];
+    if (Image === undefined) {
+      return "image for route " + this.props.route + " not found"
+    }
     return (
-      <img className="RouteLogo" alt={"Logo for the " + this.props.route} src={routeIdToImage[this.props.route]}/>
+      <Image className="RouteLogo" alt={"Logo for the " + this.props.route + " train"} />
     )
   }
 }
