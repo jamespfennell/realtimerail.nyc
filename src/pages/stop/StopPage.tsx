@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import PropTypes from 'prop-types';
 
 import './StopPage.css'
@@ -7,7 +7,7 @@ import ListOfRouteLogos from "../../shared/routelogo/ListOfRouteLogos";
 import RouteLogo from "../../shared/routelogo/RouteLogo";
 import { Link } from "react-router-dom";
 import { List, ListElement } from "../../util/List";
-import { RelatedStop, Stop } from "../../api/types";
+import { RelatedStop, Stop, Stop_StopTime, TripPreview } from "../../api/types";
 import withHttpData, { HttpData } from "../http";
 import { stopURL } from "../../api/api";
 import BasicPage from "../../shared/basicpage/BasicPage";
@@ -50,12 +50,18 @@ function Header(props: HeaderProps) {
 }
 
 function Body(stop: Stop) {
-  let directionNameToTripStopTimes = new Map();
-  for (const directionName of stop.stopHeadsigns) {
-    directionNameToTripStopTimes.set(directionName, [])
+  let headsignToStopTimes = new Map();
+  for (const headsign of stop.stopHeadsigns) {
+    headsignToStopTimes.set(headsign, [])
   }
-  for (const tripStopTime of stop.stopTimes) {
-    directionNameToTripStopTimes.get(tripStopTime.headsign).push(tripStopTime)
+  for (let stopTime of stop.stopTimes) {
+    if (stopTime.headsign === undefined) {
+      stopTime.headsign = "(terminating trains)"
+    }
+    if (!headsignToStopTimes.has(stopTime.headsign)) {
+      headsignToStopTimes.set(stopTime.headsign, [])
+    }
+    headsignToStopTimes.get(stopTime.headsign).push(stopTime)
   }
 
   let usualRouteIds: string[] = [];
@@ -85,58 +91,16 @@ function Body(stop: Stop) {
 
   let currentTime = Math.round((new Date()).getTime() / 1000);
 
-  let directionNameElements = [];
-  let allAssigned = true;
-  for (const [directionName, tripStopTimes] of directionNameToTripStopTimes) {
-    let internalElements = [];
-    internalElements.push(
-      <div key="subHeading" className="SubHeading">
-        {directionName}
-      </div>
-    );
-    if (tripStopTimes.length === 0) {
-      internalElements.push(
-        <div key="noTrainsScheduled" className="noTrainsScheduled">
-          No trains scheduled
-        </div>
-      );
-    } else {
-      let tripStopTimeElements = [];
-      for (const tripStopTime of tripStopTimes) {
-
-        let tripTime = tripStopTime.arrival.time;
-        if (tripTime == null) {
-          tripTime = tripStopTime.departure.time;
-        }
-
-        // TODO
-        let isAssigned = (
-          tripStopTime.trip.currentStatus != null ||
-          tripStopTime.trip.currentStopSequence !== 0
-        );
-        allAssigned = allAssigned && isAssigned;
-
-        tripStopTimeElements.push(
-          <TripStopTime
-            key={"trip" + tripStopTime.trip.id}
-            lastStopName={tripStopTime.trip.lastStop.name}
-            routeId={tripStopTime.trip.route.id}
-            tripId={tripStopTime.trip.id}
-            time={tripTime - currentTime}
-            isAssigned={isAssigned}
-          />
-        );
-      }
-      internalElements.push(
-        <List key="tripStopTimes">
-          {tripStopTimeElements}
-        </List>
-      );
-    }
-    directionNameElements.push(internalElements)
+  let stopTimeElements = [];
+  let allAssigned = true; // TODO
+  // TODO: iterate alphabetically?
+  for (const [headsign, stopTimes] of headsignToStopTimes) {
+    stopTimeElements.push(
+      <HeadsignStopTimes key={headsign} headsign={headsign} stopTimes={stopTimes} currentTime={currentTime} />
+    )
   }
   if (!allAssigned) {
-    directionNameElements.push(
+    stopTimeElements.push(
       <div key="scheduledTripWarning" className="scheduledTripWarning">
         Trains marked with {String.fromCharCode(9734)} are scheduled and have not entered into service yet.
       </div>
@@ -152,14 +116,94 @@ function Body(stop: Stop) {
           addLinks={true}
         />
       </div>
-      {directionNameElements}
+      {stopTimeElements}
       {buildLinkedStops(siblingStops, "Other platforms at this station")}
       {buildLinkedStops(inSystemTransfers, "Out of system transfers")}
       {buildConnections(otherSystemTransfers)}
     </div>
   )
 }
+type HeadsignStopTimesProps = {
+  headsign: string;
+  stopTimes: Stop_StopTime[];
+  currentTime: number;
+}
 
+function HeadsignStopTimes(props: HeadsignStopTimesProps) {
+
+  let [maxStopTimes, setMaxStopTimes] = useState(4);
+
+  let children = [];
+  children.push(
+    <div key="subHeading" className="SubHeading">
+      {props.headsign}
+    </div>
+  );
+  let rendered = 0;
+  let skipped = 0;
+  if (props.stopTimes.length === 0) {
+    children.push(
+      <div key="noTrainsScheduled" className="noTrainsScheduled">
+        No trains scheduled
+      </div>
+    );
+  }
+  let tripStopTimeElements = [];
+  for (const stopTime of props.stopTimes) {
+    let tripTime = stopTime.arrival?.time;
+    if (tripTime == undefined) {
+      tripTime = stopTime.departure?.time;
+    }
+    if (tripTime == undefined) {
+      skipped += 1;
+      continue
+    }
+    if (rendered >= maxStopTimes && tripTime - props.currentTime > 10 * 60) {
+      break
+    }
+    if (stopTime.trip === undefined) {
+      skipped += 1;
+      continue;
+    }
+    rendered += 1
+    let trip: TripPreview = stopTime.trip;
+
+    // TODO
+    /*
+    let isAssigned = (
+      tripStopTime.trip.currentStatus != null ||
+      tripStopTime.trip.currentStopSequence !== 0
+    );
+    allAssigned = allAssigned && isAssigned;*/
+
+    tripStopTimeElements.push(
+      <TripStopTime
+        key={"trip" + trip.id}
+        lastStopName={definedOr(trip.lastStop?.name, "")}
+        routeId={definedOr(trip.route?.id, "")}
+        tripId={trip.id}
+        time={tripTime - props.currentTime}
+        isAssigned={true} // TODO
+      />
+    );
+  }
+  if (rendered > maxStopTimes) {
+    maxStopTimes = rendered
+  }
+  children.push(
+    <List key="tripStopTimes">
+      {tripStopTimeElements}
+    </List>
+  );
+  if (rendered + skipped != props.stopTimes.length) {
+    children.push(
+      <div className="MoreTrips" onClick={() => setMaxStopTimes(maxStopTimes + 4)}>
+        show more trains
+      </div>
+    )
+  }
+  return <div>{children}</div>
+}
 
 type SiblingStopProps = {
   key: string,
@@ -281,6 +325,13 @@ function buildConnections(stops: any) {
       <List className="siblingStops">{elements}</List>
     </div>
   )
+}
+
+function definedOr<S>(s: S | undefined, d: S): S {
+  if (s === undefined) {
+    return d
+  }
+  return s
 }
 
 export default StopPage;

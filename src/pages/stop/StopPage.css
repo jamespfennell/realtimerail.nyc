@@ -63,3 +63,16 @@
     margin-left: 3px;
     font-size: 0.9em;
 }
+
+.MoreTrips {
+    color: #444;
+    padding: 10px;
+
+    font-size: 0.9em;
+    cursor: pointer;
+    text-align: center;
+}
+
+.MoreTrips:hover {
+    color: black;
+}
