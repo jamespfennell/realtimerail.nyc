@@ -2,7 +2,7 @@ import React from 'react';
 import './App.css';
 import StopPage from "./pages/stop/StopPage";
 
-import {BrowserRouter as Router, Route, Link} from "react-router-dom";
+import { BrowserRouter, Routes, Route, Link, useParams, useLocation } from "react-router-dom";
 import HomePage from "./pages/home/HomePage";
 import RoutePage from "./pages/route/RoutePage";
 import TripPage from "./pages/trip/TripPage";
@@ -11,22 +11,24 @@ import HomeIcon from './util/home.svg'
 
 function App() {
   return (
-    <Router>
+    <BrowserRouter>
       <div className="App">
         <div className="appHeader">
           <Link to="/">
             <div className="home">
               <div className="text">realtimerail.nyc</div>
-              <img alt="home" src={HomeIcon}/>
+              <img alt="home" src={HomeIcon} />
             </div>
           </Link>
         </div>
         <div className="container">
           <div className="innerContainer">
-            <Route exact path="/" component={HomePage}/>
-            <Route exact path="/routes/:routeId" component={RoutePage}/>
-            <Route exact path="/routes/:routeId/:tripId" component={TripPage}/>
-            <Route exact path="/stops/:stopId" component={StopPage}/>
+            <Routes>
+              <Route path="/" element={<HomePage />} />
+              <Route exact path="/routes/:routeId" element={<RoutePageElement />} />
+              <Route exact path="/routes/:routeId/:tripId" element={<TripPageElement />} />
+              <Route exact path="/stops/:stopId" element={<StopPageElement />} />
+            </Routes>
           </div>
         </div>
         <div className="footer">
@@ -45,8 +47,25 @@ function App() {
           </p>
         </div>
       </div>
-    </Router>
+    </BrowserRouter>
   );
+}
+
+function RoutePageElement() {
+  const params = useParams();
+  return <RoutePage routeId = {params.routeId} />
+}
+
+function StopPageElement() {
+  const params = useParams();
+  const location = useLocation();
+  return <StopPage stopId={params.stopId} stopName={location.state?.stopName} />
+}
+
+function TripPageElement() {
+  const params = useParams();
+  const location = useLocation();
+  return <TripPage routeId={params.routeId}  tripId={params.tripId} lastStopName={location.state?.lastStopName} />
 }
 
 export default App;

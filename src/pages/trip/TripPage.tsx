@@ -10,23 +10,22 @@ import BasicPage from "../../shared/basicpage/BasicPage";
 import { tripURL } from "../../api/api";
 
 
-function TripPage(props: any) {
-  let routeId = props.routeId;
-  if (props.match?.params?.routeId != null) {
-    routeId = props.match.params.routeId;
-  }
-  let tripId = props.tripId;
-  if (props.match?.params?.tripId != null) {
-    tripId = props.match.params.tripId;
-  }
+export type TripPageProps = {
+  routeId: string;
+  tripId: string;
+  lastStopName: string | null;
+}
+
+function TripPage(props: TripPageProps) {
   return (
     <div className="RoutePage">
       <BasicPageForTrip
-        httpUrl={tripURL(routeId, tripId)}
+        httpUrl={tripURL(props.routeId, props.tripId)}
         httpPollInternal={null}
-        routeId={routeId}
+        routeId={props.routeId}
         header={Header}
-        body={Body} />
+        body={Body}
+        lastStopName={props.lastStopName} />
     </div>
   )
 }
@@ -43,16 +42,9 @@ transiterErrorMessage(response: any) {
 */
 
 function Header(props: any) {
-  // TODO: extract all this props vs props.match tedium
   let routeId = props.routeId;
-  if (props.match?.params?.routeId != null) {
-    routeId = props.match.params.routeId;
-  }
+  let lastStopName = props.lastStopName;
   let trip = props.httpData.response;
-  let lastStopName = props.lastStopName
-  if (props.location != null && props.location.state != null) {
-    lastStopName = props.location.state.lastStopName
-  }
   if (trip !== null && trip !== undefined) {
     lastStopName = trip.stopTimes[trip.stopTimes.length - 1].stop?.name
   }

@@ -8,23 +8,25 @@ import RouteLogo from "../../shared/routelogo/RouteLogo";
 import { Link } from "react-router-dom";
 import { List, ListElement } from "../../util/List";
 import { RelatedStop, Stop } from "../../api/types";
-import withHttpData from "../http";
+import withHttpData, { HttpData } from "../http";
 import { stopURL } from "../../api/api";
 import BasicPage from "../../shared/basicpage/BasicPage";
 
 
-function StopPage(props: any) {
-  let stopId = props.stopId;
-  if (props.match != null) {
-    stopId = props.match.params.stopId;
-  }
+export type StopPageProps = {
+  stopId: string;
+  stopName: string | null;
+}
+
+function StopPage(props: StopPageProps) {
   return (
-    <div className="StopPage" key={stopId}>
+    <div className="StopPage" key={props.stopId}>
       <BasicPageForStop
-        httpUrl={stopURL(stopId)}
+        httpUrl={stopURL(props.stopId)}
         httpPollInterval={5000}
         header={Header}
         body={Body}
+        stopName={props.stopName}
       />
     </div>
   )
@@ -32,12 +34,14 @@ function StopPage(props: any) {
 
 let BasicPageForStop = withHttpData(BasicPage, Stop.fromJSON)
 
-function Header(props: any) {
-  let stopName: string | null = null;
-  if (props.stopName !== null) {
-    stopName = props.stopName
-  }
-  if (props.httpData.response?.name !== null) {
+export type HeaderProps = {
+  httpData: HttpData<Stop>;
+  stopName: string | null;
+}
+
+function Header(props: HeaderProps) {
+  let stopName = props.stopName;
+  if (props.httpData.response?.name !== undefined) {
     stopName = props.httpData.response?.name
   }
   return <div className="header">
@@ -86,7 +90,7 @@ function Body(stop: Stop) {
   for (const [directionName, tripStopTimes] of directionNameToTripStopTimes) {
     let internalElements = [];
     internalElements.push(
-      <div className="SubHeading">
+      <div key="subHeading" className="SubHeading">
         {directionName}
       </div>
     );
@@ -166,7 +170,7 @@ type SiblingStopProps = {
 
 function SiblingStop(props: SiblingStopProps) {
   return (
-    <Link to={{ pathname: "/stops/" + props.stopId, state: { stopName: props.name } }}>
+    <Link to={"/stops/" + props.stopId} state={{ stopName: props.name }}>
       <ListElement className="SiblingStop">
         <ListOfRouteLogos routeIds={props.routeIds} skipExpress={true} />
         <div className="name">{props.name}</div>
@@ -197,10 +201,8 @@ function TripStopTime(props: TripStopTimeProps) {
 
   return (
     <Link
-      to={{
-        pathname: "/routes/" + props.routeId + "/" + props.tripId,
-        state: { lastStopName: props.lastStopName }
-      }}>
+      to={"/routes/" + props.routeId + "/" + props.tripId}
+      state={{ lastStopName: props.lastStopName }}>
       <ListElement className={"TripStopTime"}>
         <div className="time">
           {displayTime}

@@ -42,7 +42,7 @@ function ServiceMapStop(props) {
     stopClasses += " past"
   }
   return (
-    <Link to={{pathname: "/stops/" + props.stopId, state: {stopName: props.name}}}>
+    <Link to={"/stops/" + props.stopId} state ={{stopName: props.name}}>
       <ListElement className={stopClasses}>
         <div className="time">{props.time}</div>
         <div className="map">

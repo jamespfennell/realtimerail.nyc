@@ -13,18 +13,17 @@ import withHttpData from "../http";
 import { routeURL } from "../../api/api";
 import BasicPage from "../../shared/basicpage/BasicPage";
 
+export type RoutePageProps = {
+  routeId: string;
+}
 
-function RoutePage(props: any) {
-  let routeId = props.routeId;
-  if (props.match != null) {
-    routeId = props.match.params.routeId;
-  }
+function RoutePage(props: RoutePageProps) {
   return (
     <div className="RoutePage">
       <BasicPageForRoute
-        httpUrl={routeURL(routeId)}
+        httpUrl={routeURL(props.routeId)}
         httpPollInternal={null}
-        routeId={routeId}
+        routeId={props.routeId}
         header={Header}
         body={Body} />
     </div>

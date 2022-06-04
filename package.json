@@ -9,8 +9,8 @@
     "react": "^18.1.0",
     "react-animate-height": "^3.0.3",
     "react-dom": "^18.1.0",
-    "react-router": "^5.2.0",
-    "react-router-dom": "^5.2.0",
+    "react-router": "^6.3.0",
+    "react-router-dom": "^6.3.0",
     "react-scripts": "5.0.1",
     "ts-proto": "^1.114.7",
     "typescript": "^4.7.2"
