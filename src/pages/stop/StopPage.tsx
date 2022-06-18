@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import PropTypes from 'prop-types';
 
 import './StopPage.css'
 
@@ -151,10 +150,10 @@ function HeadsignStopTimes(props: HeadsignStopTimesProps) {
   let tripStopTimeElements = [];
   for (const stopTime of props.stopTimes) {
     let tripTime = stopTime.arrival?.time;
-    if (tripTime == undefined) {
+    if (tripTime === undefined) {
       tripTime = stopTime.departure?.time;
     }
-    if (tripTime == undefined) {
+    if (tripTime === undefined) {
       skipped += 1;
       continue
     }
@@ -195,7 +194,7 @@ function HeadsignStopTimes(props: HeadsignStopTimesProps) {
       {tripStopTimeElements}
     </List>
   );
-  if (rendered + skipped != props.stopTimes.length) {
+  if (rendered + skipped !== props.stopTimes.length) {
     children.push(
       <div className="MoreTrips" onClick={() => setMaxStopTimes(maxStopTimes + 4)}>
         show more trains

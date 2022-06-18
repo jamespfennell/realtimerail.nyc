@@ -8,14 +8,21 @@ import RouteLogo from '../../shared/routelogo/RouteLogo'
 import './HomePage.css'
 import {buildStatusFromAlerts} from '../../util/Alert'
 import { listRoutesURL } from "../../api/api";
+import { AlertPreview, ListRoutesInSystemReply } from "../../api/types";
 
-class RouteButton extends React.Component {
-  render() {
+
+export type RouteButtonProps = {
+  route: string;
+  alerts: AlertPreview[];
+  description: string;
+}
+
+function RouteButton(props: RouteButtonProps) {
     let statusToColorClass = {
       "SERVICE_CHANGE": "Orange",
       "DELAYS": "Red",
     };
-    let status = buildStatusFromAlerts(this.props.alerts)
+    let status = buildStatusFromAlerts(props.alerts)
     let statusClasses = "statusCircle " + _.get(statusToColorClass, status, "");
     let buttonClasses = "cell";
     //if (this.props.status === "NO_SERVICE") {
@@ -23,20 +30,19 @@ class RouteButton extends React.Component {
     //}
 
     let descriptionElement = null;
-    if (this.props.description !== "") {
-      descriptionElement = <div className="description">{this.props.description}</div>
+    if (props.description !== "") {
+      descriptionElement = <div className="description">{props.description}</div>
     }
 
     return (
       <div className={buttonClasses}>
-        <Link to={"/routes/" + this.props.route}>
+        <Link to={"/routes/" + props.route}>
           <div className={statusClasses}/>
-          <RouteLogo route={this.props.route}/>
+          <RouteLogo route={props.route}/>
           {descriptionElement}
         </Link>
       </div>
     )
-  }
 }
 
 RouteButton.propTypes = {
@@ -46,13 +52,33 @@ RouteButton.propTypes = {
 };
 
 
+/*
+
+export type HomePageProps = {
+}
+
+function HomePage(props: {}) {
+*/
+
+export type HomePageState = {
+  routeIdToAlerts: Map<string, AlertPreview[]>;
+}
+
 class HomePage extends React.Component {
-  constructor(props) {
+  state: HomePageState;
+
+  constructor(props: {}) {
     super(props);
     this.state = {
-      routeIdToAlerts: {}
+      routeIdToAlerts: new Map(),
     };
-    this.layout = [
+
+  }
+
+  render() {
+    console.log("Rendering")
+    console.log(this.state.routeIdToAlerts);
+    const layout = [
       ["1", "2", "3"],
       ["4", "5", "6"],
       ["7", "G", "L"],
@@ -62,29 +88,32 @@ class HomePage extends React.Component {
       ["J", "Z", "SI"],
       ["H", "FS", "GS"]
     ];
-    this.routeIdToDescription = {
+    const routeIdToDescription = {
       "H": "Rockaways shuttle",
       "FS": "Franklin Av shuttle",
       "GS": "42nd street shuttle"
     };
-  }
 
-  render() {
     let grid = [];
-    for (const routeIds of this.layout) {
+    for (const routeIds of layout) {
       let row = [];
       for (const routeId of routeIds) {
+        let alerts: AlertPreview[] = [];
+        let alertsOr = this.state.routeIdToAlerts.get(routeId);
+        if (alertsOr !== undefined) {
+          alerts = alertsOr;
+        }
         row.push(
           <RouteButton
             route={routeId}
             key={routeId}
-            alerts={_.get(this.state.routeIdToAlerts, routeId, "")}
-            description={_.get(this.routeIdToDescription, routeId, "")}
+            alerts={alerts}
+            description={_.get(routeIdToDescription, routeId, "")}
           />
         )
       }
       grid.push(
-        <div className="row" key={routeIds}>
+        <div className="row" key={_.join(routeIds)}>
           {row}
         </div>
       );
@@ -108,10 +137,10 @@ class HomePage extends React.Component {
     )
   }
 
-  loadAlerts(response) {
-    let routeIdToAlerts = {};
+  loadAlerts(response: ListRoutesInSystemReply) {
+    let routeIdToAlerts: Map<string, AlertPreview[]> = new Map();
     for (const route of response.routes) {
-      routeIdToAlerts[route.id] = route.alerts
+      routeIdToAlerts.set(route.id,  route.alerts)
     }
     this.setState({
       routeIdToAlerts: routeIdToAlerts

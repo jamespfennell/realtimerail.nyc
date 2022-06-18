@@ -1,7 +1,7 @@
 import './TripPage.css'
 
 import RouteLogo from '../../shared/routelogo/RouteLogo'
-import { timestampToDateTime, timestampToTime, timestampToTimeElapsed } from '../../util/Time'
+import { timestampToDateTime, timestampToTime } from '../../util/Time'
 import ServiceMap, { StopData } from '../../shared/servicemap/ServiceMap'
 import { Link } from 'react-router-dom'
 import { Trip } from "../../api/types";

@@ -8,7 +8,7 @@ import RouteLogo, { replaceRouteIdsWithImages } from '../../shared/routelogo/Rou
 import { timestampToDateString, timestampToDateTime } from "../../util/Time";
 import parseAlert, { buildStatusFromAlerts } from '../../util/Alert'
 import ServiceMap from '../../shared/servicemap/ServiceMap'
-import { Route } from "../../api/types";
+import { Alert, Route } from "../../api/types";
 import withHttpData from "../http";
 import { routeURL } from "../../api/api";
 import BasicPage from "../../shared/basicpage/BasicPage";
@@ -73,17 +73,25 @@ function Body(route: Route) {
   )
 }
 
-function Alerts(props: any) {
+
+export type AlertsProps = {
+  alerts: Alert[];
+  alertsVisible: boolean;
+}
+
+function Alerts(props: AlertsProps) {
   let alertElements = [];
   for (const alert of props.alerts) {
     let timeMessage = "";
-    if (alert.active_period.ends_time != null) {
-      timeMessage += "In effect from " + timestampToDateString(alert.active_period.starts_at) + " to "
-        + timestampToDateString(alert.active_period.ends_time)
-    } else {
-      timeMessage += "Alert posted " + timestampToDateTime(alert.active_period.starts_at)
+    if (alert.activePeriod !== undefined) {
+      if (alert.activePeriod.endsAt != null) {
+        timeMessage += "In effect from " + timestampToDateString(alert.activePeriod.startsAt) + " to "
+          + timestampToDateString(alert.activePeriod.endsAt)
+      } else {
+        timeMessage += "Alert posted " + timestampToDateTime(alert.activePeriod.startsAt)
+      }
+      timeMessage += ".";
     }
-    timeMessage += ".";
 
     const parsedAlert = parseAlert(alert);
     alertElements.push(

@@ -326,6 +326,7 @@ export interface Route {
   periodicity?: number | undefined;
   agency: AgencyPreview | undefined;
   serviceMaps: ServiceMapForRoute[];
+  /** TODO(APIv2): alert preview */
   alerts: Alert[];
 }
 
@@ -364,7 +365,7 @@ export interface Agency {
 export interface AgencyPreviewWithAlerts {
   id: string;
   name: string;
-  alerts: string[];
+  alerts: AlertPreview[];
   href?: string | undefined;
 }
 
@@ -389,7 +390,9 @@ export interface Alert {
   /** TODO: make this an enum */
   effect: string;
   activePeriod: Alert_ActivePeriod | undefined;
-  messages: Alert_Message[];
+  header: AlertText[];
+  description: AlertText[];
+  url: AlertText[];
 }
 
 export interface Alert_ActivePeriod {
@@ -397,11 +400,9 @@ export interface Alert_ActivePeriod {
   endsAt?: number | undefined;
 }
 
-export interface Alert_Message {
-  header: string;
-  description: string;
-  language?: string | undefined;
-  url?: string | undefined;
+export interface AlertText {
+  text: string;
+  language: string;
 }
 
 export interface EstimatedTime {
@@ -1959,7 +1960,7 @@ export const AgencyPreviewWithAlerts = {
       id: isSet(object.id) ? String(object.id) : "",
       name: isSet(object.name) ? String(object.name) : "",
       alerts: Array.isArray(object?.alerts)
-        ? object.alerts.map((e: any) => String(e))
+        ? object.alerts.map((e: any) => AlertPreview.fromJSON(e))
         : [],
       href: isSet(object.href) ? String(object.href) : undefined,
     };
@@ -1970,7 +1971,9 @@ export const AgencyPreviewWithAlerts = {
     message.id !== undefined && (obj.id = message.id);
     message.name !== undefined && (obj.name = message.name);
     if (message.alerts) {
-      obj.alerts = message.alerts.map((e) => e);
+      obj.alerts = message.alerts.map((e) =>
+        e ? AlertPreview.toJSON(e) : undefined
+      );
     } else {
       obj.alerts = [];
     }
@@ -2029,7 +2032,9 @@ function createBaseAlert(): Alert {
     cause: "",
     effect: "",
     activePeriod: undefined,
-    messages: [],
+    header: [],
+    description: [],
+    url: [],
   };
 }
 
@@ -2042,8 +2047,14 @@ export const Alert = {
       activePeriod: isSet(object.activePeriod)
         ? Alert_ActivePeriod.fromJSON(object.activePeriod)
         : undefined,
-      messages: Array.isArray(object?.messages)
-        ? object.messages.map((e: any) => Alert_Message.fromJSON(e))
+      header: Array.isArray(object?.header)
+        ? object.header.map((e: any) => AlertText.fromJSON(e))
+        : [],
+      description: Array.isArray(object?.description)
+        ? object.description.map((e: any) => AlertText.fromJSON(e))
+        : [],
+      url: Array.isArray(object?.url)
+        ? object.url.map((e: any) => AlertText.fromJSON(e))
         : [],
     };
   },
@@ -2057,12 +2068,24 @@ export const Alert = {
       (obj.activePeriod = message.activePeriod
         ? Alert_ActivePeriod.toJSON(message.activePeriod)
         : undefined);
-    if (message.messages) {
-      obj.messages = message.messages.map((e) =>
-        e ? Alert_Message.toJSON(e) : undefined
+    if (message.header) {
+      obj.header = message.header.map((e) =>
+        e ? AlertText.toJSON(e) : undefined
       );
     } else {
-      obj.messages = [];
+      obj.header = [];
+    }
+    if (message.description) {
+      obj.description = message.description.map((e) =>
+        e ? AlertText.toJSON(e) : undefined
+      );
+    } else {
+      obj.description = [];
+    }
+    if (message.url) {
+      obj.url = message.url.map((e) => (e ? AlertText.toJSON(e) : undefined));
+    } else {
+      obj.url = [];
     }
     return obj;
   },
@@ -2089,27 +2112,22 @@ export const Alert_ActivePeriod = {
   },
 };
 
-function createBaseAlert_Message(): Alert_Message {
-  return { header: "", description: "", language: undefined, url: undefined };
+function createBaseAlertText(): AlertText {
+  return { text: "", language: "" };
 }
 
-export const Alert_Message = {
-  fromJSON(object: any): Alert_Message {
+export const AlertText = {
+  fromJSON(object: any): AlertText {
     return {
-      header: isSet(object.header) ? String(object.header) : "",
-      description: isSet(object.description) ? String(object.description) : "",
-      language: isSet(object.language) ? String(object.language) : undefined,
-      url: isSet(object.url) ? String(object.url) : undefined,
+      text: isSet(object.text) ? String(object.text) : "",
+      language: isSet(object.language) ? String(object.language) : "",
     };
   },
 
-  toJSON(message: Alert_Message): unknown {
+  toJSON(message: AlertText): unknown {
     const obj: any = {};
-    message.header !== undefined && (obj.header = message.header);
-    message.description !== undefined &&
-      (obj.description = message.description);
+    message.text !== undefined && (obj.text = message.text);
     message.language !== undefined && (obj.language = message.language);
-    message.url !== undefined && (obj.url = message.url);
     return obj;
   },
 };
