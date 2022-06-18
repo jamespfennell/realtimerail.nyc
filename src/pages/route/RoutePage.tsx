@@ -1,6 +1,5 @@
 import React from "react";
 import AnimateHeight, { Height } from 'react-animate-height'
-import _ from 'lodash'
 
 import './RoutePage.css'
 
@@ -111,22 +110,21 @@ function Alerts(props: AlertsProps) {
 }
 
 function StatusSummaryHeader(props: any) {
-  let statusToColorClass = {
-    "SERVICE_CHANGE": "Orange",
-    "DELAYS": "Red",
-    "GOOD_SERVICE": "Green",
-    "NO_SERVICE": "White"
-  };
-  let statusToText = {
-    "SERVICE_CHANGE": "Service Change",
-    "DELAYS": "Delays",
-    "GOOD_SERVICE": "Good Service",
-    "NO_SERVICE": "No Service"
-  };
+  let statusToColorClass = new Map()
+  statusToColorClass.set("SERVICE_CHANGE", "Orange")
+  statusToColorClass.set("DELAYS", "Red")
+  statusToColorClass.set("GOOD_SERVICE", "Green")
+  statusToColorClass.set("NO_SERVICE", "White")
+
+  let statusToText = new Map();
+  statusToText.set("SERVICE_CHANGE", "Service Change");
+  statusToText.set("DELAYS", "Delays");
+  statusToText.set("GOOD_SERVICE", "Good Service");
+  statusToText.set("NO_SERVICE", "No Service");
 
   return (
-    <div className={"StatusSummaryHeader " + _.get(statusToColorClass, props.status, "GOOD_SERVICE")}>
-      {_.get(statusToText, props.status, "Good Service")}
+    <div className={"StatusSummaryHeader " + get(statusToColorClass, props.status, "GOOD_SERVICE")}>
+      {get(statusToText, props.status, "Good Service")}
     </div>
   );
 }
@@ -234,6 +232,14 @@ class StatusPanel extends React.Component<StatusPanelProps> {
       </div>
     )
   }
+}
+
+function get(m: Map<string, string>, key: string, fallback: string): string {
+  const value = m.get(key)
+  if (value !== undefined) {
+    return value
+  }
+  return fallback
 }
 
 export default RoutePage;

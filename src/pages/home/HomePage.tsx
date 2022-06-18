@@ -1,7 +1,6 @@
 import React from "react";
 import PropTypes from 'prop-types';
 import axios from 'axios'
-import _ from 'lodash'
 
 import {Link} from "react-router-dom";
 import RouteLogo from '../../shared/routelogo/RouteLogo'
@@ -18,12 +17,11 @@ export type RouteButtonProps = {
 }
 
 function RouteButton(props: RouteButtonProps) {
-    let statusToColorClass = {
-      "SERVICE_CHANGE": "Orange",
-      "DELAYS": "Red",
-    };
+    let statusToColorClass = new Map()
+    statusToColorClass.set("SERVICE_CHANGE", "Orange")
+    statusToColorClass.set("DELAYS", "Red")
     let status = buildStatusFromAlerts(props.alerts)
-    let statusClasses = "statusCircle " + _.get(statusToColorClass, status, "");
+    let statusClasses = "statusCircle " + get(statusToColorClass, status, "");
     let buttonClasses = "cell";
     //if (this.props.status === "NO_SERVICE") {
     //  buttonClasses += " NoService"
@@ -88,14 +86,14 @@ class HomePage extends React.Component {
       ["J", "Z", "SI"],
       ["H", "FS", "GS"]
     ];
-    const routeIdToDescription = {
-      "H": "Rockaways shuttle",
-      "FS": "Franklin Av shuttle",
-      "GS": "42nd street shuttle"
-    };
-
+    let routeIdToDescription = new Map()
+    routeIdToDescription.set("H", "Rockaways shuttle");
+    routeIdToDescription.set(   "FS", "Franklin Av shuttle");
+    routeIdToDescription.set(  "GS", "42nd street shuttle");
     let grid = [];
+    let i = 0;
     for (const routeIds of layout) {
+      i++;
       let row = [];
       for (const routeId of routeIds) {
         let alerts: AlertPreview[] = [];
@@ -108,12 +106,12 @@ class HomePage extends React.Component {
             route={routeId}
             key={routeId}
             alerts={alerts}
-            description={_.get(routeIdToDescription, routeId, "")}
+            description={get(routeIdToDescription, routeId, "")}
           />
         )
       }
       grid.push(
-        <div className="row" key={_.join(routeIds)}>
+        <div className="row" key={i}>
           {row}
         </div>
       );
@@ -146,6 +144,14 @@ class HomePage extends React.Component {
       routeIdToAlerts: routeIdToAlerts
     })
   }
+}
+
+function get(m: Map<string, string>, key: string, fallback: string ):string  {
+  const value = m.get(key)
+  if (value !== undefined) {
+    return value
+  }
+  return fallback
 }
 
 export default HomePage;
