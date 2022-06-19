@@ -1,15 +1,15 @@
-import React from 'react';
 import './App.css';
-import StopPage from "./pages/stop/StopPage";
 
 import { BrowserRouter, Routes, Route, Link, useParams, useLocation } from "react-router-dom";
+
 import HomePage from "./pages/home/HomePage";
+import StopPage from "./pages/stop/StopPage";
 import RoutePage from "./pages/route/RoutePage";
 import TripPage from "./pages/trip/TripPage";
 
 import HomeIcon from './util/home.svg'
 
-function App() {
+export default function App() {
   return (
     <BrowserRouter>
       <div className="App">
@@ -25,9 +25,9 @@ function App() {
           <div className="innerContainer">
             <Routes>
               <Route path="/" element={<HomePage />} />
-              <Route exact path="/routes/:routeId" element={<RoutePageElement />} />
-              <Route exact path="/routes/:routeId/:tripId" element={<TripPageElement />} />
-              <Route exact path="/stops/:stopId" element={<StopPageElement />} />
+              <Route path="/routes/:routeId" element={<RoutePageElement />} />
+              <Route path="/routes/:routeId/:tripId" element={<TripPageElement />} />
+              <Route path="/stops/:stopId" element={<StopPageElement />} />
             </Routes>
           </div>
         </div>
@@ -53,19 +53,29 @@ function App() {
 
 function RoutePageElement() {
   const params = useParams();
-  return <RoutePage routeId = {params.routeId} />
+  return <RoutePage
+    routeId={params.routeId as string}
+  />
 }
 
 function StopPageElement() {
   const params = useParams();
   const location = useLocation();
-  return <StopPage stopId={params.stopId} stopName={location.state?.stopName} />
+  const state = location.state as {stopName: string};
+  return <StopPage
+    stopId={params.stopId as string}
+    stopName={state.stopName}
+    key={params.stopId}
+  />
 }
 
 function TripPageElement() {
   const params = useParams();
   const location = useLocation();
-  return <TripPage routeId={params.routeId}  tripId={params.tripId} lastStopName={location.state?.lastStopName} />
+  const state = location.state as {lastStopName: string};
+  return <TripPage
+    routeId={params.routeId as string}
+    tripId={params.tripId as string}
+    lastStopName={state.lastStopName}
+  />
 }
-
-export default App;
