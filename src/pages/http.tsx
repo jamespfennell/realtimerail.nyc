@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import axios from "axios";
 
 /**
@@ -31,7 +31,7 @@ export type HttpData<T> = {
  * 
  * [0] https://reactjs.org/docs/higher-order-components.html
 */
-export function withHttpData<T>(Component: React.ComponentType<any>, deserializer: (object: any) => T) {
+export default function withHttpData<T>(Component: React.ComponentType<any>, deserializer: (object: any) => T) {
   return class extends React.Component<any> {
     state: State<T>;
     timer: NodeJS.Timer | null;
@@ -129,4 +129,40 @@ function sleep(ms: number) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-export default withHttpData
+export function useHttpGetData<T>(url: string, deserializer: (object: any) => T): HttpData<T> {
+  const [data, setData] = useState<HttpData<T>>({
+    response: null,
+    error: null,
+    poll: () => { },
+  });
+
+  useEffect(() => {
+    const loadAsyncStuff = async () => {
+      axios.get(url)
+        .then((response) => {
+          setData({
+            response: deserializer(response.data),
+            error: null,
+            poll: () => { }, // TODO
+          })
+        })
+        .catch((error) => {
+          let message = "";
+          if (error.response) {
+            message = "backend error" // TODO this.transitermessage(error.response)
+          } else {
+            message = "no internet connection"
+          }
+          setData({
+            response: null,
+            error: message,
+            poll: () => { }, // TODO
+          })
+        })
+    };
+
+    loadAsyncStuff();
+
+  }, [url, deserializer]);
+  return data;
+};
