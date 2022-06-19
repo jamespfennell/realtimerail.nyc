@@ -6,7 +6,7 @@ import RouteLogo from '../../shared/routelogo/RouteLogo'
 import { buildStatusFromAlerts } from '../../util/Alert'
 import { listRoutesURL } from "../../api/api";
 import { AlertPreview, ListRoutesInSystemReply } from "../../api/types";
-import { useHttpGetData } from "../http";
+import { useHttpData } from "../http";
 
 const layout = [
   ["1", "2", "3"],
@@ -25,7 +25,7 @@ routeIdToDescription.set("FS", "Franklin Av shuttle");
 routeIdToDescription.set("GS", "42nd street shuttle");
 
 export default function HomePage() {
-  const alertsData = useHttpGetData(listRoutesURL(), ListRoutesInSystemReply.fromJSON);
+  const alertsData = useHttpData(listRoutesURL(), null, ListRoutesInSystemReply.fromJSON);
   let routeIdToAlerts: Map<string, AlertPreview[]> = new Map();
   if (alertsData.response != null) {
     for (const route of alertsData.response.routes) {

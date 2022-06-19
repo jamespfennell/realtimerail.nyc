@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import axios from "axios";
 
 /**
@@ -18,151 +18,86 @@ export type HttpData<T> = {
 }
 
 /**
- * withHttpData is a higher-order component [0] use to create components that depend on data from HTTP endpoints.
- * 
- * The input component to the HOC must have a httpData prop which accepts a value of type `HttpData`. The component
- * uses this prop to access data from the endpoint.
- * 
- * The component that is returned from the HOC must be provided with at least the httpUrl prop, which specifies the URL of the
- * endpoint to fetch. The prop httpPollInterval may optionally be provided; this specifies how often (in milliseconds) to
- * perform a HTTP request to the endpoint again.
- * 
- * Any other props on the input component are passed through.
- * 
- * [0] https://reactjs.org/docs/higher-order-components.html
+ * useHttpData is a React hook for getting data from an HTTP request.
 */
-export default function withHttpData<T>(Component: React.ComponentType<any>, deserializer: (object: any) => T) {
-  return class extends React.Component<any> {
-    state: State<T>;
-    timer: NodeJS.Timer | null;
-
-    constructor(props: any) {
-      super(props);
-      this.state = {
-        response: null,
-        error: null,
+export function useHttpData<T>(url: string, pollInterval: number | null, deserializer: (object: any) => T): HttpData<T> {
+  const [data, setData] = useState<HttpResponse<T>>({
+    response: null,
+    error: null,
+  });
+  const callback = useCallback((newData: HttpResponse<T>) => {
+    setData(prevData => {
+      // If the HTTP request errors out and we previously had data, just keep the data.
+      if (newData.error !== null && prevData.response !== null) {
+        return prevData
       }
-      this.timer = null;
+      return newData
+    })
+  }, []);
+
+  // Always make an initial request.
+  useEffect(() => {
+    performRequest(url, deserializer, callback)
+  }, [url, deserializer, callback]);
+
+  // The actual poll interval is the poll interval, or null if the window does not have focus.
+  //
+  // The point of this is to prevent the app from making backend requests when the user isn't looking.
+  // These requests are wasteful both for the user and the backend.
+  const [actualPollInterval, setActualPollInterval] = useState<number | null>(pollInterval);
+  useEffect(() => {
+    const start = () => setActualPollInterval(pollInterval);
+    const stop = () => setActualPollInterval(null);
+    window.addEventListener("focus", start);
+    window.addEventListener("blur", stop);
+    return () => {
+      window.removeEventListener("focus", start);
+      window.removeEventListener("blur", stop);
+    };
+  }, [pollInterval]);
+
+  // If poll internal is set, also make requests periodically.
+  useEffect(() => {
+    if (actualPollInterval !== null) {
+      const timer = setInterval(() => {
+        performRequest(url, deserializer, callback);
+      }, actualPollInterval);
+      return () => {
+        clearTimeout(timer)
+      };
     }
+  }, [url, actualPollInterval, deserializer, callback]);
 
-    componentDidMount() {
-      window.addEventListener("focus", this.startPolling);
-      window.addEventListener("blur", this.stopPolling);
-      this.startPolling()
-    }
+  return {
+    response: data.response,
+    error: data.error,
+    poll: () => { performRequest(url, deserializer, callback) },
+  }
+};
 
-    componentWillUnmount() {
-      window.removeEventListener("focus", this.startPolling);
-      window.removeEventListener("blur", this.stopPolling);
-      this.stopPolling()
-    }
-
-    startPolling = () => {
-      this.stopPolling();
-      this.poll();
-      if (this.props.httpPollInternal !== null) {
-        this.timer = setInterval(() => this.poll(), this.props.httpPollInterval);
-      }
-    };
-
-    stopPolling = () => {
-      if (this.timer != null) {
-        clearInterval(this.timer);
-      }
-    };
-
-    async poll() {
-      if (this.state.error !== null) {
-        this.setState({
-          response: null,
-          message: null
-        })
-      }
-      await sleep(0);
-      axios.get(this.props.httpUrl)
-        .then(this.handleHttpSuccess)
-        .catch(this.handleHttpError)
-    };
-
-    handleHttpSuccess = (response: any) => {
-      this.setState({
-        response: deserializer(response.data),
-        message: null,
-      })
-    };
-
-    handleHttpError = (error: any) => {
-      if (this.state.response !== null) {
-        return
-      }
-      let message = "";
-      if (error.response) {
-        message = "TODO: grab error from transiter" //this.transitermessage(error.response)
-      } else {
-        message = "no internet connection"
-      }
-      this.setState({
-        response: null,
-        message: message,
-      });
-    };
-
-    render() {
-      const { httpUrl, httpPollInterval, ...passThroughProps } = this.props;
-      return <Component httpData={{
-        response: this.state.response,
-        error: this.state.error,
-        poll: () => {
-          this.poll()
-        },
-      }} {...passThroughProps} />;
-    }
-  };
-}
-
-type State<T> = {
+type HttpResponse<T> = {
   response: T | null;
   error: string | null;
 }
 
-function sleep(ms: number) {
-  return new Promise(resolve => setTimeout(resolve, ms));
-}
-
-export function useHttpGetData<T>(url: string, deserializer: (object: any) => T): HttpData<T> {
-  const [data, setData] = useState<HttpData<T>>({
-    response: null,
-    error: null,
-    poll: () => { },
-  });
-
-  useEffect(() => {
-    const loadAsyncStuff = async () => {
-      axios.get(url)
-        .then((response) => {
-          setData({
-            response: deserializer(response.data),
-            error: null,
-            poll: () => { }, // TODO
-          })
-        })
-        .catch((error) => {
-          let message = "";
-          if (error.response) {
-            message = "backend error" // TODO this.transitermessage(error.response)
-          } else {
-            message = "no internet connection"
-          }
-          setData({
-            response: null,
-            error: message,
-            poll: () => { }, // TODO
-          })
-        })
-    };
-
-    loadAsyncStuff();
-
-  }, [url, deserializer]);
-  return data;
+async function performRequest<T>(url: string, deserializer: (object: any) => T, callback: (r: HttpResponse<T>) => void) {
+  axios.get(url)
+    .then((response) => {
+      callback({
+        response: deserializer(response.data),
+        error: null,
+      })
+    })
+    .catch((error) => {
+      let message = "";
+      if (error.response) {
+        message = "backend error" // TODO this.transitermessage(error.response)
+      } else {
+        message = "no internet connection"
+      }
+      callback({
+        response: null,
+        error: message,
+      })
+    })
 };

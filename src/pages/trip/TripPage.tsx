@@ -5,7 +5,7 @@ import { timestampToDateTime, timestampToTime } from '../../util/Time'
 import ServiceMap, { StopData } from '../../shared/servicemap/ServiceMap'
 import { Link } from 'react-router-dom'
 import { Trip } from "../../api/types";
-import withHttpData from "../http";
+import { useHttpData } from "../http";
 import BasicPage from "../../shared/basicpage/BasicPage";
 import { tripURL } from "../../api/api";
 
@@ -17,11 +17,11 @@ export type TripPageProps = {
 }
 
 function TripPage(props: TripPageProps) {
+  const httpData = useHttpData(tripURL(props.routeId, props.tripId), 5000, Trip.fromJSON);
   return (
-    <div className="RoutePage">
-      <BasicPageForTrip
-        httpUrl={tripURL(props.routeId, props.tripId)}
-        httpPollInternal={null}
+    <div className="TripPage">
+      <BasicPage
+        httpData={httpData}
         routeId={props.routeId}
         header={Header}
         body={Body}
@@ -29,8 +29,6 @@ function TripPage(props: TripPageProps) {
     </div>
   )
 }
-
-let BasicPageForTrip = withHttpData(BasicPage, Trip.fromJSON)
 
 /* TODO
 transiterErrorMessage(response: any) {

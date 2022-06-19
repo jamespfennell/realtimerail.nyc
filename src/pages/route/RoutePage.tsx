@@ -8,7 +8,7 @@ import { timestampToDateString, timestampToDateTime } from "../../util/Time";
 import parseAlert, { buildStatusFromAlerts } from '../../util/Alert'
 import ServiceMap from '../../shared/servicemap/ServiceMap'
 import { Alert, Route } from "../../api/types";
-import withHttpData from "../http";
+import { useHttpData } from "../http";
 import { routeURL } from "../../api/api";
 import BasicPage from "../../shared/basicpage/BasicPage";
 
@@ -17,19 +17,17 @@ export type RoutePageProps = {
 }
 
 function RoutePage(props: RoutePageProps) {
+  const httpData = useHttpData(routeURL(props.routeId), null, Route.fromJSON);
   return (
     <div className="RoutePage">
-      <BasicPageForRoute
-        httpUrl={routeURL(props.routeId)}
-        httpPollInternal={null}
+      <BasicPage
+        httpData={httpData}
         routeId={props.routeId}
         header={Header}
         body={Body} />
     </div>
   )
 }
-
-let BasicPageForRoute = withHttpData(BasicPage, Route.fromJSON)
 
 function Header(props: any) {
   return (

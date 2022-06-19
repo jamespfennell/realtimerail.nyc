@@ -7,7 +7,7 @@ import RouteLogo from "../../shared/routelogo/RouteLogo";
 import { Link } from "react-router-dom";
 import { List, ListElement } from "../../util/List";
 import { RelatedStop, Stop, Stop_StopTime, TripPreview } from "../../api/types";
-import withHttpData, { HttpData } from "../http";
+import { HttpData, useHttpData } from "../http";
 import { stopURL } from "../../api/api";
 import BasicPage from "../../shared/basicpage/BasicPage";
 
@@ -18,11 +18,11 @@ export type StopPageProps = {
 }
 
 function StopPage(props: StopPageProps) {
+  const httpData = useHttpData(stopURL(props.stopId), 5000, Stop.fromJSON);
   return (
     <div className="StopPage" key={props.stopId}>
-      <BasicPageForStop
-        httpUrl={stopURL(props.stopId)}
-        httpPollInterval={5000}
+      <BasicPage
+        httpData={httpData}
         header={Header}
         body={Body}
         stopName={props.stopName}
@@ -30,8 +30,6 @@ function StopPage(props: StopPageProps) {
     </div>
   )
 }
-
-let BasicPageForStop = withHttpData(BasicPage, Stop.fromJSON)
 
 export type HeaderProps = {
   httpData: HttpData<Stop>;

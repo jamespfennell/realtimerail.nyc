@@ -9,6 +9,8 @@ export type BasicPageProps<T> = {
   httpData: HttpData<T>;
   header: React.ComponentType<any>;
   body: React.ComponentType<T>;
+  // All other props
+  [x: string]: any;
 }
 
 function BasicPage<T>(props: BasicPageProps<T>) {
