@@ -4,7 +4,7 @@ import AnimateHeight, { Height } from 'react-animate-height'
 import './RoutePage.css'
 
 import RouteLogo, { replaceRouteIdsWithImages } from '../../shared/routelogo/RouteLogo'
-import { timestampToDateString, timestampToDateTime } from "../../util/Time";
+import { timestampToDateString, timestampToDateTime } from "../../util/time";
 import parseAlert, { buildStatusFromAlerts } from '../../util/Alert'
 import ServiceMap from '../../shared/servicemap/ServiceMap'
 import { Alert, Route } from "../../api/types";
@@ -65,6 +65,7 @@ function Body(route: Route) {
         stops={stops}
         color={"#" + route.color}
         type="Route"
+        showTimes={false}
       />
     </div>
   )

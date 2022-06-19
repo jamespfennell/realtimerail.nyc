@@ -54,7 +54,7 @@ export default function App() {
 function RoutePageElement() {
   const params = useParams();
   return <RoutePage
-    routeId={params.routeId as string}
+    routeId={params.routeId!}
   />
 }
 
@@ -63,7 +63,7 @@ function StopPageElement() {
   const location = useLocation();
   const state = location.state as {stopName: string};
   return <StopPage
-    stopId={params.stopId as string}
+    stopId={params.stopId!}
     stopName={state.stopName}
     key={params.stopId}
   />
@@ -74,8 +74,8 @@ function TripPageElement() {
   const location = useLocation();
   const state = location.state as {lastStopName: string};
   return <TripPage
-    routeId={params.routeId as string}
-    tripId={params.tripId as string}
+    routeId={params.routeId!}
+    tripId={params.tripId!}
     lastStopName={state.lastStopName}
   />
 }

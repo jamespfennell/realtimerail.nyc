@@ -1,7 +1,7 @@
 import './TripPage.css'
 
 import RouteLogo from '../../shared/routelogo/RouteLogo'
-import { timestampToDateTime, timestampToTime } from '../../util/Time'
+import { timestampToDateTime, timestampToTime } from '../../util/time'
 import ServiceMap, { StopData } from '../../shared/servicemap/ServiceMap'
 import { Link } from 'react-router-dom'
 import { Trip } from "../../api/types";
@@ -48,8 +48,8 @@ function Header(props: any) {
   }
 
   let firstStopName = trip?.stopTimes[0] == null
-      ? undefined
-      : trip?.stopTimes[0].stop?.name;
+    ? undefined
+    : trip?.stopTimes[0].stop?.name;
   if (firstStopName === undefined || firstStopName === null) {
     firstStopName = routeId + " Train"
   }
@@ -73,7 +73,7 @@ function Body(trip: Trip) {
 
   let nextStopName = "";
   let future = false;
-  let stops = [];
+  let stops: StopData[] = [];
   for (const tripStopTime of trip.stopTimes) {
     if (tripStopTime.stop === null) {
       continue
@@ -82,12 +82,12 @@ function Body(trip: Trip) {
     if (time == null) {
       time = tripStopTime.departure?.time;
     }
-    let stop = new StopData(
-      tripStopTime.stop?.id.substr(0, tripStopTime.stop.id.length - 1),
-      tripStopTime.stop?.name,
-      timestampToTime(time),
-      tripStopTime.future
-    );
+    let stop = {
+      id: tripStopTime.stop?.id.substr(0, tripStopTime.stop.id.length - 1)!,
+      name: tripStopTime.stop?.name!,
+      time: timestampToTime(time),
+      isActive: tripStopTime.future
+    };
     if (tripStopTime.future === true && future === false) {
       future = true;
       if (tripStopTime.stop?.name !== undefined) {

@@ -219,7 +219,7 @@ function SiblingStop(props: SiblingStopProps) {
   return (
     <Link to={"/stops/" + props.stopId} state={{ stopName: props.name }}>
       <ListElement className="SiblingStop">
-        <ListOfRouteLogos routeIds={props.routeIds} skipExpress={true} />
+        <ListOfRouteLogos routeIds={props.routeIds} skipExpress={true} addLinks={false} />
         <div className="name">{props.name}</div>
       </ListElement>
     </Link>

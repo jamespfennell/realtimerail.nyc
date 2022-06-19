@@ -1,7 +1,7 @@
 import React from 'react'
 import './List.css'
 
-export function ListElement(props) {
+export function ListElement(props: any) {
   return (
     <div className={"ListElement" + (props.className ? " " + props.className : "")}>
       {props.children}
@@ -9,7 +9,7 @@ export function ListElement(props) {
   )
 }
 
-export function List(props) {
+export function List(props: any) {
   return (
     <div className={"List" + (props.className ? " " + props.className : "")}>
       {props.children}

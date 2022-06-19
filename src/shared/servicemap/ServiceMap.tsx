@@ -1,17 +1,17 @@
-import React from "react";
 import './ServiceMap.css'
+
 import {Link} from "react-router-dom";
+
 import {List, ListElement} from "../../util/List"
 
-
-export function StopData(id, name, time, isActive) {
-  this.id = id;
-  this.name = name;
-  this.time = time;
-  this.isActive = isActive;
+export type StopData = {
+  id: string,
+  name: string,
+  time: string,
+  isActive: boolean,
 }
 
-function IntermediateEnRouteElement(props) {
+function IntermediateEnRouteElement(props: {name: string, color: string}) {
   return (
     <ListElement className="regular intermediateEnRoute">
       <div className="time"></div>
@@ -26,7 +26,18 @@ function IntermediateEnRouteElement(props) {
   )
 }
 
-function ServiceMapStop(props) {
+export type ServiceMapStopProps = {
+  stopId: string,
+  name: string,
+  isStartingTerminus: boolean,
+  isEndingTerminus: boolean,
+  isActive: boolean,
+  type: string,
+  color: string,
+  time: string,
+}
+
+function ServiceMapStop(props: ServiceMapStopProps) {
   let stopClasses = "";
   if (props.isStartingTerminus) {
     stopClasses += " startingTerminus"
@@ -56,23 +67,26 @@ function ServiceMapStop(props) {
   )
 }
 
-// <div className="point" style={{borderColor: props.color}} />
+export type ServiceMapProps = {
+  type: string,
+  color: string,
+  showTimes: boolean,
+  stops: StopData[],
+}
 
-
-class ServiceMap extends React.Component {
-  render() {
+export default function ServiceMap(props: ServiceMapProps) {
     let stopElements = [];
     let position = 0;
     let future = false;
     let firstStop = true;
-    for (const stop of this.props.stops) {
-      if (!future && stop.isActive && this.props.type === "Trip") {
+    for (const stop of props.stops) {
+      if (!future && stop.isActive && props.type === "Trip") {
         future = true;
         if (!firstStop) {
           stopElements.push(
             <IntermediateEnRouteElement
               key="nextStop"
-              color={this.props.color}
+              color={props.color}
               name={stop.name}
             />
           )
@@ -81,26 +95,22 @@ class ServiceMap extends React.Component {
       firstStop = false;
       stopElements.push(
         <ServiceMapStop
-          color={this.props.color}
+          color={props.color}
           key={stop.id}
           stopId={stop.id}
           name={stop.name}
-          time={this.props.showTimes ? stop.time : ""}
+          time={props.showTimes ? stop.time : ""}
           isActive={stop.isActive}
           isStartingTerminus={position === 0}
-          isEndingTerminus={position === this.props.stops.length - 1}
-          type={this.props.type}
+          isEndingTerminus={position === props.stops.length - 1}
+          type={props.type}
         />
       );
       position += 1;
     }
     return (
-      <List className={"ServiceMap " + (this.props.showTimes ? "withTimes" : "noTimes")}>
+      <List className={"ServiceMap " + (props.showTimes ? "withTimes" : "noTimes")}>
         {stopElements}
       </List>
     )
-  }
 }
-
-
-export default ServiceMap

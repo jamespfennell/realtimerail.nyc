@@ -1,4 +1,4 @@
-export function timestampToDateString(timestamp) {
+export function timestampToDateString(timestamp: number | null| undefined): string {
   if (timestamp == null) {
     return ""
   }
@@ -11,7 +11,7 @@ export function timestampToDateString(timestamp) {
   )
 }
 
-export function timestampToDateTime(timestamp) {
+export function timestampToDateTime(timestamp: number | null| undefined): string {
   if (timestamp == null) {
     return ""
   }
@@ -22,7 +22,7 @@ export function timestampToDateTime(timestamp) {
   return time + ", " + timestampToDateString(timestamp)
 }
 
-export function timestampToTime(timestamp) {
+export function timestampToTime(timestamp: number | null | undefined): string {
   if (timestamp == null) {
     return ""
   }
@@ -34,7 +34,7 @@ export function timestampToTime(timestamp) {
   )
 }
 
-export function timestampToTimeElapsed(timestamp) {
+export function timestampToTimeElapsed(timestamp: number | null| undefined): string {
   if (timestamp == null) {
     return ""
   }

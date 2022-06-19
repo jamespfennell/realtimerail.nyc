@@ -1,6 +1,3 @@
-import React from "react";
-import PropTypes from 'prop-types';
-
 import { ReactComponent as ImageFor1 } from './images/1.svg'
 import { ReactComponent as ImageFor2 } from './images/2.svg'
 import { ReactComponent as ImageFor3 } from './images/3.svg'
@@ -66,25 +63,22 @@ let routeIdToImage = {
 };
 
 
-class RouteLogo extends React.Component {
-  render() {
-    let Image = routeIdToImage[this.props.route];
-    if (Image === undefined) {
-      return "image for route " + this.props.route + " not found"
-    }
-    return (
-      <Image className="RouteLogo" alt={"Logo for the " + this.props.route + " train"} />
-    )
-  }
+export type RouteLogoProps = {
+  route: string, // TODO: rename routeID
 }
 
-//TODO: rename route routeId
-RouteLogo.propTypes = {
-  route: PropTypes.string
-};
+export default function RouteLogo(props: RouteLogoProps) {
+  // TODO: fix the typing "as any" hack here
+  let Image = (routeIdToImage as any)[props.route];
+  if (Image === undefined) {
+    return <span>"image for route " + props.route + " not found"</span>
+  }
+  return (
+    <Image className="RouteLogo" alt={"Logo for the " + props.route + " train"} />
+  )
+}
 
-
-export function replaceRouteIdsWithImages(message) {
+export function replaceRouteIdsWithImages(message: string) {
   // Replace route markers of the form [L] in a service message with the relevant image.
   // The function works recursively. It finds the first occurrence of [<route_id>]. What comes before is left intact,
   // the [<route_id>] string is replaced by an image, and the remainder of the message is processed by the same function
@@ -97,14 +91,13 @@ export function replaceRouteIdsWithImages(message) {
   let pre = message.substring(0, a);
   let route_id = message.substring(a + 1, b);
   let post = replaceRouteIdsWithImages(message.substring(b + 1));
-  let answer = [
+  let answer: JSX.Element[] = [
     <span key={post.length - 1}>{pre}</span>,
-    <RouteLogo route={route_id.toUpperCase()} key={post.length}/>
+    <RouteLogo route={route_id.toUpperCase()} key={post.length} />
   ];
-  answer.push(post);
+  answer.push(<span>{post}</span>);
   return answer;
 
 }
 
 
-export default RouteLogo
