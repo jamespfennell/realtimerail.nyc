@@ -160,6 +160,7 @@ function HeadsignStopTimes(props: HeadsignStopTimesProps) {
     // This handles buggy stale trips in the GTFS feed, as well as trips that have left the station
     // but have not been updated in the feed yet.
     if (tripTime < props.currentTime) {
+      skipped += 1;
       continue;
     }
     if (rendered >= maxStopTimes && tripTime - props.currentTime > 10 * 60) {
