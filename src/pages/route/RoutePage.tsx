@@ -126,9 +126,11 @@ function StatusSummaryMessage(props: any) {
       messageText += "s";
     }
   } else if (props.status === "GOOD_SERVICE") {
-    let p = Math.round(props.periodicity);
-    if (!isNaN(p)) {
-      messageText = "Trains running about every " + p + " minutes"
+    if (props.periodicity !== null) {
+      let mins =  Math.round(props.periodicity / 60);
+      if (!isNaN(mins)) {
+        messageText = "Trains running about every " + mins + " minutes"
+      }
     }
   } else if (props.status === "NO_SERVICE") {
     messageText = "Find alternative trains below"

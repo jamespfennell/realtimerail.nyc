@@ -277,7 +277,7 @@ message Route {
   // TODO: make this an enum
   string type = 8;
   // TODO(APIv2): make this integer seconds
-  optional double periodicity = 9;
+  optional int32 periodicity = 9;
 
   AgencyPreview agency = 10;
 

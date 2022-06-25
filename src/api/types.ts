@@ -1773,7 +1773,7 @@ export const Route = {
       (obj.continuousDropOff = message.continuousDropOff);
     message.type !== undefined && (obj.type = message.type);
     message.periodicity !== undefined &&
-      (obj.periodicity = message.periodicity);
+      (obj.periodicity = Math.round(message.periodicity));
     message.agency !== undefined &&
       (obj.agency = message.agency
         ? AgencyPreview.toJSON(message.agency)
