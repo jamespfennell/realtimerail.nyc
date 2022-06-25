@@ -4,7 +4,6 @@ import AnimateHeight, { Height } from 'react-animate-height'
 import './RoutePage.css'
 
 import RouteLogo, { replaceRouteIdsWithImages } from '../../shared/routelogo/RouteLogo'
-import { timestampToDateString, timestampToDateTime } from "../../util/time";
 import parseAlert, { buildStatusFromAlerts } from '../../util/Alert'
 import ServiceMap from '../../shared/servicemap/ServiceMap'
 import { Alert, Route } from "../../api/types";
@@ -80,23 +79,13 @@ export type AlertsProps = {
 function Alerts(props: AlertsProps) {
   let alertElements = [];
   for (const alert of props.alerts) {
-    let timeMessage = "";
-    if (alert.activePeriod !== undefined) {
-      if (alert.activePeriod.endsAt != null) {
-        timeMessage += "In effect from " + timestampToDateString(alert.activePeriod.startsAt) + " to "
-          + timestampToDateString(alert.activePeriod.endsAt)
-      } else {
-        timeMessage += "Alert posted " + timestampToDateTime(alert.activePeriod.startsAt)
-      }
-      timeMessage += ".";
-    }
-
     const parsedAlert = parseAlert(alert);
+    console.log(alert.id)
     alertElements.push(
       <div key={alert.id} className="Alert">
         <div className="header">{parsedAlert.header}</div>
         <div className="description">{replaceRouteIdsWithImages(parsedAlert.description)}</div>
-        <div className="timeMessage">{timeMessage}</div>
+        <div className="timeMessage">{parsedAlert.activePeriodMessage}</div>
       </div>
     )
   }

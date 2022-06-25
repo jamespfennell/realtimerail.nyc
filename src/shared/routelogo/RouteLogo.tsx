@@ -78,26 +78,22 @@ export default function RouteLogo(props: RouteLogoProps) {
   )
 }
 
-export function replaceRouteIdsWithImages(message: string) {
-  // Replace route markers of the form [L] in a service message with the relevant image.
-  // The function works recursively. It finds the first occurrence of [<route_id>]. What comes before is left intact,
-  // the [<route_id>] string is replaced by an image, and the remainder of the message is processed by the same function
-  // to see if there another [<route_id>] string.
-  let a = message.indexOf('[');
-  let b = message.indexOf(']', a);
-  if (a < 0 || b < 0) {
-    return message
+// Replaces route markers of the form [L] in a service message with the relevant image.
+export function replaceRouteIdsWithImages(message: string): JSX.Element[] {
+  let elements: JSX.Element[] = [];
+  let start = 0;
+  while (start < message.length) {
+    let a = message.indexOf('[');
+    let b = message.indexOf(']', a);
+    if (a < 0 || b < 0) {
+      elements.push(<span key={2 * message.length}>{message}</span>);
+      break
+    }
+    let pre = message.substring(0, a);
+    let route_id = message.substring(a + 1, b);
+    elements.push(<span key={2 * message.length}>{pre}</span>);
+    elements.push(<RouteLogo route={route_id.toUpperCase()} key={2 * message.length + 1} />);
+    message = message.substring(b + 1);
   }
-  let pre = message.substring(0, a);
-  let route_id = message.substring(a + 1, b);
-  let post = replaceRouteIdsWithImages(message.substring(b + 1));
-  let answer: JSX.Element[] = [
-    <span key={post.length - 1}>{pre}</span>,
-    <RouteLogo route={route_id.toUpperCase()} key={post.length} />
-  ];
-  answer.push(<span>{post}</span>);
-  return answer;
-
+  return elements;
 }
-
-
