@@ -65,7 +65,8 @@
 
 
 .Alert {
-    margin: 0 6px;
+    margin: 0;
+    padding: 0 6px;
 }
 
 .Alert .header {

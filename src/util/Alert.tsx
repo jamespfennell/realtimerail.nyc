@@ -1,15 +1,15 @@
-import { Alert, AlertPreview, AlertText } from "../api/types";
+import { Alert, Alert_Preview, Alert_Text, alert_EffectToJSON, alert_CauseToJSON } from "../api/types";
 import { timestampToDateString, timestampToDateTime } from "./time";
 
-export function buildStatusFromAlerts(alerts: AlertPreview[]) {
+export function buildStatusFromAlerts(alerts: Alert_Preview[]) {
   if (alerts.length === 0) {
     return "GOOD_SERVICE"
   }
   for (const alert of alerts) {
-    if (alert.cause.includes("DELAY")) {
+    if (alert_CauseToJSON(alert.cause).includes("DELAY")) {
       return "DELAYS"
     }
-    if (alert.effect.includes("DELAY")) {
+    if (alert_EffectToJSON(alert.effect).includes("DELAY")) {
       return "DELAYS"
     }
   }
@@ -24,7 +24,7 @@ export default function parseAlert(apiAlert: Alert): ParsedAlert {
   )
 }
 
-function getEnglishText(texts: AlertText[] | undefined): string {
+function getEnglishText(texts: Alert_Text[] | undefined): string {
   if (texts === undefined) {
     return ""
   }
@@ -54,13 +54,13 @@ function buildActivePeriodMessage(alert: Alert): string {
   }
   // If not, we create one ourselves.
   let timeMessage = "";
-  if (alert.activePeriod !== undefined) {
+  if (alert.currentActivePeriod !== undefined) {
     // If the active period has both a start and end time, it usually indicates a planned alert.
-    if (alert.activePeriod.endsAt != null) {
-      timeMessage += "In effect from " + timestampToDateString(alert.activePeriod.startsAt) + " to "
-        + timestampToDateString(alert.activePeriod.endsAt)
+    if (alert.currentActivePeriod.endsAt != null) {
+      timeMessage += "In effect from " + timestampToDateString(alert.currentActivePeriod.startsAt) + " to "
+        + timestampToDateString(alert.currentActivePeriod.endsAt)
     } else {
-      timeMessage += "Alert posted " + timestampToDateTime(alert.activePeriod.startsAt)
+      timeMessage += "Alert posted " + timestampToDateTime(alert.currentActivePeriod.startsAt)
     }
     timeMessage += ".";
   }

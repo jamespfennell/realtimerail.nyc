@@ -6,7 +6,7 @@ import ListOfRouteLogos from "../../shared/routelogo/ListOfRouteLogos";
 import RouteLogo from "../../shared/routelogo/RouteLogo";
 import { Link } from "react-router-dom";
 import { List, ListElement } from "../../util/List";
-import { RelatedStop, Stop, Stop_StopTime, TripPreview } from "../../api/types";
+import { Stop, StopTime, Stop_Preview, Trip_Preview } from "../../api/types";
 import { HttpData, useHttpData } from "../http";
 import { stopURL } from "../../api/api";
 import BasicPage from "../../shared/basicpage/BasicPage";
@@ -48,8 +48,8 @@ function Header(props: HeaderProps) {
 
 function Body(stop: Stop) {
   let headsignToStopTimes = new Map();
-  for (const headsign of stop.stopHeadsigns) {
-    headsignToStopTimes.set(headsign, [])
+  for (const headsignRule of stop.headsignRules) {
+    headsignToStopTimes.set(headsignRule.headsign, [])
   }
   for (let stopTime of stop.stopTimes) {
     if (stopTime.headsign === undefined) {
@@ -63,18 +63,13 @@ function Body(stop: Stop) {
 
   let usualRouteIds: string[] = [];
   for (const serviceMap of stop.serviceMaps) {
-    // TODO: weekday
-    if (serviceMap.configId === 'alltimes') {
+    if (serviceMap.configId === 'weekday') {
       serviceMap.routes.forEach(
         route => usualRouteIds.push(route.id)
       )
     }
   }
 
-  let siblingStops: RelatedStop[] = [];
-  if (stop.parentStop != null) {
-    siblingStops = stop.parentStop.childStops;
-  }
   let inSystemTransfers = [];
   let otherSystemTransfers = [];
   for (const transfer of stop.transfers) {
@@ -104,6 +99,7 @@ function Body(stop: Stop) {
     )
   }
 
+  // {buildLinkedStops(siblingStops, "Other platforms at this station")}
   return (
     <div>
       <div className="mainRoutes">
@@ -114,7 +110,6 @@ function Body(stop: Stop) {
         />
       </div>
       {stopTimeElements}
-      {buildLinkedStops(siblingStops, "Other platforms at this station")}
       {buildLinkedStops(inSystemTransfers, "Out of system transfers")}
       {buildConnections(otherSystemTransfers)}
     </div>
@@ -122,7 +117,7 @@ function Body(stop: Stop) {
 }
 type HeadsignStopTimesProps = {
   headsign: string;
-  stopTimes: Stop_StopTime[];
+  stopTimes: StopTime[];
   currentTime: number;
 }
 
@@ -169,7 +164,7 @@ function HeadsignStopTimes(props: HeadsignStopTimesProps) {
       continue;
     }
     rendered += 1
-    let trip: TripPreview = stopTime.trip;
+    let trip: Trip_Preview = stopTime.trip;
 
     // TODO
     /*
@@ -182,7 +177,7 @@ function HeadsignStopTimes(props: HeadsignStopTimesProps) {
     tripStopTimeElements.push(
       <TripStopTime
         key={"trip" + trip.id}
-        lastStopName={definedOr(trip.lastStop?.name, "")}
+        lastStopName={definedOr(trip.destination?.name, "")}
         routeId={definedOr(trip.route?.id, "")}
         tripId={trip.id}
         time={tripTime - props.currentTime}
@@ -200,7 +195,7 @@ function HeadsignStopTimes(props: HeadsignStopTimesProps) {
   );
   if (rendered + skipped !== props.stopTimes.length) {
     children.push(
-      <div className="MoreTrips" onClick={() => setMaxStopTimes(maxStopTimes + 4)}>
+      <div key="moreTrips" className="MoreTrips" onClick={() => setMaxStopTimes(maxStopTimes + 4)}>
         show more trains
       </div>
     )
@@ -268,7 +263,7 @@ function TripStopTime(props: TripStopTimeProps) {
 }
 
 
-function buildLinkedStops(stops: any, title: any) {
+function buildLinkedStops(stops: Stop_Preview[], title: any) {
   if (stops.length === 0) {
     return null
   }
@@ -280,20 +275,23 @@ function buildLinkedStops(stops: any, title: any) {
     }
     stopIds.add(siblingStop.id)
     let routeIds = [];
+    /*
+    // TODO: make a web request to /stops to get these
     for (const serviceMap of siblingStop.serviceMaps) {
-      if (serviceMap.configId === "weekday_day") {
+      if (serviceMap.configId === "weekday") {
         for (const route of serviceMap.routes) {
           routeIds.push(route.id)
         }
         break
       }
     }
+    */
     siblingStopElements.push(
       <SiblingStop
         key={"siblingStop" + siblingStop.id}
         stopId={siblingStop.id}
         name={siblingStop.name}
-        routeIds={routeIds}
+        routeIds={[]}
       />
     )
   }

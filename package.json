@@ -34,7 +34,7 @@
       "last 1 safari version"
     ]
   },
-  "proxy": "https://www.realtimerail.nyc",
+  "proxy": "https://staging.realtimerail.nyc",
   "devDependencies": {
     "@types/react": "^18.0.10",
     "@types/react-dom": "^18.0.5",

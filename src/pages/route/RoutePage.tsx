@@ -6,9 +6,9 @@ import './RoutePage.css'
 import RouteLogo, { replaceRouteIdsWithImages } from '../../shared/routelogo/RouteLogo'
 import parseAlert, { buildStatusFromAlerts } from '../../util/Alert'
 import ServiceMap from '../../shared/servicemap/ServiceMap'
-import { Alert, Route } from "../../api/types";
+import { Alert_Preview, ListAlertsReply, Route } from "../../api/types";
 import { useHttpData } from "../http";
-import { routeURL } from "../../api/api";
+import { routeURL, alertsURL } from "../../api/api";
 import BasicPage from "../../shared/basicpage/BasicPage";
 
 export type RoutePageProps = {
@@ -59,7 +59,7 @@ function Body(route: Route) {
       <StatusPanel
         realtimeService={realtimeService}
         alerts={route.alerts}
-        periodicity={route.periodicity} />
+        periodicity={route.estimatedHeadway} />
       <ServiceMap
         stops={stops}
         color={"#" + route.color}
@@ -72,13 +72,25 @@ function Body(route: Route) {
 
 
 export type AlertsProps = {
-  alerts: Alert[];
-  alertsVisible: boolean;
+  alerts: Alert_Preview[];
 }
 
 function Alerts(props: AlertsProps) {
-  let alertElements = [];
+  let alertIDs = [];
   for (const alert of props.alerts) {
+    alertIDs.push(alert.id);
+  }
+
+  const httpData = useHttpData(alertsURL(alertIDs), null, ListAlertsReply.fromJSON);
+  if (httpData.response === null) {
+    return (
+      <div className="Alerts">
+        loading
+      </div>
+    );
+  }
+  let alertElements = [];
+  for (const alert of httpData.response.alerts) {
     const parsedAlert = parseAlert(alert);
     console.log(alert.id)
     alertElements.push(
@@ -89,7 +101,6 @@ function Alerts(props: AlertsProps) {
       </div>
     )
   }
-
   return (
     <div className="Alerts">
       {alertElements}
@@ -127,7 +138,7 @@ function StatusSummaryMessage(props: any) {
     }
   } else if (props.status === "GOOD_SERVICE") {
     if (props.periodicity !== null) {
-      let mins =  Math.round(props.periodicity / 60);
+      let mins = Math.round(props.periodicity / 60);
       if (!isNaN(mins)) {
         messageText = "Trains running about every " + mins + " minutes"
       }
@@ -154,7 +165,7 @@ function StatusSummaryMessage(props: any) {
 }
 
 type StatusPanelProps = {
-  alerts: any;
+  alerts: Alert_Preview[];
   realtimeService: boolean;
   periodicity: number | undefined;
 }
@@ -199,9 +210,25 @@ class StatusPanel extends React.Component<StatusPanelProps> {
       status = "NO_SERVICE"
     }
 
+    if (this.props.alerts.length === 0) {
+      return (
+        <div>
+          <div onClick={this.toggleAlerts} className={statusSummaryClasses}>
+            <StatusSummaryHeader status={status} />
+            <StatusSummaryMessage
+              canToggleAlerts={false}
+              status={status}
+              periodicity={this.props.periodicity}
+              numberOfAlerts={this.props.alerts.length}
+              alertsVisible={this.state.alertsVisible}
+            />
+          </div>
+        </div>
+      )
+    }
     return (
       <div>
-        <div onClick={this.toggleAlerts} className={statusSummaryClasses}>
+        <div key="header" onClick={this.toggleAlerts} className={statusSummaryClasses}>
           <StatusSummaryHeader status={status} />
           <StatusSummaryMessage
             canToggleAlerts={this.canToggleAlerts()}
@@ -211,13 +238,12 @@ class StatusPanel extends React.Component<StatusPanelProps> {
             alertsVisible={this.state.alertsVisible}
           />
         </div>
-        <AnimateHeight
+        <AnimateHeight key="body"
           animateOpacity={true}
           duration={400}
           height={height}>
-          <Alerts
+          <Alerts key="alerts"
             alerts={this.props.alerts}
-            alertsVisible={this.state.alertsVisible}
           /></AnimateHeight>
       </div>
     )

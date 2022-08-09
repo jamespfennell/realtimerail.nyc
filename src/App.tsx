@@ -34,8 +34,8 @@ export default function App() {
         <div className="footer">
           <p>
             realtimerail.nyc is
-            a <a href="https://github.com/jamespfennell/realtimerail.nyc-react">Typescript/React app</a> that
-            uses the <a href="https://github.com/jamespfennell/transiter">open source software Transiter</a> to
+            an <a href="https://github.com/jamespfennell/realtimerail.nyc-react">open source Typescript/React app</a> that
+            uses the <a href="https://github.com/jamespfennell/transiter">backend software Transiter</a> to
             access New York City Transit's realtime data.
           </p>
           <p>
