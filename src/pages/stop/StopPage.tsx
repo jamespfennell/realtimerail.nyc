@@ -6,9 +6,9 @@ import ListOfRouteLogos from "../../shared/routelogo/ListOfRouteLogos";
 import RouteLogo from "../../shared/routelogo/RouteLogo";
 import { Link } from "react-router-dom";
 import { List, ListElement } from "../../util/List";
-import { Stop, StopTime, Stop_Preview, Trip_Preview } from "../../api/types";
+import { ListStopsReply, Stop, StopTime, Stop_Preview, Trip_Preview } from "../../api/types";
 import { HttpData, useHttpData } from "../http";
-import { stopURL } from "../../api/api";
+import { stopServiceMapsURL, stopURL } from "../../api/api";
 import BasicPage from "../../shared/basicpage/BasicPage";
 
 
@@ -100,6 +100,7 @@ function Body(stop: Stop) {
   }
 
   // {buildLinkedStops(siblingStops, "Other platforms at this station")}
+  // {buildConnections(otherSystemTransfers)}
   return (
     <div>
       <div className="mainRoutes">
@@ -110,8 +111,7 @@ function Body(stop: Stop) {
         />
       </div>
       {stopTimeElements}
-      {buildLinkedStops(inSystemTransfers, "Out of system transfers")}
-      {buildConnections(otherSystemTransfers)}
+      <LinkedStops stops={inSystemTransfers} title="Transfers" />
     </div>
   )
 }
@@ -262,44 +262,49 @@ function TripStopTime(props: TripStopTimeProps) {
   )
 }
 
+type LinkedStopsProps = {
+  stops: Stop_Preview[],
+  title: string,
+}
 
-function buildLinkedStops(stops: Stop_Preview[], title: any) {
-  if (stops.length === 0) {
-    return null
+function LinkedStops(props: LinkedStopsProps) {
+  let stopIDs = [];
+  for (const stop of props.stops) {
+    stopIDs.push(stop.id);
   }
-  let stopIds = new Set();
-  let siblingStopElements = [];
-  for (const siblingStop of stops) {
-    if (stopIds.has(siblingStop.id)) {
-      continue
-    }
-    stopIds.add(siblingStop.id)
-    let routeIds = [];
-    /*
-    // TODO: make a web request to /stops to get these
-    for (const serviceMap of siblingStop.serviceMaps) {
-      if (serviceMap.configId === "weekday") {
+  const httpData = useHttpData(stopServiceMapsURL(stopIDs), null, ListStopsReply.fromJSON);
+  let stopIDToRoutes = new Map();
+  if (httpData.response !== null) {
+    for (const stop of httpData.response.stops) {
+      let routeIds = [];
+      for (const serviceMap of stop.serviceMaps) {
+        if (serviceMap.configId !== "weekday") {
+          continue
+        }
         for (const route of serviceMap.routes) {
           routeIds.push(route.id)
         }
-        break
       }
+      stopIDToRoutes.set(stop.id, routeIds)
     }
-    */
-    siblingStopElements.push(
+  }
+  let elements = [];
+  for (const stop of props.stops) {
+    let routeIds = stopIDToRoutes.get(stop.id) ?? [];
+    elements.push(
       <SiblingStop
-        key={"siblingStop" + siblingStop.id}
-        stopId={siblingStop.id}
-        name={siblingStop.name}
-        routeIds={[]}
+        key={"siblingStop" + stop.id}
+        stopId={stop.id}
+        name={stop.name ?? ""}
+        routeIds={routeIds}
       />
     )
   }
   return (
     <div>
-      <div className="SubHeading" key="header">{title}</div>
+      <div className="SubHeading" key="header">{props.title}</div>
       <List className="siblingStops">
-        {siblingStopElements}
+        {elements}
       </List>
     </div>
   )

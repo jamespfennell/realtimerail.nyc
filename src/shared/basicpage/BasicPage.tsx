@@ -29,7 +29,7 @@ function BasicPage<T>(props: BasicPageProps<T>) {
       animateOpacity={true}
       height={props.httpData.response != null ? "auto" : 0}
       duration={500}>
-      {props.httpData.response != null ? React.createElement(props.body, props.httpData.response) : ""}
+      {props.httpData.response != null ? React.createElement(props.body, props.httpData.response) : <div></div>}
     </AnimateHeight>
   );
   return <div>

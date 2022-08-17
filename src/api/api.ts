@@ -19,6 +19,14 @@ export function stopURL(stopID: string): string {
     return baseURL + "systems/" + systemID + "/stops/" + stopID
 }
 
+export function stopServiceMapsURL(stopIDs: string[]): string {
+    let url = baseURL + "systems/" + systemID + "/stops?skip_stop_times=true&only_return_specified_ids=true"
+    for (const stopID of stopIDs) {
+        url = url + "&id=" + stopID
+    }
+    return url
+}
+
 export function alertsURL(alertIDs: string[]): string {
     let url = baseURL + "systems/" + systemID + "/alerts"
     let first = true
