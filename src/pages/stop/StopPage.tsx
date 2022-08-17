@@ -51,15 +51,19 @@ function Body(stop: Stop) {
   for (const headsignRule of stop.headsignRules) {
     headsignToStopTimes.set(headsignRule.headsign, [])
   }
-  for (let stopTime of stop.stopTimes) {
-    if (stopTime.headsign === undefined) {
-      stopTime.headsign = "(terminating trains)"
+  for (const stopTime of stop.stopTimes) {
+    let headsign = stopTime.headsign ?? "(terminating trains)"
+    if (!headsignToStopTimes.has(headsign)) {
+      headsignToStopTimes.set(headsign, [])
     }
-    if (!headsignToStopTimes.has(stopTime.headsign)) {
-      headsignToStopTimes.set(stopTime.headsign, [])
-    }
-    headsignToStopTimes.get(stopTime.headsign).push(stopTime)
+    headsignToStopTimes.get(headsign).push(stopTime)
   }
+
+  let headsigns = [];
+  for (const [headsign] of headsignToStopTimes) {
+    headsigns.push(headsign);
+  }
+  headsigns.sort();
 
   let usualRouteIds: string[] = [];
   for (const serviceMap of stop.serviceMaps) {
@@ -85,10 +89,9 @@ function Body(stop: Stop) {
 
   let stopTimeElements = [];
   let allAssigned = true; // TODO
-  // TODO: iterate alphabetically?
-  for (const [headsign, stopTimes] of headsignToStopTimes) {
+  for (const headsign of headsigns) {
     stopTimeElements.push(
-      <HeadsignStopTimes key={headsign} headsign={headsign} stopTimes={stopTimes} currentTime={currentTime} />
+      <HeadsignStopTimes key={headsign} headsign={headsign} stopTimes={headsignToStopTimes.get(headsign) ?? []} currentTime={currentTime} />
     )
   }
   if (!allAssigned) {
@@ -273,6 +276,9 @@ function LinkedStops(props: LinkedStopsProps) {
     stopIDs.push(stop.id);
   }
   const httpData = useHttpData(stopServiceMapsURL(stopIDs), null, ListStopsReply.fromJSON);
+  if (stopIDs.length === 0) {
+    return <div></div>
+  }
   let stopIDToRoutes = new Map();
   if (httpData.response !== null) {
     for (const stop of httpData.response.stops) {
