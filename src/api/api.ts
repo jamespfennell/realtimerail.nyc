@@ -4,7 +4,7 @@ const baseURL = "/transiter/v0.6/";
 const systemID = "us-ny-subway";
 
 export function listRoutesURL(): string {
-    return baseURL + "systems/" + systemID + "/routes"
+    return baseURL + "systems/" + systemID + "/routes?skip_service_maps=true"
 }
 
 export function routeURL(routeID: string): string {
