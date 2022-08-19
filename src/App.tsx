@@ -64,7 +64,7 @@ function StopPageElement() {
   const state = location.state as {stopName: string};
   return <StopPage
     stopId={params.stopId!}
-    stopName={state.stopName}
+    stopName={state?.stopName}
     key={params.stopId}
   />
 }
@@ -76,6 +76,6 @@ function TripPageElement() {
   return <TripPage
     routeId={params.routeId!}
     tripId={params.tripId!}
-    lastStopName={state.lastStopName}
+    lastStopName={state?.lastStopName}
   />
 }
