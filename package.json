@@ -36,6 +36,7 @@
   },
   "proxy": "https://staging.realtimerail.nyc",
   "devDependencies": {
+    "@types/jest": "^28.1.8",
     "@types/react": "^18.0.10",
     "@types/react-dom": "^18.0.5",
     "@types/react-router-dom": "^5.3.3"

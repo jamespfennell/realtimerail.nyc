@@ -10,6 +10,8 @@ COPY ./public ./public
 COPY ./src ./src
 RUN npm run build
 
+RUN CI=true npm test
+
 FROM nginx
 COPY --from=build-deps /usr/src/app/build /usr/share/realtimerail.nyc
 RUN rm /etc/nginx/conf.d/*
