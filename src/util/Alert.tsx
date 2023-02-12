@@ -1,7 +1,7 @@
-import { Alert, Alert_Preview, Alert_Text, alert_EffectToJSON, alert_CauseToJSON } from "../api/types";
+import { Alert, Alert_Reference, Alert_Text, alert_EffectToJSON, alert_CauseToJSON } from "../api/types";
 import { timestampToDateString, timestampToDateTime } from "./time";
 
-export function buildStatusFromAlerts(alerts: Alert_Preview[]) {
+export function buildStatusFromAlerts(alerts: Alert_Reference[]) {
   if (alerts.length === 0) {
     return "GOOD_SERVICE"
   }

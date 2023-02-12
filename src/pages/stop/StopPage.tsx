@@ -6,7 +6,7 @@ import ListOfRouteLogos from "../../shared/routelogo/ListOfRouteLogos";
 import RouteLogo from "../../shared/routelogo/RouteLogo";
 import { Link } from "react-router-dom";
 import { List, ListElement } from "../../util/List";
-import { ListStopsReply, Stop, StopTime, Stop_Preview, Trip_Preview } from "../../api/types";
+import { ListStopsReply, Stop, StopTime, Stop_Reference, Trip_Reference } from "../../api/types";
 import { HttpData, useHttpData } from "../http";
 import { stopServiceMapsURL, stopURL } from "../../api/api";
 import BasicPage from "../../shared/basicpage/BasicPage";
@@ -167,7 +167,7 @@ function HeadsignStopTimes(props: HeadsignStopTimesProps) {
       continue;
     }
     rendered += 1
-    let trip: Trip_Preview = stopTime.trip;
+    let trip: Trip_Reference = stopTime.trip;
 
     // TODO
     /*
@@ -266,7 +266,7 @@ function TripStopTime(props: TripStopTimeProps) {
 }
 
 type LinkedStopsProps = {
-  stops: Stop_Preview[],
+  stops: Stop_Reference[],
   title: string,
 }
 

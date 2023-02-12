@@ -6,7 +6,7 @@ import './RoutePage.css'
 import RouteLogo, { replaceRouteIdsWithImages } from '../../shared/routelogo/RouteLogo'
 import parseAlert, { buildStatusFromAlerts } from '../../util/Alert'
 import ServiceMap from '../../shared/servicemap/ServiceMap'
-import { Alert_Preview, ListAlertsReply, Route } from "../../api/types";
+import { Alert_Reference, ListAlertsReply, Route } from "../../api/types";
 import { useHttpData } from "../http";
 import { routeURL, alertsURL } from "../../api/api";
 import BasicPage from "../../shared/basicpage/BasicPage";
@@ -72,7 +72,7 @@ function Body(route: Route) {
 
 
 export type AlertsProps = {
-  alerts: Alert_Preview[];
+  alerts: Alert_Reference[];
 }
 
 function Alerts(props: AlertsProps) {
@@ -165,7 +165,7 @@ function StatusSummaryMessage(props: any) {
 }
 
 type StatusPanelProps = {
-  alerts: Alert_Preview[];
+  alerts: Alert_Reference[];
   realtimeService: boolean;
   periodicity: number | undefined;
 }

@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 import RouteLogo from '../../shared/routelogo/RouteLogo'
 import { buildStatusFromAlerts } from '../../util/Alert'
 import { listRoutesURL } from "../../api/api";
-import { Alert_Preview, ListRoutesReply } from "../../api/types";
+import { Alert_Reference, ListRoutesReply } from "../../api/types";
 import { useHttpData } from "../http";
 
 const layout = [
@@ -26,7 +26,7 @@ routeIdToDescription.set("GS", "42nd street shuttle");
 
 export default function HomePage() {
   const alertsData = useHttpData(listRoutesURL(), null, ListRoutesReply.fromJSON);
-  let routeIdToAlerts: Map<string, Alert_Preview[]> = new Map();
+  let routeIdToAlerts: Map<string, Alert_Reference[]> = new Map();
   if (alertsData.response != null) {
     for (const route of alertsData.response.routes) {
       routeIdToAlerts.set(route.id, route.alerts)
@@ -39,7 +39,7 @@ export default function HomePage() {
     i++;
     let row = [];
     for (const routeId of routeIds) {
-      let alerts: Alert_Preview[] = [];
+      let alerts: Alert_Reference[] = [];
       let alertsOr = routeIdToAlerts.get(routeId);
       if (alertsOr !== undefined) {
         alerts = alertsOr;
@@ -70,7 +70,7 @@ export default function HomePage() {
 
 type RouteButtonProps = {
   route: string;
-  alerts: Alert_Preview[];
+  alerts: Alert_Reference[];
   description: string;
 }
 

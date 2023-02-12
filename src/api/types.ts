@@ -11,8 +11,8 @@ export interface EntrypointRequest {}
 export interface EntrypointReply {
   /** Version and other information about this Transiter binary. */
   transiter: EntrypointReply_TransiterDetails | undefined;
-  /** List of systems that are installed in this Transiter instance. */
-  systems: System_Preview[];
+  /** Systems that are installed in this Transiter instance. */
+  systems: ChildResources | undefined;
 }
 
 /** Message containing version information about a Transiter binary. */
@@ -98,6 +98,13 @@ export interface ListStopsRequest {
    * This is a URL parameter in the HTTP API.
    */
   systemId: string;
+  /** If true, only return stops whose IDs are specified in the repeated `id` field. */
+  onlyReturnSpecifiedIds: boolean;
+  /**
+   * IDs to return if `only_return_specified_ids` is set to true. It is an error to
+   * populate this field if `only_return_specified_ids` is false.
+   */
+  id: string[];
   /** ID of the first stop to return. If not set, the stop with the smallest ID will be first. */
   firstId?: string | undefined;
   /** Maximum number of stops to return. */
@@ -122,6 +129,57 @@ export interface ListStopsRequest {
    * This will generally make the response faster to generate.
    */
   skipTransfers: boolean;
+  /**
+   * The maximum distance in kilometers that a stop must be from
+   * latitude, longitude to be listed when using DISTANCE search mode.
+   */
+  maxDistance?: number | undefined;
+  /** The latitude relative to the returned stops when using DISTANCE search mode. */
+  latitude?: number | undefined;
+  /** The longitude relative to the returned stops when using DISTANCE search mode. */
+  longitude?: number | undefined;
+  /** The type of search to perform when listing stops. */
+  searchMode?: ListStopsRequest_SearchMode | undefined;
+}
+
+/** The possible search types when listing stops. */
+export enum ListStopsRequest_SearchMode {
+  /** ID - Return a paginated list of stops sorted by stop ID. */
+  ID = 0,
+  /** DISTANCE - Return all stops within max_distance from latitude, longitude. */
+  DISTANCE = 1,
+  UNRECOGNIZED = -1,
+}
+
+export function listStopsRequest_SearchModeFromJSON(
+  object: any
+): ListStopsRequest_SearchMode {
+  switch (object) {
+    case 0:
+    case "ID":
+      return ListStopsRequest_SearchMode.ID;
+    case 1:
+    case "DISTANCE":
+      return ListStopsRequest_SearchMode.DISTANCE;
+    case -1:
+    case "UNRECOGNIZED":
+    default:
+      return ListStopsRequest_SearchMode.UNRECOGNIZED;
+  }
+}
+
+export function listStopsRequest_SearchModeToJSON(
+  object: ListStopsRequest_SearchMode
+): string {
+  switch (object) {
+    case ListStopsRequest_SearchMode.ID:
+      return "ID";
+    case ListStopsRequest_SearchMode.DISTANCE:
+      return "DISTANCE";
+    case ListStopsRequest_SearchMode.UNRECOGNIZED:
+    default:
+      return "UNRECOGNIZED";
+  }
 }
 
 /** Response payload for the list stops endpoint. */
@@ -248,11 +306,8 @@ export interface ListTripsRequest {
 
 /** Response payload for the list trips endpoint. */
 export interface ListTripsReply {
-  /**
-   * List of trips.
-   * TODO: full Trip instead of preview
-   */
-  trips: Trip_Preview[];
+  /** List of trips. */
+  trips: Trip[];
 }
 
 /** Request payload for the list alerts endpoint. */
@@ -325,11 +380,8 @@ export interface ListFeedsRequest {
 
 /** Response payload for the list feeds endpoint. */
 export interface ListFeedsReply {
-  /**
-   * List of feeds.
-   * TODO: full Feed instead of preview
-   */
-  feeds: Feed_Preview[];
+  /** List of feeds. */
+  feeds: Feed[];
 }
 
 /** Request payload for the list feed updates endpoint. */
@@ -386,16 +438,17 @@ export interface ListTransfersReply {
 export interface System {
   /** ID of the system as specified in the install request. */
   id: string;
+  /** Generic metadata about the system resource. */
+  resource: Resource | undefined;
   /** Name of the system as specified in the system configuration file. */
   name: string;
   /** Status of the system. */
   status: System_Status;
-  agencies?: System_ChildEntities | undefined;
-  feeds?: System_ChildEntities | undefined;
-  routes?: System_ChildEntities | undefined;
-  stops?: System_ChildEntities | undefined;
-  transfers?: System_ChildEntities | undefined;
-  href?: string | undefined;
+  agencies: ChildResources | undefined;
+  feeds: ChildResources | undefined;
+  routes: ChildResources | undefined;
+  stops: ChildResources | undefined;
+  transfers: ChildResources | undefined;
 }
 
 /** Enum describing the possible statuses of a system. */
@@ -469,15 +522,26 @@ export function system_StatusToJSON(object: System_Status): string {
   }
 }
 
-/** TODO: rename `ChildResources`, move out of here, and reuse */
-export interface System_ChildEntities {
-  count: number;
+/** Reference is the reference type for the system resource. */
+export interface System_Reference {
+  id: string;
+  resource: Resource | undefined;
+}
+
+/** The resource message contains generic metadata that applies to all resources. */
+export interface Resource {
+  path: string;
   href?: string | undefined;
 }
 
-/** Preview contains preview information about the system. */
-export interface System_Preview {
-  id: string;
+/**
+ * Description of a collection of child resources for a resource.
+ * This message and fields using this message exist to support API discoverability.
+ */
+export interface ChildResources {
+  /** Number of child resources. */
+  count: number;
+  /** URL of the endpoint to list child resources. */
   href?: string | undefined;
 }
 
@@ -493,6 +557,13 @@ export interface System_Preview {
 export interface Stop {
   /** ID of the stop. This is the `stop_id` column in `stops.txt`. */
   id: string;
+  /** Generic metadata about the stop resource. */
+  resource: Resource | undefined;
+  /**
+   * System corresponding to this stop.
+   * This is the parent resource in Transiter's resource hierarchy.
+   */
+  system: System_Reference | undefined;
   /** Code of the stop. This is the `stop_code` column in `stops.txt`. */
   code?: string | undefined;
   /** Name of the stop. This is the `stop_name` column in `stops.txt`. */
@@ -510,9 +581,9 @@ export interface Stop {
   /** Type of the stop. This is the `platform_type` column in `stops.txt`. */
   type: Stop_Type;
   /** Parent stop. This is determined using the `parent_station` column in `stops.txt`. */
-  parentStop?: Stop_Preview | undefined;
+  parentStop?: Stop_Reference | undefined;
   /** Child stops. This are determined using the `parent_station` column in `stops.txt`. */
-  childStops: Stop_Preview[];
+  childStops: Stop_Reference[];
   /** Timezone of the stop. This is the `stop_timezone` column in `stops.txt`. */
   timezone?: string | undefined;
   /** If there is wheelchair boarding for this stop. This is the `wheelchair_boarding` column in `stops.txt`. */
@@ -528,7 +599,7 @@ export interface Stop {
    * the [GTFS realtime alerts
    * message](https://developers.google.com/transit/gtfs-realtime/reference#message-alert).
    */
-  alerts: Alert_Preview[];
+  alerts: Alert_Reference[];
   /**
    * List of realtime stop times for this stop.
    *
@@ -611,13 +682,13 @@ export interface Stop_ServiceMap {
    *
    * This list may be empty, in which case the stop has no service in the service map.
    */
-  routes: Route_Preview[];
+  routes: Route_Reference[];
 }
 
 /** Message describing a headsign rule. */
 export interface Stop_HeadsignRule {
   /** Stop the rule is for. */
-  stop: Stop_Preview | undefined;
+  stop: Stop_Reference | undefined;
   /** Priority of the rule (lower is higher priority). */
   priority: number;
   /** NYCT track. */
@@ -626,12 +697,12 @@ export interface Stop_HeadsignRule {
   headsign: string;
 }
 
-/** Preview contains preview information about the stop. */
-export interface Stop_Preview {
+/** Reference is the reference type for the stop resource. */
+export interface Stop_Reference {
   id: string;
-  /** TODO: make optional */
-  name: string;
-  href?: string | undefined;
+  resource: Resource | undefined;
+  system: System_Reference | undefined;
+  name?: string | undefined;
 }
 
 /**
@@ -643,9 +714,9 @@ export interface Stop_Preview {
  */
 export interface StopTime {
   /** The stop. */
-  stop: Stop_Preview | undefined;
+  stop: Stop_Reference | undefined;
   /** The trip. */
-  trip: Trip_Preview | undefined;
+  trip: Trip_Reference | undefined;
   /** Arrival time. */
   arrival: StopTime_EstimatedTime | undefined;
   /** Departure time. */
@@ -680,30 +751,33 @@ export interface StopTime_EstimatedTime {
 
 export interface Trip {
   id: string;
-  /** TODO(APIv2): remove route? */
-  route: Route_Preview | undefined;
-  /** TODO: remove? */
-  lastStop: Stop_Preview | undefined;
+  /** Generic metadata about the trip resource. */
+  resource: Resource | undefined;
+  /**
+   * Route corresponding to this trip.
+   * This is the parent resource in Transiter's resource hierarchy.
+   * It is determined using the `route_id` field in the GTFS realtime feed.
+   */
+  route: Route_Reference | undefined;
   startedAt?: number | undefined;
-  vehicle?: Vehicle_Preview | undefined;
+  vehicle?: Vehicle_Reference | undefined;
   directionId: boolean;
   stopTimes: StopTime[];
-  href?: string | undefined;
 }
 
-/** Preview contains preview information about the trip. */
-export interface Trip_Preview {
+/** Reference is the reference type for the trip resource. */
+export interface Trip_Reference {
   id: string;
-  route: Route_Preview | undefined;
-  destination: Stop_Preview | undefined;
-  vehicle?: Vehicle_Preview | undefined;
-  href?: string | undefined;
+  resource: Resource | undefined;
+  route: Route_Reference | undefined;
+  destination: Stop_Reference | undefined;
+  vehicle?: Vehicle_Reference | undefined;
 }
 
 export interface Vehicle {}
 
-/** Preview contains preview information about the vehice. */
-export interface Vehicle_Preview {
+/** Reference is the reference type for the vehicle resource. */
+export interface Vehicle_Reference {
   id: string;
 }
 
@@ -719,6 +793,13 @@ export interface Vehicle_Preview {
 export interface Route {
   /** ID of the route. This is the `route_id` column in `routes.txt`. */
   id: string;
+  /** Generic metadata about the route resource. */
+  resource: Resource | undefined;
+  /**
+   * System corresponding to this route.
+   * This is the parent resource in Transiter's resource hierarchy.
+   */
+  system: System_Reference | undefined;
   /** Short name of the route. This is the `route_short_name` column in `routes.txt`. */
   shortName?: string | undefined;
   /** Long name of the route. This is the `route_long_name` column in `routes.txt`. */
@@ -733,21 +814,18 @@ export interface Route {
   url?: string | undefined;
   /** Sort order of the route. This is the `route_sort_order` column in `routes.txt`. */
   sortOrder?: number | undefined;
-  /**
-   * TODO: make these 3 fields enums
-   * Continuous pickup policy. This is the `continuous_pickup` column in `routes.txt`.
-   */
-  continuousPickup: string;
+  /** Continuous pickup policy. This is the `continuous_pickup` column in `routes.txt`. */
+  continuousPickup: Route_ContinuousPolicy;
   /** Continuous dropoff policy. This is the `continuous_dropoff` column in `routes.txt`. */
-  continuousDropOff: string;
+  continuousDropOff: Route_ContinuousPolicy;
   /** Type of the route. This is the `route_type` column in `routes.txt`. */
-  type: string;
+  type: Route_Type;
   /**
    * Agency this route is associated to.
    *
    * This is determined using the `agency_id` column in `routes.txt`.
    */
-  agency: Agency_Preview | undefined;
+  agency: Agency_Reference | undefined;
   /**
    * Active alerts for this route.
    *
@@ -755,7 +833,7 @@ export interface Route {
    * the [GTFS realtime alerts
    * message](https://developers.google.com/transit/gtfs-realtime/reference#message-alert).
    */
-  alerts: Alert_Preview[];
+  alerts: Alert_Reference[];
   /**
    * An estimate of the interval of time between consecutive realtime trips, in seconds.
    *
@@ -767,11 +845,156 @@ export interface Route {
    * The difference between consecutive arrival times is calculated.
    * If there are `N` trips, there will be `N-1` such arrival time diffs.
    * The estimated headway is the average of these diffs across
-   * / all stops.
+   * all stops.
    */
   estimatedHeadway?: number | undefined;
   /** List of service maps for this route. */
   serviceMaps: Route_ServiceMap[];
+}
+
+/** Enum describing possible policies for continuous pickup or drop-off. */
+export enum Route_ContinuousPolicy {
+  /** ALLOWED - Continuous pickup or drop-off allowed. */
+  ALLOWED = 0,
+  /** NOT_ALLOWED - Continuous pickup or drop-off not allowed. */
+  NOT_ALLOWED = 1,
+  /** PHONE_AGENCY - Must phone the agency to arrange continuous pickup or drop-off. */
+  PHONE_AGENCY = 2,
+  /** COORDINATE_WITH_DRIVER - Must coordinate with driver to arrange continuous pickup or drop-off. */
+  COORDINATE_WITH_DRIVER = 3,
+  UNRECOGNIZED = -1,
+}
+
+export function route_ContinuousPolicyFromJSON(
+  object: any
+): Route_ContinuousPolicy {
+  switch (object) {
+    case 0:
+    case "ALLOWED":
+      return Route_ContinuousPolicy.ALLOWED;
+    case 1:
+    case "NOT_ALLOWED":
+      return Route_ContinuousPolicy.NOT_ALLOWED;
+    case 2:
+    case "PHONE_AGENCY":
+      return Route_ContinuousPolicy.PHONE_AGENCY;
+    case 3:
+    case "COORDINATE_WITH_DRIVER":
+      return Route_ContinuousPolicy.COORDINATE_WITH_DRIVER;
+    case -1:
+    case "UNRECOGNIZED":
+    default:
+      return Route_ContinuousPolicy.UNRECOGNIZED;
+  }
+}
+
+export function route_ContinuousPolicyToJSON(
+  object: Route_ContinuousPolicy
+): string {
+  switch (object) {
+    case Route_ContinuousPolicy.ALLOWED:
+      return "ALLOWED";
+    case Route_ContinuousPolicy.NOT_ALLOWED:
+      return "NOT_ALLOWED";
+    case Route_ContinuousPolicy.PHONE_AGENCY:
+      return "PHONE_AGENCY";
+    case Route_ContinuousPolicy.COORDINATE_WITH_DRIVER:
+      return "COORDINATE_WITH_DRIVER";
+    case Route_ContinuousPolicy.UNRECOGNIZED:
+    default:
+      return "UNRECOGNIZED";
+  }
+}
+
+/**
+ * Enum describing possible route types.
+ * This corresponds to possible values of the `route_type` column in `routes.txt`.
+ */
+export enum Route_Type {
+  LIGHT_RAIL = 0,
+  SUBWAY = 1,
+  RAIL = 2,
+  BUS = 3,
+  FERRY = 4,
+  CABLE_TRAM = 5,
+  AERIAL_LIFT = 6,
+  FUNICULAR = 7,
+  TROLLEY_BUS = 11,
+  MONORAIL = 12,
+  UNKNOWN = 100,
+  UNRECOGNIZED = -1,
+}
+
+export function route_TypeFromJSON(object: any): Route_Type {
+  switch (object) {
+    case 0:
+    case "LIGHT_RAIL":
+      return Route_Type.LIGHT_RAIL;
+    case 1:
+    case "SUBWAY":
+      return Route_Type.SUBWAY;
+    case 2:
+    case "RAIL":
+      return Route_Type.RAIL;
+    case 3:
+    case "BUS":
+      return Route_Type.BUS;
+    case 4:
+    case "FERRY":
+      return Route_Type.FERRY;
+    case 5:
+    case "CABLE_TRAM":
+      return Route_Type.CABLE_TRAM;
+    case 6:
+    case "AERIAL_LIFT":
+      return Route_Type.AERIAL_LIFT;
+    case 7:
+    case "FUNICULAR":
+      return Route_Type.FUNICULAR;
+    case 11:
+    case "TROLLEY_BUS":
+      return Route_Type.TROLLEY_BUS;
+    case 12:
+    case "MONORAIL":
+      return Route_Type.MONORAIL;
+    case 100:
+    case "UNKNOWN":
+      return Route_Type.UNKNOWN;
+    case -1:
+    case "UNRECOGNIZED":
+    default:
+      return Route_Type.UNRECOGNIZED;
+  }
+}
+
+export function route_TypeToJSON(object: Route_Type): string {
+  switch (object) {
+    case Route_Type.LIGHT_RAIL:
+      return "LIGHT_RAIL";
+    case Route_Type.SUBWAY:
+      return "SUBWAY";
+    case Route_Type.RAIL:
+      return "RAIL";
+    case Route_Type.BUS:
+      return "BUS";
+    case Route_Type.FERRY:
+      return "FERRY";
+    case Route_Type.CABLE_TRAM:
+      return "CABLE_TRAM";
+    case Route_Type.AERIAL_LIFT:
+      return "AERIAL_LIFT";
+    case Route_Type.FUNICULAR:
+      return "FUNICULAR";
+    case Route_Type.TROLLEY_BUS:
+      return "TROLLEY_BUS";
+    case Route_Type.MONORAIL:
+      return "MONORAIL";
+    case Route_Type.UNKNOWN:
+      return "UNKNOWN";
+    case Route_Type.UNRECOGNIZED:
+    default:
+      return "UNRECOGNIZED";
+  }
 }
 
 /**
@@ -788,21 +1011,15 @@ export interface Route_ServiceMap {
    *
    * This list may be empty, in which case the route has no service in the service map.
    */
-  stops: Stop_Preview[];
+  stops: Stop_Reference[];
 }
 
-/** Preview contains preview information about the route. */
-export interface Route_Preview {
+/** Reference is the reference type for the route resource. */
+export interface Route_Reference {
   id: string;
-  /** TODO(APIv2): remove? or add text_color? */
+  resource: Resource | undefined;
+  system: System_Reference | undefined;
   color: string;
-  /**
-   * Will be populated only if the system is not obvious
-   * TODO: maybe we should just include it always so that each preview/reference
-   * uniquely identifies a resource
-   */
-  system?: System | undefined;
-  href?: string | undefined;
 }
 
 /**
@@ -819,26 +1036,22 @@ export interface Route_Preview {
 export interface Feed {
   /** ID of the feed, as specified in the system configuration file. */
   id: string;
-  /** Whether periodic update is enabled for this feed. */
-  periodicUpdateEnabled: boolean;
-  /** If periodic update is enabled, the period each update is triggered. */
-  periodicUpdatePeriod?: string | undefined;
-  updates?: Feed_Updates | undefined;
+  /** Generic metadata about the feed resource. */
+  resource: Resource | undefined;
+  /**
+   * System corresponding to this feed.
+   * This is the parent resource in Transiter's resource hierarchy.
+   */
+  system: System_Reference | undefined;
+  /** Updates for this feed. */
+  updates: ChildResources | undefined;
 }
 
-/** TODO: have a ChildResources message and use that instead */
-export interface Feed_Updates {
-  href?: string | undefined;
-}
-
-/** Preview contains preview information about the feed. */
-export interface Feed_Preview {
+/** Reference is the reference type for the feed resource. */
+export interface Feed_Reference {
   id: string;
-  /** TODO: remove */
-  periodicUpdateEnabled: boolean;
-  /** TODO: remove */
-  periodicUpdatePeriod?: string | undefined;
-  href?: string | undefined;
+  resource: Resource | undefined;
+  system: System_Reference | undefined;
 }
 
 /**
@@ -852,6 +1065,13 @@ export interface Feed_Preview {
 export interface Agency {
   /** ID of the agency. This is the `agency_id` column in `agency.txt`. */
   id: string;
+  /** Generic metadata about the agency resource. */
+  resource: Resource | undefined;
+  /**
+   * System corresponding to this agency.
+   * This is the parent resource in Transiter's resource hierarchy.
+   */
+  system: System_Reference | undefined;
   /** Name of the agency. This is the `agency_name` column in `agency.txt`. */
   name: string;
   /** URL of the agency. This is the `agency_url` column in `agency.txt`. */
@@ -869,8 +1089,7 @@ export interface Agency {
   fareUrl?: string | undefined;
   /** Email address of the agency. This is the `agency_email` column in `agency.txt`. */
   email?: string | undefined;
-  /** TODO: this should be its own endpoint I think */
-  routes: Route_Preview[];
+  routes: Route_Reference[];
   /**
    * List of active alerts for the agency.
    *
@@ -878,15 +1097,15 @@ export interface Agency {
    * the [GTFS realtime alerts
    * message](https://developers.google.com/transit/gtfs-realtime/reference#message-alert).
    */
-  alerts: Alert_Preview[];
-  href?: string | undefined;
+  alerts: Alert_Reference[];
 }
 
-/** Preview contains preview information about the agency. */
-export interface Agency_Preview {
+/** Reference is the reference type for the agency resource. */
+export interface Agency_Reference {
   id: string;
+  resource: Resource | undefined;
+  system: System_Reference | undefined;
   name: string;
-  href?: string | undefined;
 }
 
 /**
@@ -895,7 +1114,6 @@ export interface Agency_Preview {
  * This resource corresponds to the [alert type in the GTFS realtime
  * specification](https://developers.google.com/transit/gtfs-realtime/reference#message-alert).
  *
- * TODO: informed entites
  * TODO; alphabetize the messages
  */
 export interface Alert {
@@ -905,6 +1123,13 @@ export interface Alert {
    * corresponding to the alert.
    */
   id: string;
+  /** Generic metadata about the alert resource. */
+  resource: Resource | undefined;
+  /**
+   * System corresponding to this alert.
+   * This is the parent resource in Transiter's resource hierarchy.
+   */
+  system: System_Reference | undefined;
   /** Cause of the alert. This corresponds to the `cause` field in the realtime alert message. */
   cause: Alert_Cause;
   /** Effect of the alert. This corresponds to the `effect` field in the realtime alert message. */
@@ -1157,20 +1382,22 @@ export interface Alert_Text {
   language: string;
 }
 
-/** TODO: rename Preview to Reference? */
-export interface Alert_Preview {
+/** Reference is the reference type for the agency resource. */
+export interface Alert_Reference {
   id: string;
+  resource: Resource | undefined;
+  system: System_Reference | undefined;
   cause: Alert_Cause;
-  /**
-   * TODO(APIv2): add this field and create API endpoints
-   * optional string href = 3;
-   */
   effect: Alert_Effect;
 }
 
 export interface Transfer {
-  fromStop: Stop_Preview | undefined;
-  toStop: Stop_Preview | undefined;
+  /**
+   * TODO: id, system, resource
+   * Probably will use the pk of the DB row for the ID
+   */
+  fromStop: Stop_Reference | undefined;
+  toStop: Stop_Reference | undefined;
   type: Transfer_Type;
   minTransferTime?: number | undefined;
   distance?: number | undefined;
@@ -1236,29 +1463,136 @@ export interface FeedUpdate {
    * database row so it's actually globally unique.
    */
   id: string;
+  /** Generic metadata about the feed update resource. */
+  resource: Resource | undefined;
   /**
-   * TODO: make these enums
-   * Type of the feed update.
+   * Feed corresponding to this update.
+   * This is the parent resource in Transiter's resource hierarchy.
    */
-  type: string;
-  /** Status of the feed update. */
-  status: string;
-  /** TODO what is this? */
-  result?: string | undefined;
-  /** TODO: delete? */
-  stackTrace?: string | undefined;
-  /** Number of bytes in the downloaded feed data. */
+  feed: Feed_Reference | undefined;
+  /** Unix timestamp of when the update started. */
+  startedAt: number;
+  /** Whether the update has finished. If false, the update is still in progress. */
+  finished: boolean;
+  /**
+   * Unix timestamp of when the update finished.
+   * Only populated if the update is finished.
+   */
+  finishedAt?: number | undefined;
+  /**
+   * Result of the update.
+   * Only populated if the update is finished.
+   */
+  result?: FeedUpdate_Result | undefined;
+  /**
+   * Number of bytes in the downloaded feed data.
+   * Only populated if the update succesfully downloaded the data.
+   */
   contentLength?: number | undefined;
   /**
    * Hash of the downloaded feed data. This is used to skip updates
    * if the feed data hasn't changed.
+   * Only populated if the update succesfully downloaded the data.
    */
   contentHash?: string | undefined;
   /**
-   * Unix timestamp of the approximate time the update completed.
-   * TODO: started_at? scheduled_at?
+   * Error message of the update.
+   * Only populated if the update finished in an error
    */
-  completedAt?: number | undefined;
+  errorMessage?: string | undefined;
+}
+
+export enum FeedUpdate_Result {
+  /** UPDATED - Finished succesfully. */
+  UPDATED = 0,
+  /** NOT_NEEDED - The update was skipped because the downloaded data was identical to the data for the last succesful update. */
+  NOT_NEEDED = 1,
+  /** DOWNLOAD_ERROR - Failed to download feed data. */
+  DOWNLOAD_ERROR = 2,
+  /** EMPTY_FEED - Feed data was empty. */
+  EMPTY_FEED = 3,
+  /**
+   * INVALID_FEED_CONFIG - The feed configuration is invalid. This typically indicates a bug in Transiter because
+   * the feed configuration is validated when the system is being installed.
+   */
+  INVALID_FEED_CONFIG = 4,
+  /** INVALID_PARSER - The parser specified in the feed configuration is invalid. */
+  INVALID_PARSER = 5,
+  /**
+   * PARSE_ERROR - Failed to parse the feed data.
+   * This means the feed data was corrupted or otherwise invalid.
+   */
+  PARSE_ERROR = 6,
+  /**
+   * UPDATE_ERROR - Failed to update the database using the new feed data.
+   * This typically indicates a bug in Transiter or a transient error connecting to the database.
+   */
+  UPDATE_ERROR = 7,
+  /** INTERNAL_ERROR - An internal unspecified error occured. */
+  INTERNAL_ERROR = 8,
+  UNRECOGNIZED = -1,
+}
+
+export function feedUpdate_ResultFromJSON(object: any): FeedUpdate_Result {
+  switch (object) {
+    case 0:
+    case "UPDATED":
+      return FeedUpdate_Result.UPDATED;
+    case 1:
+    case "NOT_NEEDED":
+      return FeedUpdate_Result.NOT_NEEDED;
+    case 2:
+    case "DOWNLOAD_ERROR":
+      return FeedUpdate_Result.DOWNLOAD_ERROR;
+    case 3:
+    case "EMPTY_FEED":
+      return FeedUpdate_Result.EMPTY_FEED;
+    case 4:
+    case "INVALID_FEED_CONFIG":
+      return FeedUpdate_Result.INVALID_FEED_CONFIG;
+    case 5:
+    case "INVALID_PARSER":
+      return FeedUpdate_Result.INVALID_PARSER;
+    case 6:
+    case "PARSE_ERROR":
+      return FeedUpdate_Result.PARSE_ERROR;
+    case 7:
+    case "UPDATE_ERROR":
+      return FeedUpdate_Result.UPDATE_ERROR;
+    case 8:
+    case "INTERNAL_ERROR":
+      return FeedUpdate_Result.INTERNAL_ERROR;
+    case -1:
+    case "UNRECOGNIZED":
+    default:
+      return FeedUpdate_Result.UNRECOGNIZED;
+  }
+}
+
+export function feedUpdate_ResultToJSON(object: FeedUpdate_Result): string {
+  switch (object) {
+    case FeedUpdate_Result.UPDATED:
+      return "UPDATED";
+    case FeedUpdate_Result.NOT_NEEDED:
+      return "NOT_NEEDED";
+    case FeedUpdate_Result.DOWNLOAD_ERROR:
+      return "DOWNLOAD_ERROR";
+    case FeedUpdate_Result.EMPTY_FEED:
+      return "EMPTY_FEED";
+    case FeedUpdate_Result.INVALID_FEED_CONFIG:
+      return "INVALID_FEED_CONFIG";
+    case FeedUpdate_Result.INVALID_PARSER:
+      return "INVALID_PARSER";
+    case FeedUpdate_Result.PARSE_ERROR:
+      return "PARSE_ERROR";
+    case FeedUpdate_Result.UPDATE_ERROR:
+      return "UPDATE_ERROR";
+    case FeedUpdate_Result.INTERNAL_ERROR:
+      return "INTERNAL_ERROR";
+    case FeedUpdate_Result.UNRECOGNIZED:
+    default:
+      return "UNRECOGNIZED";
+  }
 }
 
 function createBaseEntrypointRequest(): EntrypointRequest {
@@ -1277,7 +1611,7 @@ export const EntrypointRequest = {
 };
 
 function createBaseEntrypointReply(): EntrypointReply {
-  return { transiter: undefined, systems: [] };
+  return { transiter: undefined, systems: undefined };
 }
 
 export const EntrypointReply = {
@@ -1286,9 +1620,9 @@ export const EntrypointReply = {
       transiter: isSet(object.transiter)
         ? EntrypointReply_TransiterDetails.fromJSON(object.transiter)
         : undefined,
-      systems: Array.isArray(object?.systems)
-        ? object.systems.map((e: any) => System_Preview.fromJSON(e))
-        : [],
+      systems: isSet(object.systems)
+        ? ChildResources.fromJSON(object.systems)
+        : undefined,
     };
   },
 
@@ -1298,13 +1632,10 @@ export const EntrypointReply = {
       (obj.transiter = message.transiter
         ? EntrypointReply_TransiterDetails.toJSON(message.transiter)
         : undefined);
-    if (message.systems) {
-      obj.systems = message.systems.map((e) =>
-        e ? System_Preview.toJSON(e) : undefined
-      );
-    } else {
-      obj.systems = [];
-    }
+    message.systems !== undefined &&
+      (obj.systems = message.systems
+        ? ChildResources.toJSON(message.systems)
+        : undefined);
     return obj;
   },
 };
@@ -1500,12 +1831,18 @@ export const GetAgencyRequest = {
 function createBaseListStopsRequest(): ListStopsRequest {
   return {
     systemId: "",
+    onlyReturnSpecifiedIds: false,
+    id: [],
     firstId: undefined,
     limit: undefined,
     skipStopTimes: false,
     skipServiceMaps: false,
     skipAlerts: false,
     skipTransfers: false,
+    maxDistance: undefined,
+    latitude: undefined,
+    longitude: undefined,
+    searchMode: undefined,
   };
 }
 
@@ -1513,6 +1850,10 @@ export const ListStopsRequest = {
   fromJSON(object: any): ListStopsRequest {
     return {
       systemId: isSet(object.systemId) ? String(object.systemId) : "",
+      onlyReturnSpecifiedIds: isSet(object.onlyReturnSpecifiedIds)
+        ? Boolean(object.onlyReturnSpecifiedIds)
+        : false,
+      id: Array.isArray(object?.id) ? object.id.map((e: any) => String(e)) : [],
       firstId: isSet(object.firstId) ? String(object.firstId) : undefined,
       limit: isSet(object.limit) ? Number(object.limit) : undefined,
       skipStopTimes: isSet(object.skipStopTimes)
@@ -1525,12 +1866,27 @@ export const ListStopsRequest = {
       skipTransfers: isSet(object.skipTransfers)
         ? Boolean(object.skipTransfers)
         : false,
+      maxDistance: isSet(object.maxDistance)
+        ? Number(object.maxDistance)
+        : undefined,
+      latitude: isSet(object.latitude) ? Number(object.latitude) : undefined,
+      longitude: isSet(object.longitude) ? Number(object.longitude) : undefined,
+      searchMode: isSet(object.searchMode)
+        ? listStopsRequest_SearchModeFromJSON(object.searchMode)
+        : undefined,
     };
   },
 
   toJSON(message: ListStopsRequest): unknown {
     const obj: any = {};
     message.systemId !== undefined && (obj.systemId = message.systemId);
+    message.onlyReturnSpecifiedIds !== undefined &&
+      (obj.onlyReturnSpecifiedIds = message.onlyReturnSpecifiedIds);
+    if (message.id) {
+      obj.id = message.id.map((e) => e);
+    } else {
+      obj.id = [];
+    }
     message.firstId !== undefined && (obj.firstId = message.firstId);
     message.limit !== undefined && (obj.limit = Math.round(message.limit));
     message.skipStopTimes !== undefined &&
@@ -1540,6 +1896,15 @@ export const ListStopsRequest = {
     message.skipAlerts !== undefined && (obj.skipAlerts = message.skipAlerts);
     message.skipTransfers !== undefined &&
       (obj.skipTransfers = message.skipTransfers);
+    message.maxDistance !== undefined &&
+      (obj.maxDistance = message.maxDistance);
+    message.latitude !== undefined && (obj.latitude = message.latitude);
+    message.longitude !== undefined && (obj.longitude = message.longitude);
+    message.searchMode !== undefined &&
+      (obj.searchMode =
+        message.searchMode !== undefined
+          ? listStopsRequest_SearchModeToJSON(message.searchMode)
+          : undefined);
     return obj;
   },
 };
@@ -1739,7 +2104,7 @@ export const ListTripsReply = {
   fromJSON(object: any): ListTripsReply {
     return {
       trips: Array.isArray(object?.trips)
-        ? object.trips.map((e: any) => Trip_Preview.fromJSON(e))
+        ? object.trips.map((e: any) => Trip.fromJSON(e))
         : [],
     };
   },
@@ -1747,9 +2112,7 @@ export const ListTripsReply = {
   toJSON(message: ListTripsReply): unknown {
     const obj: any = {};
     if (message.trips) {
-      obj.trips = message.trips.map((e) =>
-        e ? Trip_Preview.toJSON(e) : undefined
-      );
+      obj.trips = message.trips.map((e) => (e ? Trip.toJSON(e) : undefined));
     } else {
       obj.trips = [];
     }
@@ -1875,7 +2238,7 @@ export const ListFeedsReply = {
   fromJSON(object: any): ListFeedsReply {
     return {
       feeds: Array.isArray(object?.feeds)
-        ? object.feeds.map((e: any) => Feed_Preview.fromJSON(e))
+        ? object.feeds.map((e: any) => Feed.fromJSON(e))
         : [],
     };
   },
@@ -1883,9 +2246,7 @@ export const ListFeedsReply = {
   toJSON(message: ListFeedsReply): unknown {
     const obj: any = {};
     if (message.feeds) {
-      obj.feeds = message.feeds.map((e) =>
-        e ? Feed_Preview.toJSON(e) : undefined
-      );
+      obj.feeds = message.feeds.map((e) => (e ? Feed.toJSON(e) : undefined));
     } else {
       obj.feeds = [];
     }
@@ -2006,6 +2367,7 @@ export const ListTransfersReply = {
 function createBaseSystem(): System {
   return {
     id: "",
+    resource: undefined,
     name: "",
     status: 0,
     agencies: undefined,
@@ -2013,7 +2375,6 @@ function createBaseSystem(): System {
     routes: undefined,
     stops: undefined,
     transfers: undefined,
-    href: undefined,
   };
 }
 
@@ -2021,93 +2382,123 @@ export const System = {
   fromJSON(object: any): System {
     return {
       id: isSet(object.id) ? String(object.id) : "",
+      resource: isSet(object.resource)
+        ? Resource.fromJSON(object.resource)
+        : undefined,
       name: isSet(object.name) ? String(object.name) : "",
       status: isSet(object.status) ? system_StatusFromJSON(object.status) : 0,
       agencies: isSet(object.agencies)
-        ? System_ChildEntities.fromJSON(object.agencies)
+        ? ChildResources.fromJSON(object.agencies)
         : undefined,
       feeds: isSet(object.feeds)
-        ? System_ChildEntities.fromJSON(object.feeds)
+        ? ChildResources.fromJSON(object.feeds)
         : undefined,
       routes: isSet(object.routes)
-        ? System_ChildEntities.fromJSON(object.routes)
+        ? ChildResources.fromJSON(object.routes)
         : undefined,
       stops: isSet(object.stops)
-        ? System_ChildEntities.fromJSON(object.stops)
+        ? ChildResources.fromJSON(object.stops)
         : undefined,
       transfers: isSet(object.transfers)
-        ? System_ChildEntities.fromJSON(object.transfers)
+        ? ChildResources.fromJSON(object.transfers)
         : undefined,
-      href: isSet(object.href) ? String(object.href) : undefined,
     };
   },
 
   toJSON(message: System): unknown {
     const obj: any = {};
     message.id !== undefined && (obj.id = message.id);
+    message.resource !== undefined &&
+      (obj.resource = message.resource
+        ? Resource.toJSON(message.resource)
+        : undefined);
     message.name !== undefined && (obj.name = message.name);
     message.status !== undefined &&
       (obj.status = system_StatusToJSON(message.status));
     message.agencies !== undefined &&
       (obj.agencies = message.agencies
-        ? System_ChildEntities.toJSON(message.agencies)
+        ? ChildResources.toJSON(message.agencies)
         : undefined);
     message.feeds !== undefined &&
       (obj.feeds = message.feeds
-        ? System_ChildEntities.toJSON(message.feeds)
+        ? ChildResources.toJSON(message.feeds)
         : undefined);
     message.routes !== undefined &&
       (obj.routes = message.routes
-        ? System_ChildEntities.toJSON(message.routes)
+        ? ChildResources.toJSON(message.routes)
         : undefined);
     message.stops !== undefined &&
       (obj.stops = message.stops
-        ? System_ChildEntities.toJSON(message.stops)
+        ? ChildResources.toJSON(message.stops)
         : undefined);
     message.transfers !== undefined &&
       (obj.transfers = message.transfers
-        ? System_ChildEntities.toJSON(message.transfers)
+        ? ChildResources.toJSON(message.transfers)
         : undefined);
+    return obj;
+  },
+};
+
+function createBaseSystem_Reference(): System_Reference {
+  return { id: "", resource: undefined };
+}
+
+export const System_Reference = {
+  fromJSON(object: any): System_Reference {
+    return {
+      id: isSet(object.id) ? String(object.id) : "",
+      resource: isSet(object.resource)
+        ? Resource.fromJSON(object.resource)
+        : undefined,
+    };
+  },
+
+  toJSON(message: System_Reference): unknown {
+    const obj: any = {};
+    message.id !== undefined && (obj.id = message.id);
+    message.resource !== undefined &&
+      (obj.resource = message.resource
+        ? Resource.toJSON(message.resource)
+        : undefined);
+    return obj;
+  },
+};
+
+function createBaseResource(): Resource {
+  return { path: "", href: undefined };
+}
+
+export const Resource = {
+  fromJSON(object: any): Resource {
+    return {
+      path: isSet(object.path) ? String(object.path) : "",
+      href: isSet(object.href) ? String(object.href) : undefined,
+    };
+  },
+
+  toJSON(message: Resource): unknown {
+    const obj: any = {};
+    message.path !== undefined && (obj.path = message.path);
     message.href !== undefined && (obj.href = message.href);
     return obj;
   },
 };
 
-function createBaseSystem_ChildEntities(): System_ChildEntities {
+function createBaseChildResources(): ChildResources {
   return { count: 0, href: undefined };
 }
 
-export const System_ChildEntities = {
-  fromJSON(object: any): System_ChildEntities {
+export const ChildResources = {
+  fromJSON(object: any): ChildResources {
     return {
       count: isSet(object.count) ? Number(object.count) : 0,
       href: isSet(object.href) ? String(object.href) : undefined,
     };
   },
 
-  toJSON(message: System_ChildEntities): unknown {
+  toJSON(message: ChildResources): unknown {
     const obj: any = {};
     message.count !== undefined && (obj.count = Math.round(message.count));
-    message.href !== undefined && (obj.href = message.href);
-    return obj;
-  },
-};
-
-function createBaseSystem_Preview(): System_Preview {
-  return { id: "", href: undefined };
-}
-
-export const System_Preview = {
-  fromJSON(object: any): System_Preview {
-    return {
-      id: isSet(object.id) ? String(object.id) : "",
-      href: isSet(object.href) ? String(object.href) : undefined,
-    };
-  },
-
-  toJSON(message: System_Preview): unknown {
-    const obj: any = {};
-    message.id !== undefined && (obj.id = message.id);
     message.href !== undefined && (obj.href = message.href);
     return obj;
   },
@@ -2116,6 +2507,8 @@ export const System_Preview = {
 function createBaseStop(): Stop {
   return {
     id: "",
+    resource: undefined,
+    system: undefined,
     code: undefined,
     name: undefined,
     description: undefined,
@@ -2141,6 +2534,12 @@ export const Stop = {
   fromJSON(object: any): Stop {
     return {
       id: isSet(object.id) ? String(object.id) : "",
+      resource: isSet(object.resource)
+        ? Resource.fromJSON(object.resource)
+        : undefined,
+      system: isSet(object.system)
+        ? System_Reference.fromJSON(object.system)
+        : undefined,
       code: isSet(object.code) ? String(object.code) : undefined,
       name: isSet(object.name) ? String(object.name) : undefined,
       description: isSet(object.description)
@@ -2152,10 +2551,10 @@ export const Stop = {
       url: isSet(object.url) ? String(object.url) : undefined,
       type: isSet(object.type) ? stop_TypeFromJSON(object.type) : 0,
       parentStop: isSet(object.parentStop)
-        ? Stop_Preview.fromJSON(object.parentStop)
+        ? Stop_Reference.fromJSON(object.parentStop)
         : undefined,
       childStops: Array.isArray(object?.childStops)
-        ? object.childStops.map((e: any) => Stop_Preview.fromJSON(e))
+        ? object.childStops.map((e: any) => Stop_Reference.fromJSON(e))
         : [],
       timezone: isSet(object.timezone) ? String(object.timezone) : undefined,
       wheelchairBoarding: isSet(object.wheelchairBoarding)
@@ -2168,7 +2567,7 @@ export const Stop = {
         ? object.serviceMaps.map((e: any) => Stop_ServiceMap.fromJSON(e))
         : [],
       alerts: Array.isArray(object?.alerts)
-        ? object.alerts.map((e: any) => Alert_Preview.fromJSON(e))
+        ? object.alerts.map((e: any) => Alert_Reference.fromJSON(e))
         : [],
       stopTimes: Array.isArray(object?.stopTimes)
         ? object.stopTimes.map((e: any) => StopTime.fromJSON(e))
@@ -2185,6 +2584,14 @@ export const Stop = {
   toJSON(message: Stop): unknown {
     const obj: any = {};
     message.id !== undefined && (obj.id = message.id);
+    message.resource !== undefined &&
+      (obj.resource = message.resource
+        ? Resource.toJSON(message.resource)
+        : undefined);
+    message.system !== undefined &&
+      (obj.system = message.system
+        ? System_Reference.toJSON(message.system)
+        : undefined);
     message.code !== undefined && (obj.code = message.code);
     message.name !== undefined && (obj.name = message.name);
     message.description !== undefined &&
@@ -2196,11 +2603,11 @@ export const Stop = {
     message.type !== undefined && (obj.type = stop_TypeToJSON(message.type));
     message.parentStop !== undefined &&
       (obj.parentStop = message.parentStop
-        ? Stop_Preview.toJSON(message.parentStop)
+        ? Stop_Reference.toJSON(message.parentStop)
         : undefined);
     if (message.childStops) {
       obj.childStops = message.childStops.map((e) =>
-        e ? Stop_Preview.toJSON(e) : undefined
+        e ? Stop_Reference.toJSON(e) : undefined
       );
     } else {
       obj.childStops = [];
@@ -2219,7 +2626,7 @@ export const Stop = {
     }
     if (message.alerts) {
       obj.alerts = message.alerts.map((e) =>
-        e ? Alert_Preview.toJSON(e) : undefined
+        e ? Alert_Reference.toJSON(e) : undefined
       );
     } else {
       obj.alerts = [];
@@ -2258,7 +2665,7 @@ export const Stop_ServiceMap = {
     return {
       configId: isSet(object.configId) ? String(object.configId) : "",
       routes: Array.isArray(object?.routes)
-        ? object.routes.map((e: any) => Route_Preview.fromJSON(e))
+        ? object.routes.map((e: any) => Route_Reference.fromJSON(e))
         : [],
     };
   },
@@ -2268,7 +2675,7 @@ export const Stop_ServiceMap = {
     message.configId !== undefined && (obj.configId = message.configId);
     if (message.routes) {
       obj.routes = message.routes.map((e) =>
-        e ? Route_Preview.toJSON(e) : undefined
+        e ? Route_Reference.toJSON(e) : undefined
       );
     } else {
       obj.routes = [];
@@ -2284,7 +2691,9 @@ function createBaseStop_HeadsignRule(): Stop_HeadsignRule {
 export const Stop_HeadsignRule = {
   fromJSON(object: any): Stop_HeadsignRule {
     return {
-      stop: isSet(object.stop) ? Stop_Preview.fromJSON(object.stop) : undefined,
+      stop: isSet(object.stop)
+        ? Stop_Reference.fromJSON(object.stop)
+        : undefined,
       priority: isSet(object.priority) ? Number(object.priority) : 0,
       track: isSet(object.track) ? String(object.track) : undefined,
       headsign: isSet(object.headsign) ? String(object.headsign) : "",
@@ -2294,7 +2703,9 @@ export const Stop_HeadsignRule = {
   toJSON(message: Stop_HeadsignRule): unknown {
     const obj: any = {};
     message.stop !== undefined &&
-      (obj.stop = message.stop ? Stop_Preview.toJSON(message.stop) : undefined);
+      (obj.stop = message.stop
+        ? Stop_Reference.toJSON(message.stop)
+        : undefined);
     message.priority !== undefined &&
       (obj.priority = Math.round(message.priority));
     message.track !== undefined && (obj.track = message.track);
@@ -2303,24 +2714,36 @@ export const Stop_HeadsignRule = {
   },
 };
 
-function createBaseStop_Preview(): Stop_Preview {
-  return { id: "", name: "", href: undefined };
+function createBaseStop_Reference(): Stop_Reference {
+  return { id: "", resource: undefined, system: undefined, name: undefined };
 }
 
-export const Stop_Preview = {
-  fromJSON(object: any): Stop_Preview {
+export const Stop_Reference = {
+  fromJSON(object: any): Stop_Reference {
     return {
       id: isSet(object.id) ? String(object.id) : "",
-      name: isSet(object.name) ? String(object.name) : "",
-      href: isSet(object.href) ? String(object.href) : undefined,
+      resource: isSet(object.resource)
+        ? Resource.fromJSON(object.resource)
+        : undefined,
+      system: isSet(object.system)
+        ? System_Reference.fromJSON(object.system)
+        : undefined,
+      name: isSet(object.name) ? String(object.name) : undefined,
     };
   },
 
-  toJSON(message: Stop_Preview): unknown {
+  toJSON(message: Stop_Reference): unknown {
     const obj: any = {};
     message.id !== undefined && (obj.id = message.id);
+    message.resource !== undefined &&
+      (obj.resource = message.resource
+        ? Resource.toJSON(message.resource)
+        : undefined);
+    message.system !== undefined &&
+      (obj.system = message.system
+        ? System_Reference.toJSON(message.system)
+        : undefined);
     message.name !== undefined && (obj.name = message.name);
-    message.href !== undefined && (obj.href = message.href);
     return obj;
   },
 };
@@ -2341,8 +2764,12 @@ function createBaseStopTime(): StopTime {
 export const StopTime = {
   fromJSON(object: any): StopTime {
     return {
-      stop: isSet(object.stop) ? Stop_Preview.fromJSON(object.stop) : undefined,
-      trip: isSet(object.trip) ? Trip_Preview.fromJSON(object.trip) : undefined,
+      stop: isSet(object.stop)
+        ? Stop_Reference.fromJSON(object.stop)
+        : undefined,
+      trip: isSet(object.trip)
+        ? Trip_Reference.fromJSON(object.trip)
+        : undefined,
       arrival: isSet(object.arrival)
         ? StopTime_EstimatedTime.fromJSON(object.arrival)
         : undefined,
@@ -2361,9 +2788,13 @@ export const StopTime = {
   toJSON(message: StopTime): unknown {
     const obj: any = {};
     message.stop !== undefined &&
-      (obj.stop = message.stop ? Stop_Preview.toJSON(message.stop) : undefined);
+      (obj.stop = message.stop
+        ? Stop_Reference.toJSON(message.stop)
+        : undefined);
     message.trip !== undefined &&
-      (obj.trip = message.trip ? Trip_Preview.toJSON(message.trip) : undefined);
+      (obj.trip = message.trip
+        ? Trip_Reference.toJSON(message.trip)
+        : undefined);
     message.arrival !== undefined &&
       (obj.arrival = message.arrival
         ? StopTime_EstimatedTime.toJSON(message.arrival)
@@ -2409,13 +2840,12 @@ export const StopTime_EstimatedTime = {
 function createBaseTrip(): Trip {
   return {
     id: "",
+    resource: undefined,
     route: undefined,
-    lastStop: undefined,
     startedAt: undefined,
     vehicle: undefined,
     directionId: false,
     stopTimes: [],
-    href: undefined,
   };
 }
 
@@ -2423,15 +2853,15 @@ export const Trip = {
   fromJSON(object: any): Trip {
     return {
       id: isSet(object.id) ? String(object.id) : "",
-      route: isSet(object.route)
-        ? Route_Preview.fromJSON(object.route)
+      resource: isSet(object.resource)
+        ? Resource.fromJSON(object.resource)
         : undefined,
-      lastStop: isSet(object.lastStop)
-        ? Stop_Preview.fromJSON(object.lastStop)
+      route: isSet(object.route)
+        ? Route_Reference.fromJSON(object.route)
         : undefined,
       startedAt: isSet(object.startedAt) ? Number(object.startedAt) : undefined,
       vehicle: isSet(object.vehicle)
-        ? Vehicle_Preview.fromJSON(object.vehicle)
+        ? Vehicle_Reference.fromJSON(object.vehicle)
         : undefined,
       directionId: isSet(object.directionId)
         ? Boolean(object.directionId)
@@ -2439,26 +2869,25 @@ export const Trip = {
       stopTimes: Array.isArray(object?.stopTimes)
         ? object.stopTimes.map((e: any) => StopTime.fromJSON(e))
         : [],
-      href: isSet(object.href) ? String(object.href) : undefined,
     };
   },
 
   toJSON(message: Trip): unknown {
     const obj: any = {};
     message.id !== undefined && (obj.id = message.id);
+    message.resource !== undefined &&
+      (obj.resource = message.resource
+        ? Resource.toJSON(message.resource)
+        : undefined);
     message.route !== undefined &&
       (obj.route = message.route
-        ? Route_Preview.toJSON(message.route)
-        : undefined);
-    message.lastStop !== undefined &&
-      (obj.lastStop = message.lastStop
-        ? Stop_Preview.toJSON(message.lastStop)
+        ? Route_Reference.toJSON(message.route)
         : undefined);
     message.startedAt !== undefined &&
       (obj.startedAt = Math.round(message.startedAt));
     message.vehicle !== undefined &&
       (obj.vehicle = message.vehicle
-        ? Vehicle_Preview.toJSON(message.vehicle)
+        ? Vehicle_Reference.toJSON(message.vehicle)
         : undefined);
     message.directionId !== undefined &&
       (obj.directionId = message.directionId);
@@ -2469,54 +2898,58 @@ export const Trip = {
     } else {
       obj.stopTimes = [];
     }
-    message.href !== undefined && (obj.href = message.href);
     return obj;
   },
 };
 
-function createBaseTrip_Preview(): Trip_Preview {
+function createBaseTrip_Reference(): Trip_Reference {
   return {
     id: "",
+    resource: undefined,
     route: undefined,
     destination: undefined,
     vehicle: undefined,
-    href: undefined,
   };
 }
 
-export const Trip_Preview = {
-  fromJSON(object: any): Trip_Preview {
+export const Trip_Reference = {
+  fromJSON(object: any): Trip_Reference {
     return {
       id: isSet(object.id) ? String(object.id) : "",
+      resource: isSet(object.resource)
+        ? Resource.fromJSON(object.resource)
+        : undefined,
       route: isSet(object.route)
-        ? Route_Preview.fromJSON(object.route)
+        ? Route_Reference.fromJSON(object.route)
         : undefined,
       destination: isSet(object.destination)
-        ? Stop_Preview.fromJSON(object.destination)
+        ? Stop_Reference.fromJSON(object.destination)
         : undefined,
       vehicle: isSet(object.vehicle)
-        ? Vehicle_Preview.fromJSON(object.vehicle)
+        ? Vehicle_Reference.fromJSON(object.vehicle)
         : undefined,
-      href: isSet(object.href) ? String(object.href) : undefined,
     };
   },
 
-  toJSON(message: Trip_Preview): unknown {
+  toJSON(message: Trip_Reference): unknown {
     const obj: any = {};
     message.id !== undefined && (obj.id = message.id);
+    message.resource !== undefined &&
+      (obj.resource = message.resource
+        ? Resource.toJSON(message.resource)
+        : undefined);
     message.route !== undefined &&
       (obj.route = message.route
-        ? Route_Preview.toJSON(message.route)
+        ? Route_Reference.toJSON(message.route)
         : undefined);
     message.destination !== undefined &&
       (obj.destination = message.destination
-        ? Stop_Preview.toJSON(message.destination)
+        ? Stop_Reference.toJSON(message.destination)
         : undefined);
     message.vehicle !== undefined &&
       (obj.vehicle = message.vehicle
-        ? Vehicle_Preview.toJSON(message.vehicle)
+        ? Vehicle_Reference.toJSON(message.vehicle)
         : undefined);
-    message.href !== undefined && (obj.href = message.href);
     return obj;
   },
 };
@@ -2536,18 +2969,18 @@ export const Vehicle = {
   },
 };
 
-function createBaseVehicle_Preview(): Vehicle_Preview {
+function createBaseVehicle_Reference(): Vehicle_Reference {
   return { id: "" };
 }
 
-export const Vehicle_Preview = {
-  fromJSON(object: any): Vehicle_Preview {
+export const Vehicle_Reference = {
+  fromJSON(object: any): Vehicle_Reference {
     return {
       id: isSet(object.id) ? String(object.id) : "",
     };
   },
 
-  toJSON(message: Vehicle_Preview): unknown {
+  toJSON(message: Vehicle_Reference): unknown {
     const obj: any = {};
     message.id !== undefined && (obj.id = message.id);
     return obj;
@@ -2557,6 +2990,8 @@ export const Vehicle_Preview = {
 function createBaseRoute(): Route {
   return {
     id: "",
+    resource: undefined,
+    system: undefined,
     shortName: undefined,
     longName: undefined,
     color: "",
@@ -2564,9 +2999,9 @@ function createBaseRoute(): Route {
     description: undefined,
     url: undefined,
     sortOrder: undefined,
-    continuousPickup: "",
-    continuousDropOff: "",
-    type: "",
+    continuousPickup: 0,
+    continuousDropOff: 0,
+    type: 0,
     agency: undefined,
     alerts: [],
     estimatedHeadway: undefined,
@@ -2578,6 +3013,12 @@ export const Route = {
   fromJSON(object: any): Route {
     return {
       id: isSet(object.id) ? String(object.id) : "",
+      resource: isSet(object.resource)
+        ? Resource.fromJSON(object.resource)
+        : undefined,
+      system: isSet(object.system)
+        ? System_Reference.fromJSON(object.system)
+        : undefined,
       shortName: isSet(object.shortName) ? String(object.shortName) : undefined,
       longName: isSet(object.longName) ? String(object.longName) : undefined,
       color: isSet(object.color) ? String(object.color) : "",
@@ -2588,17 +3029,17 @@ export const Route = {
       url: isSet(object.url) ? String(object.url) : undefined,
       sortOrder: isSet(object.sortOrder) ? Number(object.sortOrder) : undefined,
       continuousPickup: isSet(object.continuousPickup)
-        ? String(object.continuousPickup)
-        : "",
+        ? route_ContinuousPolicyFromJSON(object.continuousPickup)
+        : 0,
       continuousDropOff: isSet(object.continuousDropOff)
-        ? String(object.continuousDropOff)
-        : "",
-      type: isSet(object.type) ? String(object.type) : "",
+        ? route_ContinuousPolicyFromJSON(object.continuousDropOff)
+        : 0,
+      type: isSet(object.type) ? route_TypeFromJSON(object.type) : 0,
       agency: isSet(object.agency)
-        ? Agency_Preview.fromJSON(object.agency)
+        ? Agency_Reference.fromJSON(object.agency)
         : undefined,
       alerts: Array.isArray(object?.alerts)
-        ? object.alerts.map((e: any) => Alert_Preview.fromJSON(e))
+        ? object.alerts.map((e: any) => Alert_Reference.fromJSON(e))
         : [],
       estimatedHeadway: isSet(object.estimatedHeadway)
         ? Number(object.estimatedHeadway)
@@ -2612,6 +3053,14 @@ export const Route = {
   toJSON(message: Route): unknown {
     const obj: any = {};
     message.id !== undefined && (obj.id = message.id);
+    message.resource !== undefined &&
+      (obj.resource = message.resource
+        ? Resource.toJSON(message.resource)
+        : undefined);
+    message.system !== undefined &&
+      (obj.system = message.system
+        ? System_Reference.toJSON(message.system)
+        : undefined);
     message.shortName !== undefined && (obj.shortName = message.shortName);
     message.longName !== undefined && (obj.longName = message.longName);
     message.color !== undefined && (obj.color = message.color);
@@ -2622,17 +3071,21 @@ export const Route = {
     message.sortOrder !== undefined &&
       (obj.sortOrder = Math.round(message.sortOrder));
     message.continuousPickup !== undefined &&
-      (obj.continuousPickup = message.continuousPickup);
+      (obj.continuousPickup = route_ContinuousPolicyToJSON(
+        message.continuousPickup
+      ));
     message.continuousDropOff !== undefined &&
-      (obj.continuousDropOff = message.continuousDropOff);
-    message.type !== undefined && (obj.type = message.type);
+      (obj.continuousDropOff = route_ContinuousPolicyToJSON(
+        message.continuousDropOff
+      ));
+    message.type !== undefined && (obj.type = route_TypeToJSON(message.type));
     message.agency !== undefined &&
       (obj.agency = message.agency
-        ? Agency_Preview.toJSON(message.agency)
+        ? Agency_Reference.toJSON(message.agency)
         : undefined);
     if (message.alerts) {
       obj.alerts = message.alerts.map((e) =>
-        e ? Alert_Preview.toJSON(e) : undefined
+        e ? Alert_Reference.toJSON(e) : undefined
       );
     } else {
       obj.alerts = [];
@@ -2659,7 +3112,7 @@ export const Route_ServiceMap = {
     return {
       configId: isSet(object.configId) ? String(object.configId) : "",
       stops: Array.isArray(object?.stops)
-        ? object.stops.map((e: any) => Stop_Preview.fromJSON(e))
+        ? object.stops.map((e: any) => Stop_Reference.fromJSON(e))
         : [],
     };
   },
@@ -2669,7 +3122,7 @@ export const Route_ServiceMap = {
     message.configId !== undefined && (obj.configId = message.configId);
     if (message.stops) {
       obj.stops = message.stops.map((e) =>
-        e ? Stop_Preview.toJSON(e) : undefined
+        e ? Stop_Reference.toJSON(e) : undefined
       );
     } else {
       obj.stops = [];
@@ -2678,52 +3131,56 @@ export const Route_ServiceMap = {
   },
 };
 
-function createBaseRoute_Preview(): Route_Preview {
-  return { id: "", color: "", system: undefined, href: undefined };
+function createBaseRoute_Reference(): Route_Reference {
+  return { id: "", resource: undefined, system: undefined, color: "" };
 }
 
-export const Route_Preview = {
-  fromJSON(object: any): Route_Preview {
+export const Route_Reference = {
+  fromJSON(object: any): Route_Reference {
     return {
       id: isSet(object.id) ? String(object.id) : "",
+      resource: isSet(object.resource)
+        ? Resource.fromJSON(object.resource)
+        : undefined,
+      system: isSet(object.system)
+        ? System_Reference.fromJSON(object.system)
+        : undefined,
       color: isSet(object.color) ? String(object.color) : "",
-      system: isSet(object.system) ? System.fromJSON(object.system) : undefined,
-      href: isSet(object.href) ? String(object.href) : undefined,
     };
   },
 
-  toJSON(message: Route_Preview): unknown {
+  toJSON(message: Route_Reference): unknown {
     const obj: any = {};
     message.id !== undefined && (obj.id = message.id);
-    message.color !== undefined && (obj.color = message.color);
+    message.resource !== undefined &&
+      (obj.resource = message.resource
+        ? Resource.toJSON(message.resource)
+        : undefined);
     message.system !== undefined &&
-      (obj.system = message.system ? System.toJSON(message.system) : undefined);
-    message.href !== undefined && (obj.href = message.href);
+      (obj.system = message.system
+        ? System_Reference.toJSON(message.system)
+        : undefined);
+    message.color !== undefined && (obj.color = message.color);
     return obj;
   },
 };
 
 function createBaseFeed(): Feed {
-  return {
-    id: "",
-    periodicUpdateEnabled: false,
-    periodicUpdatePeriod: undefined,
-    updates: undefined,
-  };
+  return { id: "", resource: undefined, system: undefined, updates: undefined };
 }
 
 export const Feed = {
   fromJSON(object: any): Feed {
     return {
       id: isSet(object.id) ? String(object.id) : "",
-      periodicUpdateEnabled: isSet(object.periodicUpdateEnabled)
-        ? Boolean(object.periodicUpdateEnabled)
-        : false,
-      periodicUpdatePeriod: isSet(object.periodicUpdatePeriod)
-        ? String(object.periodicUpdatePeriod)
+      resource: isSet(object.resource)
+        ? Resource.fromJSON(object.resource)
+        : undefined,
+      system: isSet(object.system)
+        ? System_Reference.fromJSON(object.system)
         : undefined,
       updates: isSet(object.updates)
-        ? Feed_Updates.fromJSON(object.updates)
+        ? ChildResources.fromJSON(object.updates)
         : undefined,
     };
   },
@@ -2731,67 +3188,50 @@ export const Feed = {
   toJSON(message: Feed): unknown {
     const obj: any = {};
     message.id !== undefined && (obj.id = message.id);
-    message.periodicUpdateEnabled !== undefined &&
-      (obj.periodicUpdateEnabled = message.periodicUpdateEnabled);
-    message.periodicUpdatePeriod !== undefined &&
-      (obj.periodicUpdatePeriod = message.periodicUpdatePeriod);
+    message.resource !== undefined &&
+      (obj.resource = message.resource
+        ? Resource.toJSON(message.resource)
+        : undefined);
+    message.system !== undefined &&
+      (obj.system = message.system
+        ? System_Reference.toJSON(message.system)
+        : undefined);
     message.updates !== undefined &&
       (obj.updates = message.updates
-        ? Feed_Updates.toJSON(message.updates)
+        ? ChildResources.toJSON(message.updates)
         : undefined);
     return obj;
   },
 };
 
-function createBaseFeed_Updates(): Feed_Updates {
-  return { href: undefined };
+function createBaseFeed_Reference(): Feed_Reference {
+  return { id: "", resource: undefined, system: undefined };
 }
 
-export const Feed_Updates = {
-  fromJSON(object: any): Feed_Updates {
-    return {
-      href: isSet(object.href) ? String(object.href) : undefined,
-    };
-  },
-
-  toJSON(message: Feed_Updates): unknown {
-    const obj: any = {};
-    message.href !== undefined && (obj.href = message.href);
-    return obj;
-  },
-};
-
-function createBaseFeed_Preview(): Feed_Preview {
-  return {
-    id: "",
-    periodicUpdateEnabled: false,
-    periodicUpdatePeriod: undefined,
-    href: undefined,
-  };
-}
-
-export const Feed_Preview = {
-  fromJSON(object: any): Feed_Preview {
+export const Feed_Reference = {
+  fromJSON(object: any): Feed_Reference {
     return {
       id: isSet(object.id) ? String(object.id) : "",
-      periodicUpdateEnabled: isSet(object.periodicUpdateEnabled)
-        ? Boolean(object.periodicUpdateEnabled)
-        : false,
-      periodicUpdatePeriod: isSet(object.periodicUpdatePeriod)
-        ? String(object.periodicUpdatePeriod)
+      resource: isSet(object.resource)
+        ? Resource.fromJSON(object.resource)
         : undefined,
-      href: isSet(object.href) ? String(object.href) : undefined,
+      system: isSet(object.system)
+        ? System_Reference.fromJSON(object.system)
+        : undefined,
     };
   },
 
-  toJSON(message: Feed_Preview): unknown {
+  toJSON(message: Feed_Reference): unknown {
     const obj: any = {};
     message.id !== undefined && (obj.id = message.id);
-    message.periodicUpdateEnabled !== undefined &&
-      (obj.periodicUpdateEnabled = message.periodicUpdateEnabled);
-    message.periodicUpdatePeriod !== undefined &&
-      (obj.periodicUpdatePeriod = message.periodicUpdatePeriod);
-    message.href !== undefined && (obj.href = message.href);
+    message.resource !== undefined &&
+      (obj.resource = message.resource
+        ? Resource.toJSON(message.resource)
+        : undefined);
+    message.system !== undefined &&
+      (obj.system = message.system
+        ? System_Reference.toJSON(message.system)
+        : undefined);
     return obj;
   },
 };
@@ -2799,6 +3239,8 @@ export const Feed_Preview = {
 function createBaseAgency(): Agency {
   return {
     id: "",
+    resource: undefined,
+    system: undefined,
     name: "",
     url: "",
     timezone: "",
@@ -2808,7 +3250,6 @@ function createBaseAgency(): Agency {
     email: undefined,
     routes: [],
     alerts: [],
-    href: undefined,
   };
 }
 
@@ -2816,6 +3257,12 @@ export const Agency = {
   fromJSON(object: any): Agency {
     return {
       id: isSet(object.id) ? String(object.id) : "",
+      resource: isSet(object.resource)
+        ? Resource.fromJSON(object.resource)
+        : undefined,
+      system: isSet(object.system)
+        ? System_Reference.fromJSON(object.system)
+        : undefined,
       name: isSet(object.name) ? String(object.name) : "",
       url: isSet(object.url) ? String(object.url) : "",
       timezone: isSet(object.timezone) ? String(object.timezone) : "",
@@ -2824,18 +3271,25 @@ export const Agency = {
       fareUrl: isSet(object.fareUrl) ? String(object.fareUrl) : undefined,
       email: isSet(object.email) ? String(object.email) : undefined,
       routes: Array.isArray(object?.routes)
-        ? object.routes.map((e: any) => Route_Preview.fromJSON(e))
+        ? object.routes.map((e: any) => Route_Reference.fromJSON(e))
         : [],
       alerts: Array.isArray(object?.alerts)
-        ? object.alerts.map((e: any) => Alert_Preview.fromJSON(e))
+        ? object.alerts.map((e: any) => Alert_Reference.fromJSON(e))
         : [],
-      href: isSet(object.href) ? String(object.href) : undefined,
     };
   },
 
   toJSON(message: Agency): unknown {
     const obj: any = {};
     message.id !== undefined && (obj.id = message.id);
+    message.resource !== undefined &&
+      (obj.resource = message.resource
+        ? Resource.toJSON(message.resource)
+        : undefined);
+    message.system !== undefined &&
+      (obj.system = message.system
+        ? System_Reference.toJSON(message.system)
+        : undefined);
     message.name !== undefined && (obj.name = message.name);
     message.url !== undefined && (obj.url = message.url);
     message.timezone !== undefined && (obj.timezone = message.timezone);
@@ -2845,41 +3299,52 @@ export const Agency = {
     message.email !== undefined && (obj.email = message.email);
     if (message.routes) {
       obj.routes = message.routes.map((e) =>
-        e ? Route_Preview.toJSON(e) : undefined
+        e ? Route_Reference.toJSON(e) : undefined
       );
     } else {
       obj.routes = [];
     }
     if (message.alerts) {
       obj.alerts = message.alerts.map((e) =>
-        e ? Alert_Preview.toJSON(e) : undefined
+        e ? Alert_Reference.toJSON(e) : undefined
       );
     } else {
       obj.alerts = [];
     }
-    message.href !== undefined && (obj.href = message.href);
     return obj;
   },
 };
 
-function createBaseAgency_Preview(): Agency_Preview {
-  return { id: "", name: "", href: undefined };
+function createBaseAgency_Reference(): Agency_Reference {
+  return { id: "", resource: undefined, system: undefined, name: "" };
 }
 
-export const Agency_Preview = {
-  fromJSON(object: any): Agency_Preview {
+export const Agency_Reference = {
+  fromJSON(object: any): Agency_Reference {
     return {
       id: isSet(object.id) ? String(object.id) : "",
+      resource: isSet(object.resource)
+        ? Resource.fromJSON(object.resource)
+        : undefined,
+      system: isSet(object.system)
+        ? System_Reference.fromJSON(object.system)
+        : undefined,
       name: isSet(object.name) ? String(object.name) : "",
-      href: isSet(object.href) ? String(object.href) : undefined,
     };
   },
 
-  toJSON(message: Agency_Preview): unknown {
+  toJSON(message: Agency_Reference): unknown {
     const obj: any = {};
     message.id !== undefined && (obj.id = message.id);
+    message.resource !== undefined &&
+      (obj.resource = message.resource
+        ? Resource.toJSON(message.resource)
+        : undefined);
+    message.system !== undefined &&
+      (obj.system = message.system
+        ? System_Reference.toJSON(message.system)
+        : undefined);
     message.name !== undefined && (obj.name = message.name);
-    message.href !== undefined && (obj.href = message.href);
     return obj;
   },
 };
@@ -2887,6 +3352,8 @@ export const Agency_Preview = {
 function createBaseAlert(): Alert {
   return {
     id: "",
+    resource: undefined,
+    system: undefined,
     cause: 0,
     effect: 0,
     currentActivePeriod: undefined,
@@ -2901,6 +3368,12 @@ export const Alert = {
   fromJSON(object: any): Alert {
     return {
       id: isSet(object.id) ? String(object.id) : "",
+      resource: isSet(object.resource)
+        ? Resource.fromJSON(object.resource)
+        : undefined,
+      system: isSet(object.system)
+        ? System_Reference.fromJSON(object.system)
+        : undefined,
       cause: isSet(object.cause) ? alert_CauseFromJSON(object.cause) : 0,
       effect: isSet(object.effect) ? alert_EffectFromJSON(object.effect) : 0,
       currentActivePeriod: isSet(object.currentActivePeriod)
@@ -2926,6 +3399,14 @@ export const Alert = {
   toJSON(message: Alert): unknown {
     const obj: any = {};
     message.id !== undefined && (obj.id = message.id);
+    message.resource !== undefined &&
+      (obj.resource = message.resource
+        ? Resource.toJSON(message.resource)
+        : undefined);
+    message.system !== undefined &&
+      (obj.system = message.system
+        ? System_Reference.toJSON(message.system)
+        : undefined);
     message.cause !== undefined &&
       (obj.cause = alert_CauseToJSON(message.cause));
     message.effect !== undefined &&
@@ -3005,22 +3486,42 @@ export const Alert_Text = {
   },
 };
 
-function createBaseAlert_Preview(): Alert_Preview {
-  return { id: "", cause: 0, effect: 0 };
+function createBaseAlert_Reference(): Alert_Reference {
+  return {
+    id: "",
+    resource: undefined,
+    system: undefined,
+    cause: 0,
+    effect: 0,
+  };
 }
 
-export const Alert_Preview = {
-  fromJSON(object: any): Alert_Preview {
+export const Alert_Reference = {
+  fromJSON(object: any): Alert_Reference {
     return {
       id: isSet(object.id) ? String(object.id) : "",
+      resource: isSet(object.resource)
+        ? Resource.fromJSON(object.resource)
+        : undefined,
+      system: isSet(object.system)
+        ? System_Reference.fromJSON(object.system)
+        : undefined,
       cause: isSet(object.cause) ? alert_CauseFromJSON(object.cause) : 0,
       effect: isSet(object.effect) ? alert_EffectFromJSON(object.effect) : 0,
     };
   },
 
-  toJSON(message: Alert_Preview): unknown {
+  toJSON(message: Alert_Reference): unknown {
     const obj: any = {};
     message.id !== undefined && (obj.id = message.id);
+    message.resource !== undefined &&
+      (obj.resource = message.resource
+        ? Resource.toJSON(message.resource)
+        : undefined);
+    message.system !== undefined &&
+      (obj.system = message.system
+        ? System_Reference.toJSON(message.system)
+        : undefined);
     message.cause !== undefined &&
       (obj.cause = alert_CauseToJSON(message.cause));
     message.effect !== undefined &&
@@ -3043,10 +3544,10 @@ export const Transfer = {
   fromJSON(object: any): Transfer {
     return {
       fromStop: isSet(object.fromStop)
-        ? Stop_Preview.fromJSON(object.fromStop)
+        ? Stop_Reference.fromJSON(object.fromStop)
         : undefined,
       toStop: isSet(object.toStop)
-        ? Stop_Preview.fromJSON(object.toStop)
+        ? Stop_Reference.fromJSON(object.toStop)
         : undefined,
       type: isSet(object.type) ? transfer_TypeFromJSON(object.type) : 0,
       minTransferTime: isSet(object.minTransferTime)
@@ -3060,11 +3561,11 @@ export const Transfer = {
     const obj: any = {};
     message.fromStop !== undefined &&
       (obj.fromStop = message.fromStop
-        ? Stop_Preview.toJSON(message.fromStop)
+        ? Stop_Reference.toJSON(message.fromStop)
         : undefined);
     message.toStop !== undefined &&
       (obj.toStop = message.toStop
-        ? Stop_Preview.toJSON(message.toStop)
+        ? Stop_Reference.toJSON(message.toStop)
         : undefined);
     message.type !== undefined &&
       (obj.type = transfer_TypeToJSON(message.type));
@@ -3079,13 +3580,15 @@ export const Transfer = {
 function createBaseFeedUpdate(): FeedUpdate {
   return {
     id: "",
-    type: "",
-    status: "",
+    resource: undefined,
+    feed: undefined,
+    startedAt: 0,
+    finished: false,
+    finishedAt: undefined,
     result: undefined,
-    stackTrace: undefined,
     contentLength: undefined,
     contentHash: undefined,
-    completedAt: undefined,
+    errorMessage: undefined,
   };
 }
 
@@ -3093,11 +3596,19 @@ export const FeedUpdate = {
   fromJSON(object: any): FeedUpdate {
     return {
       id: isSet(object.id) ? String(object.id) : "",
-      type: isSet(object.type) ? String(object.type) : "",
-      status: isSet(object.status) ? String(object.status) : "",
-      result: isSet(object.result) ? String(object.result) : undefined,
-      stackTrace: isSet(object.stackTrace)
-        ? String(object.stackTrace)
+      resource: isSet(object.resource)
+        ? Resource.fromJSON(object.resource)
+        : undefined,
+      feed: isSet(object.feed)
+        ? Feed_Reference.fromJSON(object.feed)
+        : undefined,
+      startedAt: isSet(object.startedAt) ? Number(object.startedAt) : 0,
+      finished: isSet(object.finished) ? Boolean(object.finished) : false,
+      finishedAt: isSet(object.finishedAt)
+        ? Number(object.finishedAt)
+        : undefined,
+      result: isSet(object.result)
+        ? feedUpdate_ResultFromJSON(object.result)
         : undefined,
       contentLength: isSet(object.contentLength)
         ? Number(object.contentLength)
@@ -3105,8 +3616,8 @@ export const FeedUpdate = {
       contentHash: isSet(object.contentHash)
         ? String(object.contentHash)
         : undefined,
-      completedAt: isSet(object.completedAt)
-        ? Number(object.completedAt)
+      errorMessage: isSet(object.errorMessage)
+        ? String(object.errorMessage)
         : undefined,
     };
   },
@@ -3114,16 +3625,30 @@ export const FeedUpdate = {
   toJSON(message: FeedUpdate): unknown {
     const obj: any = {};
     message.id !== undefined && (obj.id = message.id);
-    message.type !== undefined && (obj.type = message.type);
-    message.status !== undefined && (obj.status = message.status);
-    message.result !== undefined && (obj.result = message.result);
-    message.stackTrace !== undefined && (obj.stackTrace = message.stackTrace);
+    message.resource !== undefined &&
+      (obj.resource = message.resource
+        ? Resource.toJSON(message.resource)
+        : undefined);
+    message.feed !== undefined &&
+      (obj.feed = message.feed
+        ? Feed_Reference.toJSON(message.feed)
+        : undefined);
+    message.startedAt !== undefined &&
+      (obj.startedAt = Math.round(message.startedAt));
+    message.finished !== undefined && (obj.finished = message.finished);
+    message.finishedAt !== undefined &&
+      (obj.finishedAt = Math.round(message.finishedAt));
+    message.result !== undefined &&
+      (obj.result =
+        message.result !== undefined
+          ? feedUpdate_ResultToJSON(message.result)
+          : undefined);
     message.contentLength !== undefined &&
       (obj.contentLength = Math.round(message.contentLength));
     message.contentHash !== undefined &&
       (obj.contentHash = message.contentHash);
-    message.completedAt !== undefined &&
-      (obj.completedAt = Math.round(message.completedAt));
+    message.errorMessage !== undefined &&
+      (obj.errorMessage = message.errorMessage);
     return obj;
   },
 };
