@@ -239,7 +239,7 @@ function TripStopTime(props: TripStopTimeProps) {
   if (props.time < 30) {
     displayTime = "Now"
   } else if (props.time < 60) {
-    displayTime = "30s"
+    displayTime = "<1m"
   } else {
     displayTime = Math.floor(props.time / 60).toString() + "m"
   }
