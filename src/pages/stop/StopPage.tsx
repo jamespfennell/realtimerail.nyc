@@ -237,11 +237,11 @@ type TripStopTimeProps = {
 function TripStopTime(props: TripStopTimeProps) {
   let displayTime = "";
   if (props.time < 30) {
-    displayTime = "Arr"
+    displayTime = "Now"
   } else if (props.time < 60) {
-    displayTime = String.fromCharCode(189)
+    displayTime = "<1m"
   } else {
-    displayTime = Math.floor(props.time / 60).toString()
+    displayTime = Math.floor(props.time / 60).toString() + "m"
   }
 
   return (

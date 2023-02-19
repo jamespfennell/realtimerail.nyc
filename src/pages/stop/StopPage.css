@@ -27,6 +27,7 @@
 .StopPage .TripStopTime .time {
     width: 30px;
     text-align: right;
+    margin: 0 5px;
 }
 
 .StopPage .TripStopTime .route {
