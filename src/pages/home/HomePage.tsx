@@ -7,6 +7,7 @@ import { buildStatusFromAlerts } from '../../util/Alert'
 import { listRoutesURL } from "../../api/api";
 import { Alert_Reference, ListRoutesReply } from "../../api/types";
 import { useHttpData } from "../http";
+import { FavoritesList } from '../../shared/favorites/FavoritesList';
 
 const layout = [
   ["1", "2", "3"],
@@ -61,6 +62,8 @@ export default function HomePage() {
   }
   return (
     <div className="HomePage">
+      <FavoritesList />
+      <div className="SubHeading">All Routes</div>
       <div className="routeGrid">
         {grid}
       </div>

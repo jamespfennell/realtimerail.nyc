@@ -10,6 +10,7 @@ import { ListStopsReply, Stop, StopTime, Stop_Reference, Trip_Reference } from "
 import { HttpData, useHttpData } from "../http";
 import { stopServiceMapsURL, stopURL } from "../../api/api";
 import BasicPage from "../../shared/basicpage/BasicPage";
+import { FavoriteButton } from "../../shared/favorites/FavoriteButton";
 
 
 export type StopPageProps = {
@@ -26,6 +27,7 @@ function StopPage(props: StopPageProps) {
         header={Header}
         body={Body}
         stopName={props.stopName}
+        stopId={props.stopId}
       />
     </div>
   )
@@ -34,6 +36,7 @@ function StopPage(props: StopPageProps) {
 export type HeaderProps = {
   httpData: HttpData<Stop>;
   stopName: string | null;
+  stopId: string;
 }
 
 function Header(props: HeaderProps) {
@@ -42,6 +45,7 @@ function Header(props: HeaderProps) {
     stopName = props.httpData.response?.name
   }
   return <div className="header">
+    <FavoriteButton stopId={props.stopId} />
     {stopName}
   </div>
 }
