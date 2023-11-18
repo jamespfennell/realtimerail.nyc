@@ -1,8 +1,8 @@
 import React from 'react'
 import './FavoriteButton.css'
-import { useFavorites } from '../../modules/favorites';
-import FavoriteIcon from './favorite.svg';
-import FavoritedIcon from './favorited.svg';
+import { useFavorites } from './hooks/favorites';
+import FavoriteIcon from './images/favorite.svg';
+import FavoritedIcon from './images/favorited.svg';
 
 type Props = {
     stopId: string;

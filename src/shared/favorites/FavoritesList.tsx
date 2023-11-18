@@ -2,7 +2,7 @@ import React from 'react';
 import './FavoritesList.css';
 import { List, ListElement } from '../../util/List';
 import { Link } from 'react-router-dom';
-import { useFavorites } from '../../modules/favorites';
+import { useFavorites } from './hooks/favorites';
 import { useHttpData } from '../../pages/http';
 import { stopURL } from '../../api/api';
 import { Stop } from '../../api/types';
@@ -11,7 +11,7 @@ import ListOfRouteLogos from '../routelogo/ListOfRouteLogos';
 export function FavoritesList() {
     const { getFavoriteStops } = useFavorites();
     const favoriteStops = getFavoriteStops();
-    
+
     return favoriteStops.length ? (
         <div className="FavoritesList">
             <div className="SubHeading">Favorite Stops</div>
