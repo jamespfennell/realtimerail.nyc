@@ -1,4 +1,8 @@
 .FavoriteButton {
-    text-align: right;
-    margin-right: 10px;
+    margin-left: 10px;
+}
+
+.FavoriteButton:hover {
+    color: lightseagreen;
+    cursor: pointer;
 }

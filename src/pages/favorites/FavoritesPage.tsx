@@ -1,25 +1,32 @@
 import React from 'react';
-import './FavoritesList.css';
+import './FavoritesPage.css';
 import { List, ListElement } from '../../util/List';
 import { Link } from 'react-router-dom';
-import { useFavorites } from './hooks/favorites';
-import { useHttpData } from '../../pages/http';
+import { useFavorites } from '../../shared/favorites/hooks/favorites';
+import { useHttpData } from '../http';
 import { stopURL } from '../../api/api';
 import { Stop } from '../../api/types';
-import ListOfRouteLogos from '../routelogo/ListOfRouteLogos';
+import ListOfRouteLogos from '../../shared/routelogo/ListOfRouteLogos';
 
-export function FavoritesList() {
-    const { getFavoriteStops } = useFavorites();
-    const favoriteStops = getFavoriteStops();
+export type RoutePageProps = {
+  routeId: string;
+}
 
-    return favoriteStops.length ? (
-        <div className="FavoritesList">
-            <div className="SubHeading">Favorite Stops</div>
-            <List className="FavoritesList">
-                {favoriteStops.map((stopId: string) => <FavoriteStopItem key={stopId} stopId={stopId} />)}
-            </List>
-        </div>
-    ) : null;
+export default function FavoritesPage(props: RoutePageProps) {
+  const { getFavoriteStops } = useFavorites();
+
+  const favoriteStops = getFavoriteStops();
+
+  return (
+      <div className="FavoritesPage">
+          <div className="header">Favorite Stops</div>
+          <List className="FavoritesPage">
+              {favoriteStops.map((stopId: string) => (
+                  <FavoriteStopItem key={stopId} stopId={stopId} />
+              ))}
+          </List>
+      </div>
+  );
 }
 
 type FavoriteStopItemProps = {

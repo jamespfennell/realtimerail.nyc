@@ -1,4 +1,4 @@
-import { useLocalStorage } from "./localstorage";
+import { useLocalStorage } from './localstorage';
 
 export const useFavorites = () => {
     const [favorites, setFavorites] = useLocalStorage('rtr.favorites', []);

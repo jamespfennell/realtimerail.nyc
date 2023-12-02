@@ -45,8 +45,8 @@ function Header(props: HeaderProps) {
     stopName = props.httpData.response?.name
   }
   return <div className="header">
-    <FavoriteButton stopId={props.stopId} />
     {stopName}
+    <FavoriteButton stopId={props.stopId} />
   </div>
 }
 

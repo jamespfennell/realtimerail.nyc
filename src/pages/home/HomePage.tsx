@@ -7,7 +7,7 @@ import { buildStatusFromAlerts } from '../../util/Alert'
 import { listRoutesURL } from "../../api/api";
 import { Alert_Reference, ListRoutesReply } from "../../api/types";
 import { useHttpData } from "../http";
-import { FavoritesList } from '../../shared/favorites/FavoritesList';
+import { List, ListElement } from "../../util/List";
 
 const layout = [
   ["1", "2", "3"],
@@ -62,8 +62,7 @@ export default function HomePage() {
   }
   return (
     <div className="HomePage">
-      <FavoritesList />
-      <div className="SubHeading">All Routes</div>
+      <NavigationList />
       <div className="routeGrid">
         {grid}
       </div>
@@ -98,6 +97,18 @@ function RouteButton(props: RouteButtonProps) {
         {descriptionElement}
       </Link>
     </div>
+  )
+}
+
+function NavigationList() {
+  return (
+    <List className="NavigationList">
+        <Link to="/favorites">
+            <ListElement>
+                ★ Favorite Stops
+            </ListElement>
+        </Link>
+    </List>
   )
 }
 
