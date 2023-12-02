@@ -20,11 +20,16 @@ export default function FavoritesPage(props: RoutePageProps) {
   return (
       <div className="FavoritesPage">
           <div className="header">Favorite Stops</div>
-          <List className="FavoritesPage">
+          {favoriteStops.length ? (
+            <List className="FavoritesPage">
               {favoriteStops.map((stopId: string) => (
                   <FavoriteStopItem key={stopId} stopId={stopId} />
               ))}
-          </List>
+            </List>
+          ) : (
+            <div className="EmptyFavorites">Add favorites by clicking the ☆ on a Stop.</div>
+          )}
+          
       </div>
   );
 }

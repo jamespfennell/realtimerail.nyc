@@ -21,3 +21,10 @@
     margin-left: 3px;
     font-size: 0.9em;
 }
+
+.FavoritesPage .EmptyFavorites {
+    padding: 0 3px;
+    font-size: 0.9em;
+    color: gray;
+    text-align: center;
+}
