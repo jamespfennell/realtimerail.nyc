@@ -6,6 +6,7 @@ import HomePage from "./pages/home/HomePage";
 import StopPage from "./pages/stop/StopPage";
 import RoutePage from "./pages/route/RoutePage";
 import TripPage from "./pages/trip/TripPage";
+import FavoritesPage from './pages/favorites/FavoritesPage';
 
 import HomeIcon from './util/home.svg'
 
@@ -25,6 +26,7 @@ export default function App() {
           <div className="innerContainer">
             <Routes>
               <Route path="/" element={<HomePage />} />
+              <Route path="/favorites" element={<FavoritesPageElement />} />
               <Route path="/routes/:routeId" element={<RoutePageElement />} />
               <Route path="/routes/:routeId/:tripId" element={<TripPageElement />} />
               <Route path="/stops/:stopId" element={<StopPageElement />} />
@@ -49,6 +51,13 @@ export default function App() {
       </div>
     </BrowserRouter>
   );
+}
+
+function FavoritesPageElement() {
+  const params = useParams();
+  return <FavoritesPage
+    routeId={params.routeId!}
+  />
 }
 
 function RoutePageElement() {

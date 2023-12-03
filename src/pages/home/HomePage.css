@@ -69,6 +69,24 @@
     transition: opacity 500ms;
 }
 
+.NavigationList .ListElement {
+    border-radius: 12px;
+    padding: 8px 5px;
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.NavigationList .ListElement .ListOfRouteLogos > div {
+    width: 22px;
+    height: 22px;
+    margin: 0 2px;
+}
+
+.NavigationList .name {
+    margin-left: 3px;
+    font-size: 0.9em;
+}
 
 /*
 .HomePage-row {
