@@ -106,8 +106,6 @@ function Body(stop: Stop) {
     )
   }
 
-  // {buildLinkedStops(siblingStops, "Other platforms at this station")}
-  // {buildConnections(otherSystemTransfers)}
   return (
     <div>
       <div className="mainRoutes">
@@ -118,7 +116,7 @@ function Body(stop: Stop) {
         />
       </div>
       {stopTimeElements}
-      <LinkedStops stops={inSystemTransfers} title="Transfers" />
+      <LinkedStops stops={inSystemTransfers} title="Transfers" key="transfers" />
     </div>
   )
 }
@@ -184,8 +182,8 @@ function HeadsignStopTimes(props: HeadsignStopTimesProps) {
     tripStopTimeElements.push(
       <TripStopTime
         key={"trip" + trip.id}
-        lastStopName={definedOr(trip.destination?.name, "")}
-        routeId={definedOr(trip.route?.id, "")}
+        lastStopName={trip.destination?.name ?? ""}
+        routeId={trip.route?.id ?? ""}
         tripId={trip.id}
         time={tripTime - props.currentTime}
         isAssigned={true} // TODO
@@ -318,36 +316,6 @@ function LinkedStops(props: LinkedStopsProps) {
       </List>
     </div>
   )
-}
-
-function buildConnections(stops: any) {
-  if (stops.length === 0) {
-    return null
-  }
-  let stopIds = new Set();
-  let elements = []
-  for (const siblingStop of stops) {
-    if (stopIds.has(siblingStop.id)) {
-      continue
-    }
-    stopIds.add(siblingStop.id)
-    elements.push(
-      <ListElement key={siblingStop.id}>{siblingStop.system?.name} at {siblingStop.name}</ListElement>
-    )
-  }
-  return (
-    <div>
-      <div className="SubHeading">Connections</div>
-      <List className="siblingStops">{elements}</List>
-    </div>
-  )
-}
-
-function definedOr<S>(s: S | undefined, d: S): S {
-  if (s === undefined) {
-    return d
-  }
-  return s
 }
 
 export default StopPage;
