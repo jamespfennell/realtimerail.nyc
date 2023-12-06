@@ -7,7 +7,7 @@ import RouteLogo from "../../shared/routelogo/RouteLogo";
 import { Link } from "react-router-dom";
 import { List, ListElement } from "../../util/List";
 import { ListStopsReply, Stop, StopTime, Stop_Reference, Trip_Reference } from "../../api/types";
-import { HttpData, useHttpData } from "../http";
+import { useHttpData } from "../http";
 import { stopServiceMapsURL, stopURL } from "../../api/api";
 import BasicPage from "../../shared/basicpage/BasicPage";
 import { FavoriteButton } from "../../shared/favorites/FavoriteButton";
@@ -20,34 +20,19 @@ export type StopPageProps = {
 
 function StopPage(props: StopPageProps) {
   const httpData = useHttpData(stopURL(props.stopId), 5000, Stop.fromJSON);
+  let stopName = httpData.response?.name ?? props.stopName;
   return (
     <div className="StopPage" key={props.stopId}>
+      <div className="header">
+        {stopName}
+        <FavoriteButton stopId={props.stopId} />
+      </div>
       <BasicPage
         httpData={httpData}
-        header={Header}
         body={Body}
-        stopName={props.stopName}
-        stopId={props.stopId}
       />
     </div>
   )
-}
-
-export type HeaderProps = {
-  httpData: HttpData<Stop>;
-  stopName: string | null;
-  stopId: string;
-}
-
-function Header(props: HeaderProps) {
-  let stopName = props.stopName;
-  if (props.httpData.response?.name !== undefined) {
-    stopName = props.httpData.response?.name
-  }
-  return <div className="header">
-    {stopName}
-    <FavoriteButton stopId={props.stopId} />
-  </div>
 }
 
 function Body(stop: Stop) {

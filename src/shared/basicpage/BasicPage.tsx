@@ -7,15 +7,11 @@ import { HttpData } from "../../pages/http";
 
 export type BasicPageProps<T> = {
   httpData: HttpData<T>;
-  header: React.ComponentType<any>;
   body: React.ComponentType<T>;
-  // All other props
-  [x: string]: any;
 }
 
 function BasicPage<T>(props: BasicPageProps<T>) {
-  const { header, body: component, httpData, ...passThroughProps } = props;
-  let elements = [<props.header key="header" httpData={props.httpData} {...passThroughProps} />];
+  let elements = [];
   if (props.httpData.error != null) {
     elements.push(
       <ErrorMessage key="errorMessage" tryAgainFunction={() => props.httpData.poll()}>{props.httpData.error}</ErrorMessage>

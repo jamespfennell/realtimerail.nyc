@@ -5,7 +5,7 @@ import { timestampToDateTime, timestampToTime } from '../../util/time'
 import ServiceMap, { StopData } from '../../shared/servicemap/ServiceMap'
 import { Link } from 'react-router-dom'
 import { Trip } from "../../api/types";
-import { useHttpData } from "../http";
+import { HttpData, useHttpData } from "../http";
 import BasicPage from "../../shared/basicpage/BasicPage";
 import { tripURL } from "../../api/api";
 
@@ -20,12 +20,13 @@ function TripPage(props: TripPageProps) {
   const httpData = useHttpData(tripURL(props.routeId, props.tripId), 5000, Trip.fromJSON);
   return (
     <div className="TripPage">
-      <BasicPage
+      <Header
         httpData={httpData}
         routeId={props.routeId}
-        header={Header}
-        body={Body}
         lastStopName={props.lastStopName} />
+      <BasicPage
+        httpData={httpData}
+        body={Body} />
     </div>
   )
 }
@@ -39,12 +40,18 @@ transiterErrorMessage(response: any) {
 }
 */
 
-function Header(props: any) {
+type HeaderProps = {
+  routeId: string;
+  lastStopName: string | null;
+  httpData: HttpData<Trip>
+}
+
+function Header(props: HeaderProps) {
   let routeId = props.routeId;
   let lastStopName = props.lastStopName;
   let trip = props.httpData.response;
   if (trip !== null && trip !== undefined) {
-    lastStopName = trip.stopTimes[trip.stopTimes.length - 1].stop?.name
+    lastStopName = trip.stopTimes[trip.stopTimes.length - 1].stop?.name ?? lastStopName
   }
 
   let firstStopName = trip?.stopTimes[0] == null

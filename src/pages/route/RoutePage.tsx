@@ -19,19 +19,12 @@ function RoutePage(props: RoutePageProps) {
   const httpData = useHttpData(routeURL(props.routeId), null, Route.fromJSON);
   return (
     <div className="RoutePage">
+      <div key="header">
+        <RouteLogo route={props.routeId} />
+      </div>
       <BasicPage
         httpData={httpData}
-        routeId={props.routeId}
-        header={Header}
         body={Body} />
-    </div>
-  )
-}
-
-function Header(props: any) {
-  return (
-    <div key="header">
-      <RouteLogo route={props.routeId} />
     </div>
   )
 }
