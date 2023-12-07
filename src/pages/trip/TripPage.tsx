@@ -1,34 +1,36 @@
-import './TripPage.css'
+import "./TripPage.css";
 
-import RouteLogo from '../../shared/routelogo/RouteLogo'
-import { timestampToDateTime, timestampToTime } from '../../util/time'
-import ServiceMap, { StopData } from '../../shared/servicemap/ServiceMap'
-import { Link } from 'react-router-dom'
+import RouteLogo from "../../shared/routelogo/RouteLogo";
+import { timestampToDateTime, timestampToTime } from "../../util/time";
+import ServiceMap, { StopData } from "../../shared/servicemap/ServiceMap";
+import { Link } from "react-router-dom";
 import { Trip } from "../../api/types";
 import { HttpData, useHttpData } from "../http";
 import BasicPage from "../../shared/basicpage/BasicPage";
 import { tripURL } from "../../api/api";
 
-
 export type TripPageProps = {
   routeId: string;
   tripId: string;
   lastStopName: string | null;
-}
+};
 
 function TripPage(props: TripPageProps) {
-  const httpData = useHttpData(tripURL(props.routeId, props.tripId), 5000, Trip.fromJSON);
+  const httpData = useHttpData(
+    tripURL(props.routeId, props.tripId),
+    5000,
+    Trip.fromJSON,
+  );
   return (
     <div className="TripPage">
       <Header
         httpData={httpData}
         routeId={props.routeId}
-        lastStopName={props.lastStopName} />
-      <BasicPage
-        httpData={httpData}
-        body={Body} />
+        lastStopName={props.lastStopName}
+      />
+      <BasicPage httpData={httpData} body={Body} />
     </div>
-  )
+  );
 }
 
 /* TODO
@@ -43,22 +45,22 @@ transiterErrorMessage(response: any) {
 type HeaderProps = {
   routeId: string;
   lastStopName: string | null;
-  httpData: HttpData<Trip>
-}
+  httpData: HttpData<Trip>;
+};
 
 function Header(props: HeaderProps) {
   let routeId = props.routeId;
   let lastStopName = props.lastStopName;
   let trip = props.httpData.response;
   if (trip !== null && trip !== undefined) {
-    lastStopName = trip.stopTimes[trip.stopTimes.length - 1].stop?.name ?? lastStopName
+    lastStopName =
+      trip.stopTimes[trip.stopTimes.length - 1].stop?.name ?? lastStopName;
   }
 
-  let firstStopName = trip?.stopTimes[0] == null
-    ? undefined
-    : trip?.stopTimes[0].stop?.name;
+  let firstStopName =
+    trip?.stopTimes[0] == null ? undefined : trip?.stopTimes[0].stop?.name;
   if (firstStopName === undefined || firstStopName === null) {
-    firstStopName = routeId + " Train"
+    firstStopName = routeId + " Train";
   }
   return (
     <div className="TripPageHeader">
@@ -73,17 +75,16 @@ function Header(props: HeaderProps) {
         <div className="big">{lastStopName}</div>
       </div>
     </div>
-  )
+  );
 }
 
 function Body(trip: Trip) {
-
   let nextStopName = "";
   let future = false;
   let stops: StopData[] = [];
   for (const tripStopTime of trip.stopTimes) {
     if (tripStopTime.stop === null) {
-      continue
+      continue;
     }
     let time = tripStopTime.arrival?.time;
     if (time == null) {
@@ -93,7 +94,7 @@ function Body(trip: Trip) {
       id: tripStopTime.stop?.id.substr(0, tripStopTime.stop.id.length - 1)!,
       name: tripStopTime.stop?.name!,
       time: timestampToTime(time),
-      isActive: tripStopTime.future
+      isActive: tripStopTime.future,
     };
     if (tripStopTime.future === true && future === false) {
       future = true;
@@ -104,9 +105,9 @@ function Body(trip: Trip) {
     stops.push(stop);
   }
 
-  let vehicleId = ""
+  let vehicleId = "";
   if (trip.vehicle != null) {
-    vehicleId = trip.vehicle.id
+    vehicleId = trip.vehicle.id;
   }
 
   /*
@@ -130,16 +131,20 @@ function Body(trip: Trip) {
       <div className="SubHeading">Additional trip details</div>
       <TripData dataKey="Trip ID" value={trip.id} code={true} />
       <TripData dataKey="Vehicle ID" value={vehicleId} code={true} />
-      <TripData dataKey="Start time" value={timestampToDateTime(trip.startedAt)} code={false} />
+      <TripData
+        dataKey="Start time"
+        value={timestampToDateTime(trip.startedAt)}
+        code={false}
+      />
     </div>
-  )
+  );
 }
 
 type TripDataProps = {
-  dataKey: string,
-  value: string,
-  code: boolean,
-}
+  dataKey: string;
+  value: string;
+  code: boolean;
+};
 
 function TripData(props: TripDataProps) {
   let valueClasses = "value";
@@ -147,14 +152,14 @@ function TripData(props: TripDataProps) {
     valueClasses += " code";
   }
   if (props.value === "") {
-    return null
+    return null;
   }
   return (
     <div className="TripData">
       <div className="dataKey">{props.dataKey}:</div>
       <div className={valueClasses}>{props.value}</div>
     </div>
-  )
+  );
 }
 
 export default TripPage;

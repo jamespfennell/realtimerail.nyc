@@ -1,9 +1,9 @@
-import './HomePage.css'
+import "./HomePage.css";
 
 import { Link } from "react-router-dom";
 
-import RouteLogo from '../../shared/routelogo/RouteLogo'
-import { buildStatusFromAlerts } from '../../util/Alert'
+import RouteLogo from "../../shared/routelogo/RouteLogo";
+import { buildStatusFromAlerts } from "../../util/Alert";
 import { listRoutesURL } from "../../api/api";
 import { Alert_Reference, ListRoutesReply } from "../../api/types";
 import { useHttpData } from "../http";
@@ -17,20 +17,24 @@ const layout = [
   ["B", "D", "F", "M"],
   ["N", "Q", "R", "W"],
   ["J", "Z", "SI"],
-  ["H", "FS", "GS"]
+  ["H", "FS", "GS"],
 ];
 
-let routeIdToDescription = new Map()
+let routeIdToDescription = new Map();
 routeIdToDescription.set("H", "Rockaways shuttle");
 routeIdToDescription.set("FS", "Franklin Av shuttle");
 routeIdToDescription.set("GS", "42nd street shuttle");
 
 export default function HomePage() {
-  const alertsData = useHttpData(listRoutesURL(), null, ListRoutesReply.fromJSON);
+  const alertsData = useHttpData(
+    listRoutesURL(),
+    null,
+    ListRoutesReply.fromJSON,
+  );
   let routeIdToAlerts: Map<string, Alert_Reference[]> = new Map();
   if (alertsData.response != null) {
     for (const route of alertsData.response.routes) {
-      routeIdToAlerts.set(route.id, route.alerts)
+      routeIdToAlerts.set(route.id, route.alerts);
     }
   }
 
@@ -51,21 +55,19 @@ export default function HomePage() {
           key={routeId}
           alerts={alerts}
           description={get(routeIdToDescription, routeId, "")}
-        />
-      )
+        />,
+      );
     }
     grid.push(
       <div className="row" key={i}>
         {row}
-      </div>
+      </div>,
     );
   }
   return (
     <div className="HomePage">
       <NavigationList />
-      <div className="routeGrid">
-        {grid}
-      </div>
+      <div className="routeGrid">{grid}</div>
     </div>
   );
 }
@@ -74,19 +76,19 @@ type RouteButtonProps = {
   route: string;
   alerts: Alert_Reference[];
   description: string;
-}
+};
 
 function RouteButton(props: RouteButtonProps) {
-  let statusToColorClass = new Map()
-  statusToColorClass.set("SERVICE_CHANGE", "Orange")
-  statusToColorClass.set("DELAYS", "Red")
-  let status = buildStatusFromAlerts(props.alerts)
+  let statusToColorClass = new Map();
+  statusToColorClass.set("SERVICE_CHANGE", "Orange");
+  statusToColorClass.set("DELAYS", "Red");
+  let status = buildStatusFromAlerts(props.alerts);
   let statusClasses = "statusCircle " + get(statusToColorClass, status, "");
   let buttonClasses = "cell";
 
   let descriptionElement = null;
   if (props.description !== "") {
-    descriptionElement = <div className="description">{props.description}</div>
+    descriptionElement = <div className="description">{props.description}</div>;
   }
 
   return (
@@ -97,25 +99,23 @@ function RouteButton(props: RouteButtonProps) {
         {descriptionElement}
       </Link>
     </div>
-  )
+  );
 }
 
 function NavigationList() {
   return (
     <List className="NavigationList">
-        <Link to="/favorites">
-            <ListElement>
-                ★ Favorite Stops
-            </ListElement>
-        </Link>
+      <Link to="/favorites">
+        <ListElement>★ Favorite Stops</ListElement>
+      </Link>
     </List>
-  )
+  );
 }
 
 function get(m: Map<string, string>, key: string, fallback: string): string {
-  const value = m.get(key)
+  const value = m.get(key);
   if (value !== undefined) {
-    return value
+    return value;
   }
-  return fallback
+  return fallback;
 }

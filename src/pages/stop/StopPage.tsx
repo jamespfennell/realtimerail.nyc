@@ -1,35 +1,51 @@
 import React, { useState } from "react";
 
-import './StopPage.css'
+import "./StopPage.css";
 
 import ListOfRouteLogos from "../../shared/routelogo/ListOfRouteLogos";
 import RouteLogo from "../../shared/routelogo/RouteLogo";
 import { Link } from "react-router-dom";
 import { List, ListElement } from "../../util/List";
-import { ListStopsReply, Stop, StopTime, Stop_Reference, Trip_Reference } from "../../api/types";
+import {
+  ListStopsReply,
+  Stop,
+  StopTime,
+  Stop_Reference,
+  Trip_Reference,
+} from "../../api/types";
 import { useHttpData } from "../http";
 import { stopServiceMapsURL, stopURL } from "../../api/api";
 import { ErrorMessage, LoadingPanel } from "../../shared/basicpage/BasicPage";
 import { FavoriteButton } from "../../shared/favorites/FavoriteButton";
 
-
 export type StopPageProps = {
   stopId: string;
   stopName: string | null;
-}
+};
 
 function StopPage(props: StopPageProps) {
   const stopData = useHttpData(stopURL(props.stopId), 5000, Stop.fromJSON);
-  const transfersData = useHttpData(transfersURL(stopData.response), null, ListStopsReply.fromJSON);
+  const transfersData = useHttpData(
+    transfersURL(stopData.response),
+    null,
+    ListStopsReply.fromJSON,
+  );
 
   let error = stopData.error ?? transfersData.error;
   if (error !== null) {
-    return <ErrorMessage key="errorMessage" tryAgainFunction={() => {
-      // We poll transfers first because if the problem was the stop data,
-      // polling transfers is a no-op.
-      transfersData.poll();
-      stopData.poll();
-    }}>{error}</ErrorMessage>
+    return (
+      <ErrorMessage
+        key="errorMessage"
+        tryAgainFunction={() => {
+          // We poll transfers first because if the problem was the stop data,
+          // polling transfers is a no-op.
+          transfersData.poll();
+          stopData.poll();
+        }}
+      >
+        {error}
+      </ErrorMessage>
+    );
   }
 
   let loaded = stopData.response !== null && transfersData.response !== null;
@@ -46,25 +62,25 @@ function StopPage(props: StopPageProps) {
         <Transfers data={transfersData.response!} title="Transfers" />
       </LoadingPanel>
     </div>
-  )
+  );
 }
 
 export type BodyProps = {
   stop: Stop;
-}
+};
 
 function Body(props: BodyProps) {
   let stop = props.stop;
   let headsignToStopTimes = new Map();
   for (const headsignRule of stop.headsignRules) {
-    headsignToStopTimes.set(headsignRule.headsign, [])
+    headsignToStopTimes.set(headsignRule.headsign, []);
   }
   for (const stopTime of stop.stopTimes) {
-    let headsign = stopTime.headsign ?? "(terminating trains)"
+    let headsign = stopTime.headsign ?? "(terminating trains)";
     if (!headsignToStopTimes.has(headsign)) {
-      headsignToStopTimes.set(headsign, [])
+      headsignToStopTimes.set(headsign, []);
     }
-    headsignToStopTimes.get(headsign).push(stopTime)
+    headsignToStopTimes.get(headsign).push(stopTime);
   }
 
   let headsigns = [];
@@ -75,10 +91,8 @@ function Body(props: BodyProps) {
 
   let usualRouteIds: string[] = [];
   for (const serviceMap of stop.serviceMaps) {
-    if (serviceMap.configId === 'weekday') {
-      serviceMap.routes.forEach(
-        route => usualRouteIds.push(route.id)
-      )
+    if (serviceMap.configId === "weekday") {
+      serviceMap.routes.forEach((route) => usualRouteIds.push(route.id));
     }
   }
 
@@ -87,27 +101,33 @@ function Body(props: BodyProps) {
   for (const transfer of stop.transfers) {
     // TODO: handle cross-system transfers
     if (transfer.toStop != null) {
-      inSystemTransfers.push(transfer.toStop)
+      inSystemTransfers.push(transfer.toStop);
     } else {
       otherSystemTransfers.push(transfer.toStop);
     }
   }
 
-  let currentTime = Math.round((new Date()).getTime() / 1000);
+  let currentTime = Math.round(new Date().getTime() / 1000);
 
   let stopTimeElements = [];
   let allAssigned = true; // TODO
   for (const headsign of headsigns) {
     stopTimeElements.push(
-      <HeadsignStopTimes key={headsign} headsign={headsign} stopTimes={headsignToStopTimes.get(headsign) ?? []} currentTime={currentTime} />
-    )
+      <HeadsignStopTimes
+        key={headsign}
+        headsign={headsign}
+        stopTimes={headsignToStopTimes.get(headsign) ?? []}
+        currentTime={currentTime}
+      />,
+    );
   }
   if (!allAssigned) {
     stopTimeElements.push(
       <div key="scheduledTripWarning" className="scheduledTripWarning">
-        Trains marked with {String.fromCharCode(9734)} are scheduled and have not entered into service yet.
-      </div>
-    )
+        Trains marked with {String.fromCharCode(9734)} are scheduled and have
+        not entered into service yet.
+      </div>,
+    );
   }
 
   return (
@@ -121,23 +141,22 @@ function Body(props: BodyProps) {
       </div>
       {stopTimeElements}
     </div>
-  )
+  );
 }
 type HeadsignStopTimesProps = {
   headsign: string;
   stopTimes: StopTime[];
   currentTime: number;
-}
+};
 
 function HeadsignStopTimes(props: HeadsignStopTimesProps) {
-
   let [maxStopTimes, setMaxStopTimes] = useState(4);
 
   let children = [];
   children.push(
     <div key="subHeading" className="SubHeading">
       {props.headsign}
-    </div>
+    </div>,
   );
   let rendered = 0;
   let skipped = 0;
@@ -145,7 +164,7 @@ function HeadsignStopTimes(props: HeadsignStopTimesProps) {
     children.push(
       <div key="noTrainsScheduled" className="noTrainsScheduled">
         No trains scheduled
-      </div>
+      </div>,
     );
   }
   let tripStopTimeElements = [];
@@ -156,7 +175,7 @@ function HeadsignStopTimes(props: HeadsignStopTimesProps) {
     }
     if (tripTime === undefined) {
       skipped += 1;
-      continue
+      continue;
     }
     // This handles buggy stale trips in the GTFS feed, as well as trips that have left the station
     // but have not been updated in the feed yet.
@@ -165,13 +184,13 @@ function HeadsignStopTimes(props: HeadsignStopTimesProps) {
       continue;
     }
     if (rendered >= maxStopTimes && tripTime - props.currentTime > 10 * 60) {
-      break
+      break;
     }
     if (stopTime.trip === undefined) {
       skipped += 1;
       continue;
     }
-    rendered += 1
+    rendered += 1;
     let trip: Trip_Reference = stopTime.trip;
 
     // TODO
@@ -190,89 +209,92 @@ function HeadsignStopTimes(props: HeadsignStopTimesProps) {
         tripId={trip.id}
         time={tripTime - props.currentTime}
         isAssigned={true} // TODO
-      />
+      />,
     );
   }
   if (rendered > maxStopTimes) {
-    maxStopTimes = rendered
+    maxStopTimes = rendered;
   }
-  children.push(
-    <List key="tripStopTimes">
-      {tripStopTimeElements}
-    </List>
-  );
+  children.push(<List key="tripStopTimes">{tripStopTimeElements}</List>);
   if (rendered + skipped !== props.stopTimes.length) {
     children.push(
-      <div key="moreTrips" className="MoreTrips" onClick={() => setMaxStopTimes(maxStopTimes + 4)}>
+      <div
+        key="moreTrips"
+        className="MoreTrips"
+        onClick={() => setMaxStopTimes(maxStopTimes + 4)}
+      >
         show more trains
-      </div>
-    )
+      </div>,
+    );
   }
-  return <div>{children}</div>
+  return <div>{children}</div>;
 }
 
 type SiblingStopProps = {
-  key: string,
-  stopId: string,
-  name: string,
-  routeIds: string[],
-}
+  key: string;
+  stopId: string;
+  name: string;
+  routeIds: string[];
+};
 
 function SiblingStop(props: SiblingStopProps) {
   return (
     <Link to={"/stops/" + props.stopId} state={{ stopName: props.name }}>
       <ListElement className="SiblingStop">
-        <ListOfRouteLogos routeIds={props.routeIds} skipExpress={true} addLinks={false} />
+        <ListOfRouteLogos
+          routeIds={props.routeIds}
+          skipExpress={true}
+          addLinks={false}
+        />
         <div className="name">{props.name}</div>
       </ListElement>
     </Link>
-  )
+  );
 }
-
 
 type TripStopTimeProps = {
-  key: string,
-  lastStopName: string,
-  routeId: string,
-  tripId: string,
-  time: any,
-  isAssigned: boolean,
-}
+  key: string;
+  lastStopName: string;
+  routeId: string;
+  tripId: string;
+  time: any;
+  isAssigned: boolean;
+};
 
 function TripStopTime(props: TripStopTimeProps) {
   let displayTime = "";
   if (props.time < 30) {
-    displayTime = "Now"
+    displayTime = "Now";
   } else if (props.time < 60) {
-    displayTime = "<1m"
+    displayTime = "<1m";
   } else {
-    displayTime = Math.floor(props.time / 60).toString() + "m"
+    displayTime = Math.floor(props.time / 60).toString() + "m";
   }
 
   return (
     <Link
       to={"/routes/" + props.routeId + "/" + props.tripId}
-      state={{ lastStopName: props.lastStopName }}>
+      state={{ lastStopName: props.lastStopName }}
+    >
       <ListElement className={"TripStopTime"}>
-        <div className="time">
-          {displayTime}
-        </div>
+        <div className="time">{displayTime}</div>
         <div className="route">
           <RouteLogo route={props.routeId} />
         </div>
         <div className="lastStop">
           {props.lastStopName}
-          {props.isAssigned ? "" : String.fromCharCode(160)
-            + String.fromCharCode(9734)}
+          {props.isAssigned
+            ? ""
+            : String.fromCharCode(160) + String.fromCharCode(9734)}
         </div>
       </ListElement>
     </Link>
-  )
+  );
 }
 
 function transfersURL(stop: Stop | null) {
   if (stop === null) {
-    return ""
+    return "";
   }
   let inSystemTransfers = [];
   let otherSystemTransfers = [];
@@ -288,30 +310,30 @@ function transfersURL(stop: Stop | null) {
     }
   }
   // TODO: don't request if stops are empty?
-  return stopServiceMapsURL(inSystemTransfers)
+  return stopServiceMapsURL(inSystemTransfers);
 }
 
 type TransfersProps = {
-  title: string,
-  data: ListStopsReply
-}
+  title: string;
+  data: ListStopsReply;
+};
 
 function Transfers(props: TransfersProps) {
   if (props.data.stops.length === 0) {
-    return <div></div>
+    return <div></div>;
   }
   let stopIDToRoutes = new Map();
   for (const stop of props.data.stops) {
     let routeIds = [];
     for (const serviceMap of stop.serviceMaps) {
       if (serviceMap.configId !== "weekday") {
-        continue
+        continue;
       }
       for (const route of serviceMap.routes) {
-        routeIds.push(route.id)
+        routeIds.push(route.id);
       }
     }
-    stopIDToRoutes.set(stop.id, routeIds)
+    stopIDToRoutes.set(stop.id, routeIds);
   }
   let elements = [];
   for (const stop of props.data.stops) {
@@ -322,17 +344,17 @@ function Transfers(props: TransfersProps) {
         stopId={stop.id}
         name={stop.name ?? ""}
         routeIds={routeIds}
-      />
-    )
+      />,
+    );
   }
   return (
     <div>
-      <div className="SubHeading" key="header">{props.title}</div>
-      <List className="siblingStops">
-        {elements}
-      </List>
+      <div className="SubHeading" key="header">
+        {props.title}
+      </div>
+      <List className="siblingStops">{elements}</List>
     </div>
-  )
+  );
 }
 
 export default StopPage;

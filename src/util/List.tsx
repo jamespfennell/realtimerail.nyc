@@ -1,12 +1,14 @@
-import React from 'react'
-import './List.css'
+import React from "react";
+import "./List.css";
 
 export function ListElement(props: any) {
   return (
-    <div className={"ListElement" + (props.className ? " " + props.className : "")}>
+    <div
+      className={"ListElement" + (props.className ? " " + props.className : "")}
+    >
       {props.children}
     </div>
-  )
+  );
 }
 
 export function List(props: any) {
@@ -14,5 +16,5 @@ export function List(props: any) {
     <div className={"List" + (props.className ? " " + props.className : "")}>
       {props.children}
     </div>
-  )
+  );
 }

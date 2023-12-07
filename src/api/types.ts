@@ -152,7 +152,7 @@ export enum ListStopsRequest_SearchMode {
 }
 
 export function listStopsRequest_SearchModeFromJSON(
-  object: any
+  object: any,
 ): ListStopsRequest_SearchMode {
   switch (object) {
     case 0:
@@ -169,7 +169,7 @@ export function listStopsRequest_SearchModeFromJSON(
 }
 
 export function listStopsRequest_SearchModeToJSON(
-  object: ListStopsRequest_SearchMode
+  object: ListStopsRequest_SearchMode,
 ): string {
   switch (object) {
     case ListStopsRequest_SearchMode.ID:
@@ -866,7 +866,7 @@ export enum Route_ContinuousPolicy {
 }
 
 export function route_ContinuousPolicyFromJSON(
-  object: any
+  object: any,
 ): Route_ContinuousPolicy {
   switch (object) {
     case 0:
@@ -889,7 +889,7 @@ export function route_ContinuousPolicyFromJSON(
 }
 
 export function route_ContinuousPolicyToJSON(
-  object: Route_ContinuousPolicy
+  object: Route_ContinuousPolicy,
 ): string {
   switch (object) {
     case Route_ContinuousPolicy.ALLOWED:
@@ -1737,7 +1737,7 @@ export const ListSystemsReply = {
     const obj: any = {};
     if (message.systems) {
       obj.systems = message.systems.map((e) =>
-        e ? System.toJSON(e) : undefined
+        e ? System.toJSON(e) : undefined,
       );
     } else {
       obj.systems = [];
@@ -1799,7 +1799,7 @@ export const ListAgenciesReply = {
     const obj: any = {};
     if (message.agencies) {
       obj.agencies = message.agencies.map((e) =>
-        e ? Agency.toJSON(e) : undefined
+        e ? Agency.toJSON(e) : undefined,
       );
     } else {
       obj.agencies = [];
@@ -2291,7 +2291,7 @@ export const ListFeedUpdatesReply = {
     const obj: any = {};
     if (message.updates) {
       obj.updates = message.updates.map((e) =>
-        e ? FeedUpdate.toJSON(e) : undefined
+        e ? FeedUpdate.toJSON(e) : undefined,
       );
     } else {
       obj.updates = [];
@@ -2355,7 +2355,7 @@ export const ListTransfersReply = {
     const obj: any = {};
     if (message.transfers) {
       obj.transfers = message.transfers.map((e) =>
-        e ? Transfer.toJSON(e) : undefined
+        e ? Transfer.toJSON(e) : undefined,
       );
     } else {
       obj.transfers = [];
@@ -2607,7 +2607,7 @@ export const Stop = {
         : undefined);
     if (message.childStops) {
       obj.childStops = message.childStops.map((e) =>
-        e ? Stop_Reference.toJSON(e) : undefined
+        e ? Stop_Reference.toJSON(e) : undefined,
       );
     } else {
       obj.childStops = [];
@@ -2619,35 +2619,35 @@ export const Stop = {
       (obj.platformCode = message.platformCode);
     if (message.serviceMaps) {
       obj.serviceMaps = message.serviceMaps.map((e) =>
-        e ? Stop_ServiceMap.toJSON(e) : undefined
+        e ? Stop_ServiceMap.toJSON(e) : undefined,
       );
     } else {
       obj.serviceMaps = [];
     }
     if (message.alerts) {
       obj.alerts = message.alerts.map((e) =>
-        e ? Alert_Reference.toJSON(e) : undefined
+        e ? Alert_Reference.toJSON(e) : undefined,
       );
     } else {
       obj.alerts = [];
     }
     if (message.stopTimes) {
       obj.stopTimes = message.stopTimes.map((e) =>
-        e ? StopTime.toJSON(e) : undefined
+        e ? StopTime.toJSON(e) : undefined,
       );
     } else {
       obj.stopTimes = [];
     }
     if (message.transfers) {
       obj.transfers = message.transfers.map((e) =>
-        e ? Transfer.toJSON(e) : undefined
+        e ? Transfer.toJSON(e) : undefined,
       );
     } else {
       obj.transfers = [];
     }
     if (message.headsignRules) {
       obj.headsignRules = message.headsignRules.map((e) =>
-        e ? Stop_HeadsignRule.toJSON(e) : undefined
+        e ? Stop_HeadsignRule.toJSON(e) : undefined,
       );
     } else {
       obj.headsignRules = [];
@@ -2675,7 +2675,7 @@ export const Stop_ServiceMap = {
     message.configId !== undefined && (obj.configId = message.configId);
     if (message.routes) {
       obj.routes = message.routes.map((e) =>
-        e ? Route_Reference.toJSON(e) : undefined
+        e ? Route_Reference.toJSON(e) : undefined,
       );
     } else {
       obj.routes = [];
@@ -2893,7 +2893,7 @@ export const Trip = {
       (obj.directionId = message.directionId);
     if (message.stopTimes) {
       obj.stopTimes = message.stopTimes.map((e) =>
-        e ? StopTime.toJSON(e) : undefined
+        e ? StopTime.toJSON(e) : undefined,
       );
     } else {
       obj.stopTimes = [];
@@ -3072,11 +3072,11 @@ export const Route = {
       (obj.sortOrder = Math.round(message.sortOrder));
     message.continuousPickup !== undefined &&
       (obj.continuousPickup = route_ContinuousPolicyToJSON(
-        message.continuousPickup
+        message.continuousPickup,
       ));
     message.continuousDropOff !== undefined &&
       (obj.continuousDropOff = route_ContinuousPolicyToJSON(
-        message.continuousDropOff
+        message.continuousDropOff,
       ));
     message.type !== undefined && (obj.type = route_TypeToJSON(message.type));
     message.agency !== undefined &&
@@ -3085,7 +3085,7 @@ export const Route = {
         : undefined);
     if (message.alerts) {
       obj.alerts = message.alerts.map((e) =>
-        e ? Alert_Reference.toJSON(e) : undefined
+        e ? Alert_Reference.toJSON(e) : undefined,
       );
     } else {
       obj.alerts = [];
@@ -3094,7 +3094,7 @@ export const Route = {
       (obj.estimatedHeadway = Math.round(message.estimatedHeadway));
     if (message.serviceMaps) {
       obj.serviceMaps = message.serviceMaps.map((e) =>
-        e ? Route_ServiceMap.toJSON(e) : undefined
+        e ? Route_ServiceMap.toJSON(e) : undefined,
       );
     } else {
       obj.serviceMaps = [];
@@ -3122,7 +3122,7 @@ export const Route_ServiceMap = {
     message.configId !== undefined && (obj.configId = message.configId);
     if (message.stops) {
       obj.stops = message.stops.map((e) =>
-        e ? Stop_Reference.toJSON(e) : undefined
+        e ? Stop_Reference.toJSON(e) : undefined,
       );
     } else {
       obj.stops = [];
@@ -3299,14 +3299,14 @@ export const Agency = {
     message.email !== undefined && (obj.email = message.email);
     if (message.routes) {
       obj.routes = message.routes.map((e) =>
-        e ? Route_Reference.toJSON(e) : undefined
+        e ? Route_Reference.toJSON(e) : undefined,
       );
     } else {
       obj.routes = [];
     }
     if (message.alerts) {
       obj.alerts = message.alerts.map((e) =>
-        e ? Alert_Reference.toJSON(e) : undefined
+        e ? Alert_Reference.toJSON(e) : undefined,
       );
     } else {
       obj.alerts = [];
@@ -3381,7 +3381,7 @@ export const Alert = {
         : undefined,
       allActivePeriods: Array.isArray(object?.allActivePeriods)
         ? object.allActivePeriods.map((e: any) =>
-            Alert_ActivePeriod.fromJSON(e)
+            Alert_ActivePeriod.fromJSON(e),
           )
         : [],
       header: Array.isArray(object?.header)
@@ -3417,21 +3417,21 @@ export const Alert = {
         : undefined);
     if (message.allActivePeriods) {
       obj.allActivePeriods = message.allActivePeriods.map((e) =>
-        e ? Alert_ActivePeriod.toJSON(e) : undefined
+        e ? Alert_ActivePeriod.toJSON(e) : undefined,
       );
     } else {
       obj.allActivePeriods = [];
     }
     if (message.header) {
       obj.header = message.header.map((e) =>
-        e ? Alert_Text.toJSON(e) : undefined
+        e ? Alert_Text.toJSON(e) : undefined,
       );
     } else {
       obj.header = [];
     }
     if (message.description) {
       obj.description = message.description.map((e) =>
-        e ? Alert_Text.toJSON(e) : undefined
+        e ? Alert_Text.toJSON(e) : undefined,
       );
     } else {
       obj.description = [];

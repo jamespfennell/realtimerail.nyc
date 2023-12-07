@@ -1,91 +1,87 @@
-
 .routeGrid a {
-    color: black;
-    text-decoration: none;
+  color: black;
+  text-decoration: none;
 }
 
 .routeGrid a:hover {
-    opacity: 0.6;
+  opacity: 0.6;
 }
 
 .routeGrid {
-    margin: 0;
+  margin: 0;
 }
 
-
 .routeGrid .row {
-    display: flex;
-    justify-content: center;
+  display: flex;
+  justify-content: center;
 }
 
 .routeGrid .cell {
-
-    width: 23%;
-    padding-bottom: 23%;
-    margin: 1%;
-    position: relative;
+  width: 23%;
+  padding-bottom: 23%;
+  margin: 1%;
+  position: relative;
 }
 
 .routeGrid .RouteLogo {
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 100%;
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
 }
 
 .routeGrid .statusCircle {
-    transition: background-color 0.5s;
-    width: 15%;
-    height: 0;
-    padding: 15% 0 0 0;
-    position: absolute;
-    border-radius: 100%;
-    right: 0;
-    top: 0;
+  transition: background-color 0.5s;
+  width: 15%;
+  height: 0;
+  padding: 15% 0 0 0;
+  position: absolute;
+  border-radius: 100%;
+  right: 0;
+  top: 0;
 }
 
 .routeGrid .description {
-    text-align: center;
-    padding-top: 5%;
-    font-family: 'Roboto Condensed', sans-serif;
-    margin-top: 100%;
-    font-size: 0.8em;
-    margin-bottom: -100%
+  text-align: center;
+  padding-top: 5%;
+  font-family: "Roboto Condensed", sans-serif;
+  margin-top: 100%;
+  font-size: 0.8em;
+  margin-bottom: -100%;
 }
 
-
 .routeGrid .Orange {
-    background-color: orange;
-    transition: background-color 500ms;
+  background-color: orange;
+  transition: background-color 500ms;
 }
 
 .routeGrid .Red {
-    background-color: red;
-    transition: background-color 500ms;
+  background-color: red;
+  transition: background-color 500ms;
 }
 
 .routeGrid .NoService {
-    opacity: 0.7;
-    transition: opacity 500ms;
+  opacity: 0.7;
+  transition: opacity 500ms;
 }
 
 .NavigationList .ListElement {
-    border-radius: 12px;
-    padding: 8px 5px;
-    display: flex;
-    align-items: center;
-    margin-bottom: 15px;
+  border-radius: 12px;
+  padding: 8px 5px;
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
 }
 
 .NavigationList .ListElement .ListOfRouteLogos > div {
-    width: 22px;
-    height: 22px;
-    margin: 0 2px;
+  width: 22px;
+  height: 22px;
+  margin: 0 2px;
 }
 
 .NavigationList .name {
-    margin-left: 3px;
-    font-size: 0.9em;
+  margin-left: 3px;
+  font-size: 0.9em;
 }
 
 /*

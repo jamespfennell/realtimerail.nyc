@@ -1,17 +1,17 @@
-
-.List > *:nth-child(odd) .ListElement, .List > .ListElement:nth-child(odd) {
-    background: #E1F4F7;
+.List > *:nth-child(odd) .ListElement,
+.List > .ListElement:nth-child(odd) {
+  background: #e1f4f7;
 }
 
 .List .ListElement:hover {
-    background-color: lightseagreen;
+  background-color: lightseagreen;
 }
 
 .List > a {
-    color: black;
-    text-decoration: none;
+  color: black;
+  text-decoration: none;
 }
 
 .List .ListElement {
-    border-radius: 12px;
+  border-radius: 12px;
 }

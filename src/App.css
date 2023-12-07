@@ -1,106 +1,99 @@
 .App {
-    width: 330px;
-    margin: 10px auto 0 auto;
-
+  width: 330px;
+  margin: 10px auto 0 auto;
 }
 
-
 .container {
-    padding: 10px;
-    border-radius: 12px;
-    background-color: aliceblue;
-    min-height: 400px;
+  padding: 10px;
+  border-radius: 12px;
+  background-color: aliceblue;
+  min-height: 400px;
 }
 
 .footer {
-    margin: 0 auto;
-    padding: 10px;
-    font-size: 0.8em;
-    line-height: 1.4em;
-    color: black;
+  margin: 0 auto;
+  padding: 10px;
+  font-size: 0.8em;
+  line-height: 1.4em;
+  color: black;
 }
 
 .footer p {
-    margin: 0 auto 10px auto;
+  margin: 0 auto 10px auto;
 }
 
 .footer a {
-    color: black;
+  color: black;
 }
-
 
 .appHeader {
 }
 
 .appHeader .home {
-    border-radius: 12px 12px 0 0;
-    padding: 10px;
-    text-align: center;
-    margin: 0 20px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    color: black;
-    font-size: 1.1em;
+  border-radius: 12px 12px 0 0;
+  padding: 10px;
+  text-align: center;
+  margin: 0 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: black;
+  font-size: 1.1em;
 }
 
 .appHeader .home img {
-    margin-left: 5px;
-    display: block;
-    width: 20px;
-    height: 20px;
+  margin-left: 5px;
+  display: block;
+  width: 20px;
+  height: 20px;
 }
 
 .appHeader a {
-    color: black;
-    text-decoration: none;
+  color: black;
+  text-decoration: none;
 }
 
-
 @media only screen and (max-width: 425px) {
+  .App {
+    width: auto;
+    padding: 0 10px;
+    margin: 0;
+  }
 
-    .App {
-        width: auto;
-        padding: 0 10px;
-        margin: 0;
-    }
+  .innerContainer {
+    max-width: 300px;
+    margin: 0 auto;
+  }
 
+  .appHeader {
+    background: lightseagreen;
+  }
 
-    .innerContainer {
-        max-width: 300px;
-        margin: 0 auto;
-    }
+  .appHeader .home {
+    padding: 15px;
+  }
 
-    .appHeader {
-        background: lightseagreen;
-    }
+  .footer {
+    background: lightseagreen;
+  }
 
-    .appHeader .home {
-        padding: 15px;
-    }
-
-    .footer {
-        background: lightseagreen;
-    }
-
-    .footer p {
-        padding-left: 0;
-        padding-right: 0;
-        max-width: 300px;
-    }
-
+  .footer p {
+    padding-left: 0;
+    padding-right: 0;
+    max-width: 300px;
+  }
 }
 
 .noInternet {
-    padding: 10px;
-    border-radius: 12px;
-    text-align: center;
-    background: lightblue;
+  padding: 10px;
+  border-radius: 12px;
+  text-align: center;
+  background: lightblue;
 }
 
 .SubHeading {
-    font-size: 1.1em;
-    margin: 15px 0;
-    color: lightseagreen;
-    text-align: center;
+  font-size: 1.1em;
+  margin: 15px 0;
+  color: lightseagreen;
+  text-align: center;
 }

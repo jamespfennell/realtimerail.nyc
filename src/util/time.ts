@@ -1,49 +1,47 @@
-export function timestampToDateString(timestamp: number | null| undefined): string {
+export function timestampToDateString(
+  timestamp: number | null | undefined,
+): string {
   if (timestamp == null) {
-    return ""
+    return "";
   }
   let date = new Date(timestamp * 1000);
-  let month = date.toLocaleString('default', {month: 'long'});
-  return (
-    month + " " +
-    date.getDate() + " " +
-    date.getFullYear()
-  )
+  let month = date.toLocaleString("default", { month: "long" });
+  return month + " " + date.getDate() + " " + date.getFullYear();
 }
 
-export function timestampToDateTime(timestamp: number | null| undefined): string {
+export function timestampToDateTime(
+  timestamp: number | null | undefined,
+): string {
   if (timestamp == null) {
-    return ""
+    return "";
   }
-  const time = timestampToTime(timestamp)
+  const time = timestampToTime(timestamp);
   if (time === "0:00") {
-    return timestampToDateString(timestamp)
+    return timestampToDateString(timestamp);
   }
-  return time + ", " + timestampToDateString(timestamp)
+  return time + ", " + timestampToDateString(timestamp);
 }
 
 export function timestampToTime(timestamp: number | null | undefined): string {
   if (timestamp == null) {
-    return ""
+    return "";
   }
   let date = new Date(timestamp * 1000);
   let hours = date.getHours();
   let minutes = ("0" + date.getMinutes()).substr(-2);
-  return (
-    hours + ":" + minutes
-  )
+  return hours + ":" + minutes;
 }
 
-export function timestampToTimeElapsed(timestamp: number | null| undefined): string {
+export function timestampToTimeElapsed(
+  timestamp: number | null | undefined,
+): string {
   if (timestamp == null) {
-    return ""
+    return "";
   }
-  let secondsElapsed = (new Date()).getTime() / 1000 - timestamp;
-  let minutesElapsed = Math.ceil(secondsElapsed/60);
+  let secondsElapsed = new Date().getTime() / 1000 - timestamp;
+  let minutesElapsed = Math.ceil(secondsElapsed / 60);
   if (minutesElapsed <= 1) {
-    return "less than 1 minute ago"
+    return "less than 1 minute ago";
   }
-  return (
-    minutesElapsed + " minutes ago"
-  )
+  return minutesElapsed + " minutes ago";
 }

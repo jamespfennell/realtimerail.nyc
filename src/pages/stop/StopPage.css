@@ -1,79 +1,77 @@
-
 .StopPage .header {
-    font-size: 1.3em;
-    margin: 10px 0 10px 0;
-    text-align: center;
+  font-size: 1.3em;
+  margin: 10px 0 10px 0;
+  text-align: center;
 }
 
 .StopPage .mainRoutes .ListOfRouteLogos > div {
-    width: 35px;
-    height: 35px;
-    margin: 0 2px;
+  width: 35px;
+  height: 35px;
+  margin: 0 2px;
 }
 
 .StopPage .noTrainsScheduled {
-    text-align: center;
-    color: dimgray;
-    font-style: italic;
-    margin: 15px 0 20px 0;
+  text-align: center;
+  color: dimgray;
+  font-style: italic;
+  margin: 15px 0 20px 0;
 }
 
 .StopPage .TripStopTime {
-    padding: 8px 5px;
-    display: flex;
-    align-items: center;
+  padding: 8px 5px;
+  display: flex;
+  align-items: center;
 }
 
 .StopPage .TripStopTime .time {
-    width: 30px;
-    text-align: right;
-    margin: 0 5px;
+  width: 30px;
+  text-align: right;
+  margin: 0 5px;
 }
 
 .StopPage .TripStopTime .route {
-    width: 22px;
-    height: 22px;
-    margin: 0 5px;
+  width: 22px;
+  height: 22px;
+  margin: 0 5px;
 }
 
 .StopPage .TripStopTime .lastStop {
-    margin-left: 3px;
-    font-size: 0.9em;
+  margin-left: 3px;
+  font-size: 0.9em;
 }
 
 .StopPage .scheduledTripWarning {
-    font-size: 0.9em;
-    margin: 10px 0;
+  font-size: 0.9em;
+  margin: 10px 0;
 }
 
-
 .siblingStops .ListElement {
-    border-radius: 12px;
-    padding: 8px 5px;
-    display: flex;
-    align-items: center;
+  border-radius: 12px;
+  padding: 8px 5px;
+  display: flex;
+  align-items: center;
 }
 
 .siblingStops .ListElement .ListOfRouteLogos > div {
-    width: 22px;
-    height: 22px;
-    margin: 0 2px;
+  width: 22px;
+  height: 22px;
+  margin: 0 2px;
 }
 
 .siblingStops .name {
-    margin-left: 3px;
-    font-size: 0.9em;
+  margin-left: 3px;
+  font-size: 0.9em;
 }
 
 .MoreTrips {
-    color: #444;
-    padding: 10px;
+  color: #444;
+  padding: 10px;
 
-    font-size: 0.9em;
-    cursor: pointer;
-    text-align: center;
+  font-size: 0.9em;
+  cursor: pointer;
+  text-align: center;
 }
 
 .MoreTrips:hover {
-    color: black;
+  color: black;
 }

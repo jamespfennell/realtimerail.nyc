@@ -1,8 +1,7 @@
-
 # realtimerail.nyc web app
 
 This repository hosts the UI code for the
-[realtimerail.nyc web app](https://www.realtimerail.nyc). 
+[realtimerail.nyc web app](https://www.realtimerail.nyc).
 The UI is written using React.
 It accesses NYC subway data using
 [Transiter](https://www.github.com/jamespfennell/transiter).
@@ -10,10 +9,13 @@ It accesses NYC subway data using
 The codebase was started using `create-react-app`.
 Assuming that you have `node` installed,
 the development server listing on port 3000 can be launched using:
+
 ```
 npm start
 ```
+
 An optimized production build can be created using:
+
 ```
 npm run build
 ```
