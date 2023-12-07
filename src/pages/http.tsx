@@ -5,7 +5,7 @@ import axios from "axios";
  * HttpData is the type of the httpData prop in components created using withHttpData.
  * 
  * An instance of the type has three possible states depending on the status of the HTTP request:
- * - Request in progress: both response and error are null.
+ * - Request pending: both response and error are null.
  * - Request succeeded: response is non-null, error is null.
  * - Request failed: response is null, error is non-null.
  * 
@@ -19,8 +19,17 @@ export type HttpData<T> = {
 
 /**
  * useHttpData is a React hook for getting data from an HTTP request.
+ * 
+ * If the provided URL is empty, then no HTTP request is performed and the returned data is
+ * always in the pending state. The point of this feature is to allow chaining HTTP requests where
+ * the URL of one request depends on a previous request. Because of React restrictions on hooks,
+ * even when we don't have the URL of the second request we still need to add the hook to our
+ * component.
 */
 export function useHttpData<T>(url: string, pollInterval: number | null, deserializer: (object: any) => T): HttpData<T> {
+  if (url === "") {
+  pollInterval = null;
+ }
   const [data, setData] = useState<HttpResponse<T>>({
     response: null,
     error: null,
@@ -81,6 +90,9 @@ type HttpResponse<T> = {
 }
 
 async function performRequest<T>(url: string, deserializer: (object: any) => T, callback: (r: HttpResponse<T>) => void) {
+  if (url === "") {
+    return
+  }
   axios.get(url)
     .then((response) => {
       callback({

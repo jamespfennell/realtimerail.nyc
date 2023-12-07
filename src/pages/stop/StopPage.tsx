@@ -9,7 +9,7 @@ import { List, ListElement } from "../../util/List";
 import { ListStopsReply, Stop, StopTime, Stop_Reference, Trip_Reference } from "../../api/types";
 import { useHttpData } from "../http";
 import { stopServiceMapsURL, stopURL } from "../../api/api";
-import BasicPage from "../../shared/basicpage/BasicPage";
+import { ErrorMessage, LoadingPanel } from "../../shared/basicpage/BasicPage";
 import { FavoriteButton } from "../../shared/favorites/FavoriteButton";
 
 
@@ -19,23 +19,42 @@ export type StopPageProps = {
 }
 
 function StopPage(props: StopPageProps) {
-  const httpData = useHttpData(stopURL(props.stopId), 5000, Stop.fromJSON);
-  let stopName = httpData.response?.name ?? props.stopName;
+  const stopData = useHttpData(stopURL(props.stopId), 5000, Stop.fromJSON);
+  const transfersData = useHttpData(transfersURL(stopData.response), null, ListStopsReply.fromJSON);
+
+  let error = stopData.error ?? transfersData.error;
+  if (error !== null) {
+    return <ErrorMessage key="errorMessage" tryAgainFunction={() => {
+      // We poll transfers first because if the problem was the stop data,
+      // polling transfers is a no-op.
+      transfersData.poll();
+      stopData.poll();
+    }}>{error}</ErrorMessage>
+  }
+
+  let loaded = stopData.response !== null && transfersData.response !== null;
+
+  let stopName = stopData.response?.name ?? props.stopName;
   return (
     <div className="StopPage" key={props.stopId}>
       <div className="header">
         {stopName}
         <FavoriteButton stopId={props.stopId} />
       </div>
-      <BasicPage
-        httpData={httpData}
-        body={Body}
-      />
+      <LoadingPanel loaded={loaded}>
+        <Body stop={stopData.response!} />
+        <Transfers data={transfersData.response!} title="Transfers" />
+      </LoadingPanel>
     </div>
   )
 }
 
-function Body(stop: Stop) {
+export type BodyProps = {
+  stop: Stop;
+}
+
+function Body(props: BodyProps) {
+  let stop = props.stop;
   let headsignToStopTimes = new Map();
   for (const headsignRule of stop.headsignRules) {
     headsignToStopTimes.set(headsignRule.headsign, [])
@@ -101,7 +120,6 @@ function Body(stop: Stop) {
         />
       </div>
       {stopTimeElements}
-      <LinkedStops stops={inSystemTransfers} title="Transfers" key="transfers" />
     </div>
   )
 }
@@ -252,37 +270,51 @@ function TripStopTime(props: TripStopTimeProps) {
   )
 }
 
-type LinkedStopsProps = {
-  stops: Stop_Reference[],
-  title: string,
+function transfersURL(stop: Stop | null) {
+  if (stop === null) {
+    return ""
+  }
+  let inSystemTransfers = [];
+  let otherSystemTransfers = [];
+  for (const transfer of stop.transfers) {
+    // TODO: handle cross-system transfers
+    if (transfer.toStop != null) {
+      inSystemTransfers.push(transfer.toStop.id);
+    } else {
+      // TODO: this logic is totally broken: transfer.toStop is always null
+      // I think this is based on an old version of Transiter
+      // When cross-system transfers land in Transter, this logic will need to inspect the system
+      otherSystemTransfers.push(transfer.toStop);
+    }
+  }
+  // TODO: don't request if stops are empty?
+  return stopServiceMapsURL(inSystemTransfers)
 }
 
-function LinkedStops(props: LinkedStopsProps) {
-  let stopIDs = [];
-  for (const stop of props.stops) {
-    stopIDs.push(stop.id);
-  }
-  const httpData = useHttpData(stopServiceMapsURL(stopIDs), null, ListStopsReply.fromJSON);
-  if (stopIDs.length === 0) {
+type TransfersProps = {
+  title: string,
+  data: ListStopsReply
+}
+
+function Transfers(props: TransfersProps) {
+  if (props.data.stops.length === 0) {
     return <div></div>
   }
   let stopIDToRoutes = new Map();
-  if (httpData.response !== null) {
-    for (const stop of httpData.response.stops) {
-      let routeIds = [];
-      for (const serviceMap of stop.serviceMaps) {
-        if (serviceMap.configId !== "weekday") {
-          continue
-        }
-        for (const route of serviceMap.routes) {
-          routeIds.push(route.id)
-        }
+  for (const stop of props.data.stops) {
+    let routeIds = [];
+    for (const serviceMap of stop.serviceMaps) {
+      if (serviceMap.configId !== "weekday") {
+        continue
       }
-      stopIDToRoutes.set(stop.id, routeIds)
+      for (const route of serviceMap.routes) {
+        routeIds.push(route.id)
+      }
     }
+    stopIDToRoutes.set(stop.id, routeIds)
   }
   let elements = [];
-  for (const stop of props.stops) {
+  for (const stop of props.data.stops) {
     let routeIds = stopIDToRoutes.get(stop.id) ?? [];
     elements.push(
       <SiblingStop

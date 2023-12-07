@@ -5,6 +5,31 @@ import './BasicPage.css'
 import AnimateHeight from "react-animate-height";
 import { HttpData } from "../../pages/http";
 
+export type LoadingPanelProps = {
+  loaded: boolean;
+  children: any;
+}
+
+export function LoadingPanel(props: LoadingPanelProps) {
+  let elements = [];
+  if (!props.loaded) {
+    elements.push(<LoadingBar key="loadingBar " />)
+  }
+  elements.push(
+    <AnimateHeight
+      key="body"
+      animateOpacity={true}
+      height={props.loaded ? "auto" : 0}
+      duration={500}>
+      {props.loaded ? props.children : null}
+    </AnimateHeight>
+  );
+  return <div>
+    {elements}
+  </div>
+}
+
+
 export type BasicPageProps<T> = {
   httpData: HttpData<T>;
   body: React.ComponentType<T>;
@@ -33,7 +58,7 @@ function BasicPage<T>(props: BasicPageProps<T>) {
   </div>
 }
 
-function ErrorMessage(props: any) {
+export function ErrorMessage(props: any) {
   return (
     <div className="ErrorMessage">
       <div>{props.children}</div>
