@@ -1,4 +1,4 @@
-import ListOfRouteLogos, { sortRouteIds } from "./ListOfRouteLogos";
+import { sortRouteIds } from "./ListOfRouteLogos";
 import "./ListOfRouteLogos.css";
 import "./ListOfRouteLogos.tsx";
 

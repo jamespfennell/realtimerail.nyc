@@ -87,15 +87,30 @@ message ListStopsRequest {
   // This is a URL parameter in the HTTP API.
   string system_id = 1;
 
+  // The possible search modes when listing stops.
+  enum SearchMode {
+    // Return a paginated list of stops sorted by stop ID.
+    ID = 0;
+    // Return all stops within max_distance of (latitude, longitude), sorted by the distance.
+    DISTANCE = 1;
+  }
+  // The type of search to perform when listing stops.
+  optional SearchMode search_mode = 13;
+
   // If true, only return stops whose IDs are specified in the repeated `id` field.
+  // Only supported when the search mode is ID.
   bool only_return_specified_ids = 8;
   // IDs to return if `only_return_specified_ids` is set to true. It is an error to
   // populate this field if `only_return_specified_ids` is false.
+  // Only supported when the search mode is ID.
   repeated string id = 9;
-
   // ID of the first stop to return. If not set, the stop with the smallest ID will be first.
+  // Only supported when the search mode is ID.
   optional string first_id = 2;
+
   // Maximum number of stops to return.
+  // This is supported in all search modes.
+  // For performance reasons, if it is larger than 100 it is rounded down to 100.
   optional int32 limit = 3;
 
   // If true, the stop times field will not be populated.
@@ -120,17 +135,6 @@ message ListStopsRequest {
 
   // The longitude relative to the returned stops when using DISTANCE search mode.
   optional double longitude = 12;
-
-  // The possible search types when listing stops.
-  enum SearchMode {
-    // Return a paginated list of stops sorted by stop ID.
-    ID = 0;
-    // Return all stops within max_distance from latitude, longitude.
-    DISTANCE = 1;
-  }
-
-  // The type of search to perform when listing stops.
-  optional SearchMode search_mode = 13;
 }
 
 // Response payload for the list stops endpoint.
@@ -292,24 +296,6 @@ message ListFeedsReply {
   repeated Feed feeds = 1;
 }
 
-// Request payload for the list feed updates endpoint.
-message ListFeedUpdatesRequest {
-  // ID of the system the feed is in.
-  //
-  // This is a URL parameter in the HTTP API.
-  string system_id = 1;
-  // ID of the feed for which to list updates.
-  //
-  // This is a URL parameter in the HTTP API.
-  string feed_id = 2;
-}
-
-// Response payload for the list feed updates endpoint.
-message ListFeedUpdatesReply {
-  // List of updates.
-  repeated FeedUpdate updates = 1;
-}
-
 // Request payload for the get feed endpoint.
 message GetFeedRequest {
   // ID of the system the feed is in.
@@ -332,6 +318,101 @@ message ListTransfersRequest {
 message ListTransfersReply {
   // List of transfers.
   repeated Transfer transfers = 1;
+}
+
+message ListVehiclesRequest {
+  // ID of the system for which to list vehicles.
+  string system_id = 1;
+
+  enum SearchMode {
+    // Return a paginated list of vehicles sorted by vehicle ID.
+    ID = 0;
+    // Return all vehicles within max_distance of (latitude, longitude), sorted by the distance.
+    DISTANCE = 1;
+  }
+  // The type of search to perform when listing vehicles.
+  optional SearchMode search_mode = 2;
+
+  // If true, only return vehicles whose IDs are specified in the repeated `id` field.
+  // Only supported when the search mode is ID.
+  bool only_return_specified_ids = 3;
+
+  // IDs to return if `only_return_specified_ids` is set to true. It is an error to
+  // populate this field if `only_return_specified_ids` is false.
+  // Only supported when the search mode is ID.
+  repeated string id = 4;
+
+  // ID of the first vehicle to return. If not set, the vehicle with the smallest ID will be first.
+  // Only supported when the search mode is ID.
+  optional string first_id = 5;
+
+  // Maximum number of vehicles to return.
+  // This is supported in all search modes.
+  // For performance reasons, if it is larger than 100 it is rounded down to 100.
+  optional int32 limit = 6;
+
+  // The maximum distance in kilometers that a vehicle must be from
+  // latitude, longitude to be listed when using DISTANCE search mode.
+  optional double max_distance = 7;
+
+  // The latitude relative to the returned vehicles when using DISTANCE search mode.
+  optional double latitude = 8;
+
+  // The longitude relative to the returned vehicles when using DISTANCE search mode.
+  optional double longitude = 9;
+}
+
+message ListVehiclesReply {
+  // List of vehicles.
+  repeated Vehicle vehicles = 1;
+
+  // ID of the next vehicle to return, if there are more results.
+  optional string next_id = 2;
+}
+
+message GetVehicleRequest {
+    // ID of the system the vehicle is in.
+    //
+    // This is a URL parameter in the HTTP API.
+    string system_id = 1;
+    // ID of the vehicle.
+    //
+    // This is a URL parameter in the HTTP API.
+    string vehicle_id = 2;
+}
+
+message ListShapesRequest {
+  // System to list shapes for.
+  string system_id = 1;
+
+  // If true, only return shapes whose IDs are specified in the repeated `id` field.
+  bool only_return_specified_ids = 2;
+
+  // IDs to return if `only_return_specified_ids` is set to true. It is an error to
+  // populate this field if `only_return_specified_ids` is false.
+  repeated string id = 3;
+
+  // ID of the first shape to return. If not set, the shape with the smallest ID will be first.
+  optional string first_id = 4;
+
+  // Maximum number of shapes to return.
+  optional int32 limit = 5;
+}
+
+message ListShapesReply {
+  // Shapes that were listed.
+  repeated Shape shapes = 1;
+
+  // ID of the next shape to list, if there are more results.
+  optional string next_id = 2;
+}
+
+message GetShapeRequest {
+  // System to get shape for.
+  string system_id = 1;
+
+  // ID of the shape to get.
+  string shape_id = 2;
 }
 
 // The System resource.
@@ -551,6 +632,8 @@ message Trip {
 
   repeated StopTime stop_times = 7;
 
+  optional Shape.Reference shape = 8;
+
   // Reference is the reference type for the trip resource.
   message Reference {
     string id = 1;
@@ -558,13 +641,88 @@ message Trip {
     Route.Reference route = 3;
     Stop.Reference destination = 4;
     optional Vehicle.Reference vehicle = 5;
+    bool direction_id = 6;
   }
 }
 
+// The Vehicle resource.
+//
+// This resource corresponds to the [vehicle position type in the GTFS static
+// specification](https://developers.google.com/transit/gtfs-realtime/reference#message-vehicleposition).
 message Vehicle {
+  // A unique ID for the vehicle.
+  string id = 1;
+
+  // A reference to the vehicle's trip.
+  optional Trip.Reference trip = 2;
+
+  // The vehicle's current latitude.
+  optional double latitude = 3;
+
+  // The vehicle's current longitude.
+  optional double longitude = 4;
+
+  // The vehicle's current bearing.
+  optional float bearing = 5;
+
+  // The vehicle's current odometer reading.
+  optional double odometer = 6;
+
+  // The vehicle's current speed.
+  optional float speed = 7;
+
+  // The stop sequence index of the vehicle's current stop.
+  optional int32 stop_sequence = 8;
+
+  // A reference to the vehicle's current stop.
+  optional Stop.Reference stop = 9;
+
+  // Corresponds to [VehicleStopStatus](https://developers.google.com/
+  // transit/gtfs-realtime/reference#enum-vehiclestopstatus).
+  enum CurrentStatus {
+    INCOMING_AT = 0;
+    STOPPED_AT = 1;
+    IN_TRANSIT_TO = 2;
+  }
+  // The vehicle's current status.
+  optional CurrentStatus current_status = 10;
+
+  // The timestamp of the last update to the vehicle's position.
+  optional int64 updated_at = 11;
+
+  // Corresponds to [CongestionLevel](https://developers.google.com/
+  // transit/gtfs-realtime/reference#enum-congestionlevel).
+  enum CongestionLevel {
+    UNKNOWN_CONGESTION_LEVEL = 0;
+    RUNNING_SMOOTHLY = 1;
+    STOP_AND_GO = 2;
+    CONGESTION = 3;
+    SEVERE_CONGESTION = 4;
+  }
+  // The vehicle's current congestion level.
+  CongestionLevel congestion_level = 12;
+
+  // Corresponds to [OccupancyStatus](https://developers.google.com/
+  // transit/gtfs-realtime/reference#enum-occupancystatus).
+  enum OccupancyStatus {
+    EMPTY = 0;
+    MANY_SEATS_AVAILABLE = 1;
+    FEW_SEATS_AVAILABLE = 2;
+    STANDING_ROOM_ONLY = 3;
+    CRUSHED_STANDING_ROOM_ONLY = 4;
+    FULL = 5;
+    NOT_ACCEPTING_PASSENGERS = 6;
+  }
+  // The vehicle's current occupancy status.
+  optional OccupancyStatus occupancy_status = 13;
+
+  // The percentage of seats occupied.
+  optional int32 occupancy_percentage = 14;
+
   // Reference is the reference type for the vehicle resource.
   message Reference {
     string id = 1;
+    Resource resource = 2;
   }
 }
 
@@ -686,7 +844,7 @@ message Route {
 // Each feed is defined in the system configuration file.
 // Feeds are included in the public API because there are non-admin use-cases for this resource.
 // For example, an app might publish the staleness of realtime data
-//   by checking for the last succesful feed update.
+//   by checking the last successful feed update time.
 //
 // More detailed information on a feed -- its full configuration, and the
 //   current status of its periodic updates -- can be retrieved through the admin API.
@@ -699,8 +857,10 @@ message Feed {
   // This is the parent resource in Transiter's resource hierarchy.
   System.Reference system = 3;
 
-  // Updates for this feed.
-  ChildResources updates = 4;
+  optional int64 last_update_ms = 4;
+  optional int64 last_successful_update_ms = 5;
+  optional int64 last_skipped_update_ms = 6;
+  optional int64 last_failed_update_ms = 7;
 
   // Reference is the reference type for the feed resource.
   message Reference {
@@ -882,65 +1042,24 @@ message Transfer {
   optional int32 distance = 8;
 }
 
-// The feed update resource.
-//
-// Each feed update event
-//   -- triggered manually though the admin API, or automatically by the scheduler --
-// generates a feed update resource.
-// This resource is updated as the feed update progresses.
-// A background task in Transiter periodically garbage collects old updates.
-message FeedUpdate {
-  // ID of the feed update. This is the primary key of the associated Postgres
-  // database row so it's actually globally unique.
+message Shape {
+  // Unique ID for the shape.
   string id = 1;
-  // Generic metadata about the feed update resource.
-  Resource resource = 2;
-  // Feed corresponding to this update.
-  // This is the parent resource in Transiter's resource hierarchy.
-  Feed.Reference feed = 3;
 
-  // Unix timestamp of when the update started.
-  int64 started_at = 4;
-  // Whether the update has finished. If false, the update is still in progress.
-  bool finished = 5;
-  // Unix timestamp of when the update finished.
-  // Only populated if the update is finished.
-  optional int64 finished_at = 6;
-
-  enum Result {
-    // Finished succesfully.
-    UPDATED = 0;
-    // The update was skipped because the downloaded data was identical to the data for the last succesful update.
-    NOT_NEEDED = 1;
-    // Failed to download feed data.
-    DOWNLOAD_ERROR = 2;
-    // Feed data was empty.
-    EMPTY_FEED = 3;
-    // The feed configuration is invalid. This typically indicates a bug in Transiter because
-    // the feed configuration is validated when the system is being installed.
-    INVALID_FEED_CONFIG = 4;
-    // The parser specified in the feed configuration is invalid.
-    INVALID_PARSER = 5;
-    // Failed to parse the feed data.
-    // This means the feed data was corrupted or otherwise invalid.
-    PARSE_ERROR = 6;
-    // Failed to update the database using the new feed data.
-    // This typically indicates a bug in Transiter or a transient error connecting to the database.
-    UPDATE_ERROR = 7;
-    // An internal unspecified error occured.
-    INTERNAL_ERROR = 8;
+  // A point within the shape.
+  message ShapePoint {
+    // Latitude of the point.
+    double latitude = 1;
+    // Longitude of the point.
+    double longitude = 2;
+    // Distance from the start of the shape to this point.
+    optional double distance = 3;
   }
-  // Result of the update.
-  // Only populated if the update is finished.
-  optional Result result = 7;
-  // Number of bytes in the downloaded feed data.
-  // Only populated if the update succesfully downloaded the data.
-  optional int32 content_length = 8;
-  // Hash of the downloaded feed data. This is used to skip updates
-  // if the feed data hasn't changed.
-  // Only populated if the update succesfully downloaded the data.
-  optional string content_hash = 9;
-  // Error message of the update.
-  // Only populated if the update finished in an error
-  optional string error_message = 10;
+  // Ordered list of points that make up the shape.
+  repeated ShapePoint points = 2;
+
+  message Reference {
+    string id = 1;
+    Resource resource = 2;
+  }
 }

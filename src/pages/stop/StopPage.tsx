@@ -10,7 +10,6 @@ import {
   ListStopsReply,
   Stop,
   StopTime,
-  Stop_Reference,
   Trip_Reference,
 } from "../../api/types";
 import { useHttpData } from "../http";
@@ -53,10 +52,10 @@ function StopPage(props: StopPageProps) {
   let stopName = stopData.response?.name ?? props.stopName;
   return (
     <div className="StopPage" key={props.stopId}>
-      <div className="header">
+      <h1>
         {stopName}
         <FavoriteButton stopId={props.stopId} />
-      </div>
+      </h1>
       <LoadingPanel loaded={loaded}>
         <Body stop={stopData.response!} />
         <Transfers data={transfersData.response!} title="Transfers" />
@@ -153,11 +152,7 @@ function HeadsignStopTimes(props: HeadsignStopTimesProps) {
   let [maxStopTimes, setMaxStopTimes] = useState(4);
 
   let children = [];
-  children.push(
-    <div key="subHeading" className="SubHeading">
-      {props.headsign}
-    </div>,
-  );
+  children.push(<h2>{props.headsign}</h2>);
   let rendered = 0;
   let skipped = 0;
   if (props.stopTimes.length === 0) {

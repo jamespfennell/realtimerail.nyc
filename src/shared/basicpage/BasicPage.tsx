@@ -16,12 +16,7 @@ export function LoadingPanel(props: LoadingPanelProps) {
     elements.push(<LoadingBar key="loadingBar " />);
   }
   elements.push(
-    <AnimateHeight
-      key="body"
-      animateOpacity={true}
-      height={props.loaded ? "auto" : 0}
-      duration={500}
-    >
+    <AnimateHeight key="body" height={props.loaded ? "auto" : 0} duration={500}>
       {props.loaded ? props.children : null}
     </AnimateHeight>,
   );

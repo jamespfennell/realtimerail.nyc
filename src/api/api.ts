@@ -17,6 +17,14 @@ export function tripURL(routeID: string, tripID: string): string {
   );
 }
 
+export function entrypointURL(): string {
+  return baseURL;
+}
+
+export function feedsURL(): string {
+  return baseURL + "systems/" + systemID + "/feeds";
+}
+
 export function stopURL(stopID: string): string {
   return baseURL + "systems/" + systemID + "/stops/" + stopID;
 }

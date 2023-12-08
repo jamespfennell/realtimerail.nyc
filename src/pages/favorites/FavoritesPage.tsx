@@ -19,7 +19,7 @@ export default function FavoritesPage(props: RoutePageProps) {
 
   return (
     <div className="FavoritesPage">
-      <div className="header">Favorite Stops</div>
+      <h1>Favorite stops</h1>
       {favoriteStops.length ? (
         <List className="FavoritesPage">
           {favoriteStops.map((stopId: string) => (

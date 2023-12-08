@@ -17,3 +17,59 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
 }
+
+.Center {
+  text-align: center;
+}
+
+.Gray {
+  color: #a7a9ac;
+}
+
+.Orange {
+  color: orange;
+}
+
+.Red {
+  color: #ee352e;
+}
+
+.Green {
+  color: #00933c;
+}
+
+h1 {
+  font-weight: normal;
+  font-size: 1.3em;
+  margin: 10px 0 10px 0;
+  text-align: center;
+}
+
+h2 {
+  font-weight: normal;
+  font-size: 1.1em;
+  margin: 0px 0;
+  padding: 15px 0;
+  color: teal;
+  text-align: center;
+}
+
+h3 {
+  font-size: 1em;
+}
+
+table {
+  border-collapse: collapse;
+  margin: 0px auto;
+}
+
+tr {
+  margin: 0px;
+}
+
+td,
+th {
+  text-align: left;
+  margin: 0px;
+  padding: 5px;
+}

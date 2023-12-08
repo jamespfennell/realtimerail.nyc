@@ -26,9 +26,6 @@
   color: black;
 }
 
-.appHeader {
-}
-
 .appHeader .home {
   border-radius: 12px 12px 0 0;
   padding: 10px;
@@ -82,18 +79,4 @@
     padding-right: 0;
     max-width: 300px;
   }
-}
-
-.noInternet {
-  padding: 10px;
-  border-radius: 12px;
-  text-align: center;
-  background: lightblue;
-}
-
-.SubHeading {
-  font-size: 1.1em;
-  margin: 15px 0;
-  color: lightseagreen;
-  text-align: center;
 }

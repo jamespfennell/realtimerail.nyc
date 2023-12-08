@@ -16,6 +16,7 @@ import TripPage from "./pages/trip/TripPage";
 import FavoritesPage from "./pages/favorites/FavoritesPage";
 
 import HomeIcon from "./util/home.svg";
+import DebuggingPage from "./pages/debug/DebuggingPage";
 
 export default function App() {
   return (
@@ -33,6 +34,7 @@ export default function App() {
           <div className="innerContainer">
             <Routes>
               <Route path="/" element={<HomePage />} />
+              <Route path="/debug" element={<DebuggingPage />} />
               <Route path="/favorites" element={<FavoritesPageElement />} />
               <Route path="/routes/:routeId" element={<RoutePageElement />} />
               <Route
@@ -59,6 +61,9 @@ export default function App() {
           <p>
             All subway symbols are trademarked and are used pursuant to a
             license from the <a href="http://www.mta.info">MTA</a>.
+          </p>
+          <p>
+            <Link to="/debug">Debugging information</Link>.
           </p>
         </div>
       </div>
