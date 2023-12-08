@@ -16,6 +16,7 @@ import { useHttpData } from "../http";
 import { stopServiceMapsURL, stopURL } from "../../api/api";
 import { ErrorMessage, LoadingPanel } from "../../shared/basicpage/BasicPage";
 import { FavoriteButton } from "../../shared/favorites/FavoriteButton";
+import ListOfStops from "../../shared/ListOfStops";
 
 export type StopPageProps = {
   stopId: string;
@@ -317,37 +318,10 @@ function Transfers(props: TransfersProps) {
   if (props.data.stops.length === 0) {
     return <div></div>;
   }
-  let stopIDToRoutes = new Map();
-  for (const stop of props.data.stops) {
-    let routeIds = [];
-    for (const serviceMap of stop.serviceMaps) {
-      if (serviceMap.configId !== "weekday") {
-        continue;
-      }
-      for (const route of serviceMap.routes) {
-        routeIds.push(route.id);
-      }
-    }
-    stopIDToRoutes.set(stop.id, routeIds);
-  }
-  let elements = [];
-  for (const stop of props.data.stops) {
-    let routeIds = stopIDToRoutes.get(stop.id) ?? [];
-    elements.push(
-      <SiblingStop
-        key={"siblingStop" + stop.id}
-        stopId={stop.id}
-        name={stop.name ?? ""}
-        routeIds={routeIds}
-      />,
-    );
-  }
   return (
     <div>
-      <div className="SubHeading" key="header">
-        {props.title}
-      </div>
-      <List className="siblingStops">{elements}</List>
+      <h2>{props.title}</h2>
+      <ListOfStops stops={props.data.stops} />
     </div>
   );
 }

@@ -1,24 +1,6 @@
-.FavoritesPage .ListElement {
-  border-radius: 12px;
-  padding: 8px 5px;
-  display: flex;
-  align-items: center;
-}
-
-.FavoritesPage .ListElement .ListOfRouteLogos > div {
-  width: 22px;
-  height: 22px;
-  margin: 0 2px;
-}
-
-.FavoritesPage .name {
-  margin-left: 3px;
-  font-size: 0.9em;
-}
-
-.FavoritesPage .EmptyFavorites {
+.EmptyFavorites {
   padding: 0 3px;
   font-size: 0.9em;
-  color: gray;
+  color: teal;
   text-align: center;
 }

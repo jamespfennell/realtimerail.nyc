@@ -1,66 +1,45 @@
 import React from "react";
 import "./FavoritesPage.css";
-import { List, ListElement } from "../../util/List";
-import { Link } from "react-router-dom";
 import { useFavorites } from "../../shared/favorites/hooks/favorites";
 import { useHttpData } from "../http";
-import { stopURL } from "../../api/api";
-import { Stop } from "../../api/types";
-import ListOfRouteLogos from "../../shared/routelogo/ListOfRouteLogos";
+import { stopServiceMapsURL } from "../../api/api";
+import { ListStopsReply } from "../../api/types";
+import { ErrorMessage, LoadingPanel } from "../../shared/basicpage/BasicPage";
+import ListOfStops from "../../shared/ListOfStops";
 
-export type RoutePageProps = {
-  routeId: string;
-};
-
-export default function FavoritesPage(props: RoutePageProps) {
+export default function FavoritesPage() {
   const { getFavoriteStops } = useFavorites();
-
   const favoriteStops = getFavoriteStops();
 
   return (
-    <div className="FavoritesPage">
+    <div>
       <h1>Favorite stops</h1>
-      {favoriteStops.length ? (
-        <List className="FavoritesPage">
-          {favoriteStops.map((stopId: string) => (
-            <FavoriteStopItem key={stopId} stopId={stopId} />
-          ))}
-        </List>
-      ) : (
-        <div className="EmptyFavorites">
-          Add favorites by clicking the ☆ on a Stop.
-        </div>
+      <h3>Add favorites by clicking the ☆ on a stop</h3>
+      {favoriteStops.length === 0 ? null : (
+        <Body favoriteStops={favoriteStops} />
       )}
     </div>
   );
 }
 
-type FavoriteStopItemProps = {
-  stopId: string;
-};
-
-function FavoriteStopItem({ stopId }: FavoriteStopItemProps) {
-  const httpData = useHttpData(stopURL(stopId), 60000, Stop.fromJSON);
-  const stopName = httpData.response?.name;
-  const serviceMaps = httpData.response?.serviceMaps || [];
-
-  let usualRouteIds: string[] = [];
-  for (const serviceMap of serviceMaps) {
-    if (serviceMap.configId === "weekday") {
-      serviceMap.routes.forEach((route) => usualRouteIds.push(route.id));
-    }
+function Body(props: { favoriteStops: string[] }) {
+  const httpData = useHttpData(
+    stopServiceMapsURL(props.favoriteStops),
+    null,
+    ListStopsReply.fromJSON,
+  );
+  if (httpData.error !== null) {
+    return (
+      <ErrorMessage tryAgainFunction={httpData.poll}>
+        {httpData.error}
+      </ErrorMessage>
+    );
   }
-
   return (
-    <Link to={`/stops/${stopId}`} state={{ stopName }}>
-      <ListElement className="FavoriteStop">
-        <ListOfRouteLogos
-          routeIds={usualRouteIds}
-          skipExpress={true}
-          addLinks={false}
-        />
-        <div className="name">{stopName}</div>
-      </ListElement>
-    </Link>
+    <div>
+      <LoadingPanel loaded={httpData.response !== null}>
+        <ListOfStops stops={httpData.response?.stops!} />
+      </LoadingPanel>
+    </div>
   );
 }

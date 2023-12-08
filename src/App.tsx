@@ -35,7 +35,7 @@ export default function App() {
             <Routes>
               <Route path="/" element={<HomePage />} />
               <Route path="/debug" element={<DebuggingPage />} />
-              <Route path="/favorites" element={<FavoritesPageElement />} />
+              <Route path="/favorites" element={<FavoritesPage />} />
               <Route path="/routes/:routeId" element={<RoutePageElement />} />
               <Route
                 path="/routes/:routeId/:tripId"
@@ -69,11 +69,6 @@ export default function App() {
       </div>
     </BrowserRouter>
   );
-}
-
-function FavoritesPageElement() {
-  const params = useParams();
-  return <FavoritesPage routeId={params.routeId!} />;
 }
 
 function RoutePageElement() {

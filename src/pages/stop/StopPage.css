@@ -39,24 +39,6 @@
   margin: 10px 0;
 }
 
-.siblingStops .ListElement {
-  border-radius: 12px;
-  padding: 8px 5px;
-  display: flex;
-  align-items: center;
-}
-
-.siblingStops .ListElement .ListOfRouteLogos > div {
-  width: 22px;
-  height: 22px;
-  margin: 0 2px;
-}
-
-.siblingStops .name {
-  margin-left: 3px;
-  font-size: 0.9em;
-}
-
 .MoreTrips {
   color: #444;
   padding: 10px;

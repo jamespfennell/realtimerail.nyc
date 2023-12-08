@@ -55,7 +55,12 @@ h2 {
 }
 
 h3 {
+  color: #3f3f3f;
+  font-weight: normal;
   font-size: 1em;
+  width: 70%;
+  margin: 15px auto;
+  text-align: center;
 }
 
 table {
