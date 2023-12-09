@@ -10,6 +10,7 @@ import {
 } from "react-router-dom";
 
 import HomePage from "./pages/home/HomePage";
+import LocationPage from "./pages/location/LocationPage";
 import StopPage from "./pages/stop/StopPage";
 import RoutePage from "./pages/route/RoutePage";
 import TripPage from "./pages/trip/TripPage";
@@ -36,6 +37,7 @@ export default function App() {
               <Route path="/" element={<HomePage />} />
               <Route path="/debug" element={<DebuggingPage />} />
               <Route path="/favorites" element={<FavoritesPage />} />
+              <Route path="/location" element={<LocationPage />} />
               <Route path="/routes/:routeId" element={<RoutePageElement />} />
               <Route
                 path="/routes/:routeId/:tripId"

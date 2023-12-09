@@ -17,6 +17,10 @@ export default function ListOfStops(props: { stops: Stop[] }) {
         serviceMap.routes.forEach((route) => usualRouteIds.push(route.id));
       }
     }
+    if (usualRouteIds.length === 0) {
+      continue;
+    }
+    // TODO: optionally print how far away the stops are
     elements.push(
       <Link to={"/stops/" + stop.id} state={{ stopName: stop.name }}>
         <ListElement className="ListOfStopsElement">

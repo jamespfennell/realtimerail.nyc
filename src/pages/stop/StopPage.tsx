@@ -226,28 +226,6 @@ function HeadsignStopTimes(props: HeadsignStopTimesProps) {
   return <div>{children}</div>;
 }
 
-type SiblingStopProps = {
-  key: string;
-  stopId: string;
-  name: string;
-  routeIds: string[];
-};
-
-function SiblingStop(props: SiblingStopProps) {
-  return (
-    <Link to={"/stops/" + props.stopId} state={{ stopName: props.name }}>
-      <ListElement className="SiblingStop">
-        <ListOfRouteLogos
-          routeIds={props.routeIds}
-          skipExpress={true}
-          addLinks={false}
-        />
-        <div className="name">{props.name}</div>
-      </ListElement>
-    </Link>
-  );
-}
-
 type TripStopTimeProps = {
   key: string;
   lastStopName: string;

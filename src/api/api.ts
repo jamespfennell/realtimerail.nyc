@@ -29,6 +29,18 @@ export function stopURL(stopID: string): string {
   return baseURL + "systems/" + systemID + "/stops/" + stopID;
 }
 
+export function locationURL(latitude: number, longitude: number): string {
+  return (
+    baseURL +
+    "systems/" +
+    systemID +
+    "/stops?skip_stop_times=true&limit=30&search_mode=DISTANCE&max_distance=3.2&latitude=" +
+    latitude +
+    "&longitude=" +
+    longitude
+  );
+}
+
 export function stopServiceMapsURL(stopIDs: string[]): string {
   let url =
     baseURL +
