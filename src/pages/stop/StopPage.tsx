@@ -153,7 +153,7 @@ function HeadsignStopTimes(props: HeadsignStopTimesProps) {
   let [maxStopTimes, setMaxStopTimes] = useState(4);
 
   let children = [];
-  children.push(<h2>{props.headsign}</h2>);
+  children.push(<h2 key="header">{props.headsign}</h2>);
   let rendered = 0;
   let skipped = 0;
   if (props.stopTimes.length === 0) {

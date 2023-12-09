@@ -26,14 +26,18 @@
   color: black;
 }
 
-.appHeader .home {
-  border-radius: 12px 12px 0 0;
-  padding: 10px;
-  text-align: center;
-  margin: 0 20px;
+.appHeader {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.appHeader .home {
+  padding: 5px 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
   color: black;
   font-size: 1.1em;
 }
@@ -41,8 +45,16 @@
 .appHeader .home img {
   margin-left: 5px;
   display: block;
-  width: 20px;
-  height: 20px;
+  width: 30px;
+  height: 30px;
+}
+
+.appHeader .home .text {
+  padding: 0px 4px;
+}
+
+.appHeader .home .textIcon {
+  font-size: 1.2em;
 }
 
 .appHeader a {
@@ -64,10 +76,6 @@
 
   .appHeader {
     background: lightseagreen;
-  }
-
-  .appHeader .home {
-    padding: 15px;
   }
 
   .footer {

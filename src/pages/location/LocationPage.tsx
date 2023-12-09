@@ -46,9 +46,9 @@ export default function LocationPage() {
   }
   return (
     <div>
-      <h1>Nearby stations</h1>
+      <h1>Nearby stops</h1>
       <LoadingPanel loaded={location.response !== null}>
-        <h3>Stations within 2 miles</h3>
+        <h3>Stops within 2 miles</h3>
         <LocationResultPage
           latitude={location.response?.coords.latitude!}
           longitude={location.response?.coords.longitude!}

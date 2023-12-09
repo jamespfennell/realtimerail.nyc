@@ -22,7 +22,11 @@ export default function ListOfStops(props: { stops: Stop[] }) {
     }
     // TODO: optionally print how far away the stops are
     elements.push(
-      <Link to={"/stops/" + stop.id} state={{ stopName: stop.name }}>
+      <Link
+        to={"/stops/" + stop.id}
+        state={{ stopName: stop.name }}
+        key={stop.id}
+      >
         <ListElement className="ListOfStopsElement">
           <ListOfRouteLogos
             routeIds={usualRouteIds}

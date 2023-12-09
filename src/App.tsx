@@ -17,6 +17,8 @@ import TripPage from "./pages/trip/TripPage";
 import FavoritesPage from "./pages/favorites/FavoritesPage";
 
 import HomeIcon from "./util/home.svg";
+import StarIcon from "./util/star.svg";
+import LocationIcon from "./util/location.svg";
 import DebuggingPage from "./pages/debug/DebuggingPage";
 
 export default function App() {
@@ -24,10 +26,19 @@ export default function App() {
     <BrowserRouter>
       <div className="App">
         <div className="appHeader">
+          <Link to="/favorites">
+            <div className="home">
+              <img alt="go to favorite stops" src={StarIcon} />
+            </div>
+          </Link>
           <Link to="/">
             <div className="home">
-              <div className="text">realtimerail.nyc</div>
-              <img alt="home" src={HomeIcon} />
+              <img alt="go to the home page" src={HomeIcon} />
+            </div>
+          </Link>
+          <Link to="/nearby">
+            <div className="home">
+              <img alt="find nearby stops" src={LocationIcon} />
             </div>
           </Link>
         </div>
@@ -37,7 +48,7 @@ export default function App() {
               <Route path="/" element={<HomePage />} />
               <Route path="/debug" element={<DebuggingPage />} />
               <Route path="/favorites" element={<FavoritesPage />} />
-              <Route path="/location" element={<LocationPage />} />
+              <Route path="/nearby" element={<LocationPage />} />
               <Route path="/routes/:routeId" element={<RoutePageElement />} />
               <Route
                 path="/routes/:routeId/:tripId"
