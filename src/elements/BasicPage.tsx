@@ -3,7 +3,7 @@ import React from "react";
 import "./BasicPage.css";
 
 import AnimateHeight from "react-animate-height";
-import { HttpData } from "../../pages/http";
+import { HttpData } from "../hooks/http";
 
 export type LoadingPanelProps = {
   loaded: boolean;

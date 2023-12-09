@@ -9,17 +9,18 @@ import {
   useLocation,
 } from "react-router-dom";
 
-import HomePage from "./pages/home/HomePage";
-import LocationPage from "./pages/location/LocationPage";
-import StopPage from "./pages/stop/StopPage";
-import RoutePage from "./pages/route/RoutePage";
-import TripPage from "./pages/trip/TripPage";
-import FavoritesPage from "./pages/favorites/FavoritesPage";
+import HomePage from "./pages/HomePage";
+import LocationPage from "./pages/LocationPage";
+import StopPage from "./pages/StopPage";
+import RoutePage from "./pages/RoutePage";
+import TripPage from "./pages/TripPage";
+import FavoritesPage from "./pages/FavoritesPage";
 
-import HomeIcon from "./util/home.svg";
-import StarIcon from "./util/star.svg";
-import LocationIcon from "./util/location.svg";
-import DebuggingPage from "./pages/debug/DebuggingPage";
+// TODO: add a public attribution for the icons https://iconoir.com/
+import HomeIcon from "./icons/home.svg";
+import StarIcon from "./icons/star.svg";
+import LocationIcon from "./icons/location.svg";
+import DebuggingPage from "./pages/DebuggingPage";
 
 export default function App() {
   return (

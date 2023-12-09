@@ -5,13 +5,13 @@ import "./RoutePage.css";
 
 import RouteLogo, {
   replaceRouteIdsWithImages,
-} from "../../shared/routelogo/RouteLogo";
-import parseAlert, { buildStatusFromAlerts } from "../../util/Alert";
-import ServiceMap from "../../shared/servicemap/ServiceMap";
-import { Alert_Reference, ListAlertsReply, Route } from "../../api/types";
-import { useHttpData } from "../http";
-import { routeURL, alertsURL } from "../../api/api";
-import BasicPage from "../../shared/basicpage/BasicPage";
+} from "../elements/routelogo/RouteLogo";
+import parseAlert, { buildStatusFromAlerts } from "../elements/Alert";
+import ServiceMap from "../elements/servicemap/ServiceMap";
+import { Alert_Reference, ListAlertsReply, Route } from "../api/types";
+import { useHttpData } from "../hooks/http";
+import { routeURL, alertsURL } from "../api/api";
+import BasicPage from "../elements/BasicPage";
 
 export type RoutePageProps = {
   routeId: string;

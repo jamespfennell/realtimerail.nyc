@@ -1,6 +1,6 @@
 import { sortRouteIds } from "./ListOfRouteLogos";
 import "./ListOfRouteLogos.css";
-import "./ListOfRouteLogos.tsx";
+import "./ListOfRouteLogos";
 
 test.each([
   [

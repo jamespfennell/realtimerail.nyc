@@ -2,11 +2,11 @@ import "./HomePage.css";
 
 import { Link } from "react-router-dom";
 
-import RouteLogo from "../../shared/routelogo/RouteLogo";
-import { buildStatusFromAlerts } from "../../util/Alert";
-import { listRoutesURL } from "../../api/api";
-import { Alert_Reference, ListRoutesReply } from "../../api/types";
-import { useHttpData } from "../http";
+import RouteLogo from "../elements/routelogo/RouteLogo";
+import { buildStatusFromAlerts } from "../elements/Alert";
+import { listRoutesURL } from "../api/api";
+import { Alert_Reference, ListRoutesReply } from "../api/types";
+import { useHttpData } from "../hooks/http";
 
 const layout = [
   ["1", "2", "3"],

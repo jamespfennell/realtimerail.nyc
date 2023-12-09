@@ -1,11 +1,11 @@
 import React from "react";
 
 import { useEffect, useState } from "react";
-import { useHttpData } from "../http";
-import { locationURL } from "../../api/api";
-import { ErrorMessage, LoadingPanel } from "../../shared/basicpage/BasicPage";
-import { ListStopsReply } from "../../api/types";
-import ListOfStops from "../../shared/ListOfStops";
+import { useHttpData } from "../hooks/http";
+import { locationURL } from "../api/api";
+import { ErrorMessage, LoadingPanel } from "../elements/BasicPage";
+import { ListStopsReply } from "../api/types";
+import ListOfStops from "../elements/ListOfStops";
 
 export default function LocationPage() {
   const [location, setLocation] = useState<LocationQueryResponse>({

@@ -5,7 +5,7 @@ import {
   alert_EffectToJSON,
   alert_CauseToJSON,
 } from "../api/types";
-import { timestampToDateString, timestampToDateTime } from "./time";
+import { timestampToDateString, timestampToDateTime } from "../lib/time";
 
 export function buildStatusFromAlerts(alerts: Alert_Reference[]) {
   if (alerts.length === 0) {

@@ -1,13 +1,13 @@
 import "./TripPage.css";
 
-import RouteLogo from "../../shared/routelogo/RouteLogo";
-import { timestampToDateTime, timestampToTime } from "../../util/time";
-import ServiceMap, { StopData } from "../../shared/servicemap/ServiceMap";
+import RouteLogo from "../elements/routelogo/RouteLogo";
+import { timestampToDateTime, timestampToTime } from "../lib/time";
+import ServiceMap, { StopData } from "../elements/servicemap/ServiceMap";
 import { Link } from "react-router-dom";
-import { Trip } from "../../api/types";
-import { HttpData, useHttpData } from "../http";
-import BasicPage from "../../shared/basicpage/BasicPage";
-import { tripURL } from "../../api/api";
+import { Trip } from "../api/types";
+import { HttpData, useHttpData } from "../hooks/http";
+import BasicPage from "../elements/BasicPage";
+import { tripURL } from "../api/api";
 
 export type TripPageProps = {
   routeId: string;

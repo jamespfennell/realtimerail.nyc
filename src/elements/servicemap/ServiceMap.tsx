@@ -2,7 +2,7 @@ import "./ServiceMap.css";
 
 import { Link } from "react-router-dom";
 
-import { List, ListElement } from "../../util/List";
+import { List, ListElement } from "../List";
 
 export type StopData = {
   id: string;

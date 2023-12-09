@@ -1,7 +1,7 @@
-import { EntrypointReply, Feed, ListFeedsReply } from "../../api/types";
-import { useHttpData } from "../http";
-import { feedsURL, entrypointURL } from "../../api/api";
-import { ErrorMessage, LoadingPanel } from "../../shared/basicpage/BasicPage";
+import { EntrypointReply, Feed, ListFeedsReply } from "../api/types";
+import { useHttpData } from "../hooks/http";
+import { feedsURL, entrypointURL } from "../api/api";
+import { ErrorMessage, LoadingPanel } from "../elements/BasicPage";
 
 export default function DebuggingPage() {
   const feedData = useHttpData(feedsURL(), 5000, ListFeedsReply.fromJSON);

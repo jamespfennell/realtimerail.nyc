@@ -1,11 +1,11 @@
 import React from "react";
-import "./FavoritesPage.css";
-import { useFavorites } from "../../shared/favorites/hooks/favorites";
-import { useHttpData } from "../http";
-import { stopServiceMapsURL } from "../../api/api";
-import { ListStopsReply } from "../../api/types";
-import { ErrorMessage, LoadingPanel } from "../../shared/basicpage/BasicPage";
-import ListOfStops from "../../shared/ListOfStops";
+
+import { useFavorites } from "../hooks/favorites";
+import { useHttpData } from "../hooks/http";
+import { stopServiceMapsURL } from "../api/api";
+import { ListStopsReply } from "../api/types";
+import { ErrorMessage, LoadingPanel } from "../elements/BasicPage";
+import ListOfStops from "../elements/ListOfStops";
 
 export default function FavoritesPage() {
   const { getFavoriteStops } = useFavorites();

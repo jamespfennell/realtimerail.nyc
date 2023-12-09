@@ -2,21 +2,21 @@ import React, { useState } from "react";
 
 import "./StopPage.css";
 
-import ListOfRouteLogos from "../../shared/routelogo/ListOfRouteLogos";
-import RouteLogo from "../../shared/routelogo/RouteLogo";
+import ListOfRouteLogos from "../elements/routelogo/ListOfRouteLogos";
+import RouteLogo from "../elements/routelogo/RouteLogo";
 import { Link } from "react-router-dom";
-import { List, ListElement } from "../../util/List";
+import { List, ListElement } from "../elements/List";
 import {
   ListStopsReply,
   Stop,
   StopTime,
   Trip_Reference,
-} from "../../api/types";
-import { useHttpData } from "../http";
-import { stopServiceMapsURL, stopURL } from "../../api/api";
-import { ErrorMessage, LoadingPanel } from "../../shared/basicpage/BasicPage";
-import { FavoriteButton } from "../../shared/favorites/FavoriteButton";
-import ListOfStops from "../../shared/ListOfStops";
+} from "../api/types";
+import { useHttpData } from "../hooks/http";
+import { stopServiceMapsURL, stopURL } from "../api/api";
+import { ErrorMessage, LoadingPanel } from "../elements/BasicPage";
+import { FavoriteButton } from "../elements/FavoriteButton";
+import ListOfStops from "../elements/ListOfStops";
 
 export type StopPageProps = {
   stopId: string;

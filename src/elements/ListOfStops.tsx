@@ -1,7 +1,7 @@
 import "./ListOfStops.css";
 
 import { Stop } from "../api/types";
-import { List, ListElement } from "../util/List";
+import { List, ListElement } from "./List";
 import ListOfRouteLogos from "./routelogo/ListOfRouteLogos";
 import { Link } from "react-router-dom";
 

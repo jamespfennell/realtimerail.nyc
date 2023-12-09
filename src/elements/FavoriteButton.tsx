@@ -1,6 +1,6 @@
 import React from "react";
 import "./FavoriteButton.css";
-import { useFavorites } from "./hooks/favorites";
+import { useFavorites } from "../hooks/favorites";
 
 type Props = {
   stopId: string;
