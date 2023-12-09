@@ -63,21 +63,20 @@ export default function App() {
           <p>
             realtimerail.nyc is an{" "}
             <a href="https://github.com/jamespfennell/realtimerail.nyc-react">
-              open source Typescript/React app
+              open source app
             </a>{" "}
             that uses the{" "}
             <a href="https://github.com/jamespfennell/transiter">
               backend software Transiter
             </a>{" "}
-            to access New York City Transit's realtime data.
+            to access NYC subway realtime data.{" "}
+            <Link to="/debug">Debugging information</Link>.
           </p>
           <p>No cookies, no tracking, no ads.</p>
           <p>
-            All subway symbols are trademarked and are used pursuant to a
-            license from the <a href="http://www.mta.info">MTA</a>.
-          </p>
-          <p>
-            <Link to="/debug">Debugging information</Link>.
+            Subway symbols are
+            licensed from the <a href="http://www.mta.info">MTA</a>.
+            Other icons are from the open-source <a href="https://iconoir.com">Iconoir</a> project.
           </p>
         </div>
       </div>

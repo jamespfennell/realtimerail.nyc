@@ -1,7 +1,8 @@
 # realtimerail.nyc
 
 [realtimerail.nyc](https://realtimerail.nyc)
-    is an open-source web app for NYC subway realtime train times.
+    is an open-source web app for the NYC subway.
+It displays train times based on realtime data from the MTA.
 The app's philosophy is to be very simple and 100% user-centric.
 No cookes, no tracking, no ads, etc.
 
@@ -52,7 +53,7 @@ Formatter: `npx prettier . --write`
 
 Linter: `npx eslint src`
 
-Tests: unfortunately almost non existent.
+Tests: unfortunately almost non-existent.
     The few tests that exist can be run with `npm test`.
 
 ### Backend

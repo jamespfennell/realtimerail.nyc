@@ -30,6 +30,8 @@ export default function DebuggingPage() {
   return (
     <div className="DebugPage">
       <h1>Debugging</h1>
+      <h3>To report a problem with the app, please <a href="https://github.com/jamespfennell/realtimerail.nyc/issues">open an issue on the GitHub 
+      respository</a> Thank you in advance!</h3>
       <LoadingPanel loaded={loaded}>
         <Body
           feedData={feedData.response!}
