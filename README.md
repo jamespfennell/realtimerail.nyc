@@ -1,7 +1,7 @@
 # realtimerail.nyc
 
 [realtimerail.nyc](https://realtimerail.nyc)
-    is an open-source web app for the NYC subway.
+is an open-source web app for the NYC subway.
 It displays train times based on realtime data from the MTA.
 The app's philosophy is to be very simple and 100% user-centric.
 No cookes, no tracking, no ads, etc.
@@ -21,7 +21,7 @@ npm start
 ```
 
 By default, all backend requests are proxied to `staging.realtimerail.nyc`
-    so you don't need to run the backend yourself.
+so you don't need to run the backend yourself.
 
 An optimized production build can be created using:
 
@@ -36,7 +36,7 @@ docker build .
 ```
 
 The project's Docker image is an Nginx image containing the compiled files
-    and some basic caching configuration.
+and some basic caching configuration.
 
 ### Code layout
 
@@ -54,13 +54,13 @@ Formatter: `npx prettier . --write`
 Linter: `npx eslint src`
 
 Tests: unfortunately almost non-existent.
-    The few tests that exist can be run with `npm test`.
+The few tests that exist can be run with `npm test`.
 
 ### Backend
 
 As mentioned above, all backend requests are proxied to `staging.realtimerail.nyc`.
 In general the app expects Transiter to be available at `$DOMAIN/transiter/v0.6`
-    and expects the NYC subway system to be installed in the Transiter instance with ID `us-ny-subway`.
+and expects the NYC subway system to be installed in the Transiter instance with ID `us-ny-subway`.
 The `transiter/v0.6` and `us-ny-subway` constants live in `src/api/api.ts` in case you want to change them.
 
 ## License

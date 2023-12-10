@@ -38,7 +38,7 @@ function Body(props: { favoriteStops: string[] }) {
   return (
     <div>
       <LoadingPanel loaded={httpData.response !== null}>
-        <ListOfStops stops={httpData.response?.stops!} />
+        <ListOfStops stops={httpData.response?.stops!} orderByName={true} />
       </LoadingPanel>
     </div>
   );

@@ -74,9 +74,9 @@ export default function App() {
           </p>
           <p>No cookies, no tracking, no ads.</p>
           <p>
-            Subway symbols are
-            licensed from the <a href="http://www.mta.info">MTA</a>.
-            Other icons are from the open-source <a href="https://iconoir.com">Iconoir</a> project.
+            Subway symbols are licensed from the{" "}
+            <a href="http://www.mta.info">MTA</a>. Other icons are from the
+            open-source <a href="https://iconoir.com">Iconoir</a> project.
           </p>
         </div>
       </div>

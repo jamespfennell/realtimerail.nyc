@@ -49,7 +49,7 @@ export default function LocationPage() {
       <h1>Nearby stops</h1>
       <LoadingPanel loaded={location.response !== null}>
         <h3>Stops within 2 miles</h3>
-        <LocationResultPage
+        <Body
           latitude={location.response?.coords.latitude!}
           longitude={location.response?.coords.longitude!}
         />
@@ -63,12 +63,12 @@ type LocationQueryResponse = {
   error: GeolocationPositionError | null;
 };
 
-type LocationResultPageProps = {
+type BodyProps = {
   latitude: number;
   longitude: number;
 };
 
-function LocationResultPage(props: LocationResultPageProps) {
+function Body(props: BodyProps) {
   let url = locationURL(props.latitude, props.longitude);
   const httpData = useHttpData(url, null, ListStopsReply.fromJSON);
   if (httpData.error !== null) {
@@ -80,7 +80,7 @@ function LocationResultPage(props: LocationResultPageProps) {
   }
   return (
     <LoadingPanel loaded={httpData.response !== null}>
-      <ListOfStops stops={httpData.response?.stops!} />
+      <ListOfStops stops={httpData.response?.stops!} orderByName={false} />
     </LoadingPanel>
   );
 }

@@ -6,12 +6,7 @@ import ListOfRouteLogos from "../elements/routelogo/ListOfRouteLogos";
 import RouteLogo from "../elements/routelogo/RouteLogo";
 import { Link } from "react-router-dom";
 import { List, ListElement } from "../elements/List";
-import {
-  ListStopsReply,
-  Stop,
-  StopTime,
-  Trip_Reference,
-} from "../api/types";
+import { ListStopsReply, Stop, StopTime, Trip_Reference } from "../api/types";
 import { useHttpData } from "../hooks/http";
 import { stopServiceMapsURL, stopURL } from "../api/api";
 import { ErrorMessage, LoadingPanel } from "../elements/BasicPage";
@@ -299,7 +294,7 @@ function Transfers(props: TransfersProps) {
   return (
     <div>
       <h2>{props.title}</h2>
-      <ListOfStops stops={props.data.stops} />
+      <ListOfStops stops={props.data.stops} orderByName={true} />
     </div>
   );
 }

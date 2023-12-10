@@ -5,11 +5,16 @@ import { List, ListElement } from "./List";
 import ListOfRouteLogos from "./routelogo/ListOfRouteLogos";
 import { Link } from "react-router-dom";
 
-export default function ListOfStops(props: { stops: Stop[] }) {
+export default function ListOfStops(props: {
+  stops: Stop[];
+  orderByName: boolean;
+}) {
+  if (props.orderByName) {
+    props.stops.sort(function (a, b) {
+      return (a.name ?? "").localeCompare(b.name ?? "");
+    });
+  }
   let elements = [];
-  props.stops.sort(function (a, b) {
-    return (a.name ?? "").localeCompare(b.name ?? "");
-  });
   for (const stop of props.stops) {
     let usualRouteIds: string[] = [];
     for (const serviceMap of stop.serviceMaps) {

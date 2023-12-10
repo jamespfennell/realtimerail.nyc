@@ -27,11 +27,17 @@ export default function DebuggingPage() {
   }
 
   let loaded = feedData.response !== null && transiterData.response !== null;
+  // TODO: the header and report suggestion should appear even if the HTTP request errors our
   return (
     <div className="DebugPage">
       <h1>Debugging</h1>
-      <h3>To report a problem with the app, please <a href="https://github.com/jamespfennell/realtimerail.nyc/issues">open an issue on the GitHub 
-      respository</a> Thank you in advance!</h3>
+      <h3>
+        To report a problem with the app, please{" "}
+        <a href="https://github.com/jamespfennell/realtimerail.nyc/issues">
+          open an issue on the GitHub respository
+        </a>{" "}
+        Thank you in advance!
+      </h3>
       <LoadingPanel loaded={loaded}>
         <Body
           feedData={feedData.response!}
