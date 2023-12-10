@@ -34,6 +34,10 @@
   font-size: 0.9em;
 }
 
+.StopPage .TripStopTime .terminating {
+  color: dimgray;
+}
+
 .StopPage .scheduledTripWarning {
   font-size: 0.9em;
   margin: 10px 0;

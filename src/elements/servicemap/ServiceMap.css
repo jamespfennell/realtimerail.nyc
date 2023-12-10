@@ -61,9 +61,6 @@
   border-radius: 0 0 2px 2px;
 }
 
-.ServiceMap .ListElement.intermediateEnRoute {
-}
-
 .ServiceMap .ListElement.intermediateEnRoute .name {
   font-style: italic;
   padding-top: 30px;

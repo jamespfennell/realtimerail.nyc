@@ -65,13 +65,15 @@ export type BodyProps = {
 };
 
 function Body(props: BodyProps) {
-  let stop = props.stop;
+  const stop = props.stop;
+
   let headsignToStopTimes = new Map();
   for (const headsignRule of stop.headsignRules) {
     headsignToStopTimes.set(headsignRule.headsign, []);
   }
+  const terminatingTrains = "(terminating trains)";
   for (const stopTime of stop.stopTimes) {
-    let headsign = stopTime.headsign ?? "(terminating trains)";
+    const headsign = stopTime.headsign ?? terminatingTrains;
     if (!headsignToStopTimes.has(headsign)) {
       headsignToStopTimes.set(headsign, []);
     }
@@ -79,10 +81,19 @@ function Body(props: BodyProps) {
   }
 
   let headsigns = [];
+  let hasTerminatingTrains = false;
   for (const [headsign] of headsignToStopTimes) {
+    if (headsign === terminatingTrains) {
+      // We'll put this headsign at the end after sorting all the other headsigns.
+      hasTerminatingTrains = true;
+      continue;
+    }
     headsigns.push(headsign);
   }
   headsigns.sort();
+  if (hasTerminatingTrains) {
+    headsigns.push(terminatingTrains);
+  }
 
   let usualRouteIds: string[] = [];
   for (const serviceMap of stop.serviceMaps) {
@@ -162,11 +173,13 @@ function HeadsignStopTimes(props: HeadsignStopTimesProps) {
   }
   let tripStopTimeElements = [];
   for (const stopTime of props.stopTimes) {
-    let tripTime = stopTime.arrival?.time;
+    let tripTime = stopTime.arrival?.time ?? stopTime.departure?.time;
     if (tripTime === undefined) {
-      tripTime = stopTime.departure?.time;
-    }
-    if (tripTime === undefined) {
+      console.log(
+        "Skipping trip " +
+          stopTime.trip?.id +
+          " because it has no arrival or departure time",
+      );
       skipped += 1;
       continue;
     }
@@ -193,18 +206,17 @@ function HeadsignStopTimes(props: HeadsignStopTimesProps) {
       tripStopTime.trip.currentStopSequence !== 0
     );
     allAssigned = allAssigned && isAssigned;*/
-    let lastStopName = trip.destination?.name ?? "";
-    if ((trip.destination?.id ?? "").substring(0, 3) === props.stopID) {
-      lastStopName = "(terminating train)";
-    }
     tripStopTimeElements.push(
       <TripStopTime
         key={"trip" + trip.id}
-        lastStopName={lastStopName}
+        lastStopName={trip.destination?.name ?? ""}
         routeId={trip.route?.id ?? ""}
         tripId={trip.id}
         time={tripTime - props.currentTime}
         isAssigned={true} // TODO
+        isTerminating={
+          (trip.destination?.id ?? "").substring(0, 3) === props.stopID
+        }
       />,
     );
   }
@@ -233,6 +245,7 @@ type TripStopTimeProps = {
   tripId: string;
   time: any;
   isAssigned: boolean;
+  isTerminating: boolean;
 };
 
 function TripStopTime(props: TripStopTimeProps) {
@@ -244,19 +257,20 @@ function TripStopTime(props: TripStopTimeProps) {
   } else {
     displayTime = Math.floor(props.time / 60).toString() + "m";
   }
-
   return (
     <Link
       to={"/routes/" + props.routeId + "/" + props.tripId}
       state={{ lastStopName: props.lastStopName }}
     >
-      <ListElement className={"TripStopTime"}>
+      <ListElement className="TripStopTime">
         <div className="time">{displayTime}</div>
         <div className="route">
           <RouteLogo route={props.routeId} />
         </div>
-        <div className="lastStop">
-          {props.lastStopName}
+        <div
+          className={"lastStop" + (props.isTerminating ? " terminating" : "")}
+        >
+          {props.isTerminating ? "(terminating)" : props.lastStopName}
           {props.isAssigned
             ? ""
             : String.fromCharCode(160) + String.fromCharCode(9734)}
