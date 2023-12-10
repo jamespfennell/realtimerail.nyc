@@ -110,6 +110,7 @@ function Body(props: BodyProps) {
     stopTimeElements.push(
       <HeadsignStopTimes
         key={headsign}
+        stopID={stop.id}
         headsign={headsign}
         stopTimes={headsignToStopTimes.get(headsign) ?? []}
         currentTime={currentTime}
@@ -140,6 +141,7 @@ function Body(props: BodyProps) {
 }
 type HeadsignStopTimesProps = {
   headsign: string;
+  stopID: string;
   stopTimes: StopTime[];
   currentTime: number;
 };
@@ -191,11 +193,14 @@ function HeadsignStopTimes(props: HeadsignStopTimesProps) {
       tripStopTime.trip.currentStopSequence !== 0
     );
     allAssigned = allAssigned && isAssigned;*/
-
+    let lastStopName = trip.destination?.name ?? "";
+    if ((trip.destination?.id ?? "").substring(0, 3) === props.stopID) {
+      lastStopName = "(terminating train)";
+    }
     tripStopTimeElements.push(
       <TripStopTime
         key={"trip" + trip.id}
-        lastStopName={trip.destination?.name ?? ""}
+        lastStopName={lastStopName}
         routeId={trip.route?.id ?? ""}
         tripId={trip.id}
         time={tripTime - props.currentTime}
