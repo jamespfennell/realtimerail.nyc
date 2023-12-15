@@ -13,6 +13,7 @@ import { ErrorMessage, LoadingPanel } from "../elements/BasicPage";
 import { FavoriteButton } from "../elements/FavoriteButton";
 import ListOfStops from "../elements/ListOfStops";
 import { SecondsButton } from "../elements/SecondsButton";
+import { useSeconds } from "../hooks/seconds";
 
 export type StopPageProps = {
   stopId: string;
@@ -251,21 +252,37 @@ type TripStopTimeProps = {
 };
 
 function TripStopTime(props: TripStopTimeProps) {
+  const { getUseSeconds } = useSeconds();
+  const displaySeconds = getUseSeconds();
+
   let displayTime = "";
-  if (props.time < 30) {
-    displayTime = "Now";
-  } else if (props.time < 60) {
-    displayTime = "<1m";
+  let margin = "";
+  if (!displaySeconds) {
+    margin = "0 5px";
+    if (props.time < 30) {
+      displayTime = "Now";
+    } else if (props.time < 60) {
+      displayTime = "<1m";
+    } else {
+      displayTime = Math.floor(props.time / 60).toString() + "m";
+    }
   } else {
-    displayTime = Math.floor(props.time / 60).toString() + "m";
+    margin = "0 15px";
+    const minutes = Math.floor(props.time / 60);
+    const seconds = props.time % 60;
+    const padSeconds = seconds < 10;
+    displayTime = `${minutes}:${padSeconds ? "0" : ""}${seconds}`;
   }
+
   return (
     <Link
       to={"/routes/" + props.routeId + "/" + props.tripId}
       state={{ lastStopName: props.lastStopName }}
     >
       <ListElement className="TripStopTime">
-        <div className="time">{displayTime}</div>
+        <div className="time" style={{ margin }}>
+          {displayTime}
+        </div>
         <div className="route">
           <RouteLogo route={props.routeId} />
         </div>

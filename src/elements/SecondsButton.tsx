@@ -9,6 +9,7 @@ export function SecondsButton({ stopId }: Props) {
 
   const handleClick = () => {
     toggleSeconds();
+    window.location.reload();
   };
 
   const isLeastUsedStop = stopId === "H14";
