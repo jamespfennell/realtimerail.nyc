@@ -1,0 +1,9 @@
+.SecondsButton {
+  margin-left: 5px;
+  margin-top: -5px;
+}
+
+.SecondsButton:hover {
+  color: lightseagreen;
+  cursor: pointer;
+}
