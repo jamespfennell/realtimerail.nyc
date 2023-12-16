@@ -20,26 +20,33 @@ import FavoritesPage from "./pages/FavoritesPage";
 import HomeIcon from "./icons/home.svg";
 import StarIcon from "./icons/star.svg";
 import LocationIcon from "./icons/location.svg";
+import SettingsIcon from "./icons/settings.svg";
 import DebuggingPage from "./pages/DebuggingPage";
+import SettingsPage from "./pages/SettingsPage";
 
 export default function App() {
   return (
     <BrowserRouter>
       <div className="App">
         <div className="appHeader">
-          <Link to="/favorites">
-            <div className="home">
-              <img alt="go to favorite stops" src={StarIcon} />
-            </div>
-          </Link>
           <Link to="/">
             <div className="home">
               <img alt="go to the home page" src={HomeIcon} />
             </div>
           </Link>
+          <Link to="/favorites">
+            <div className="home">
+              <img alt="go to favorite stops" src={StarIcon} />
+            </div>
+          </Link>
           <Link to="/nearby">
             <div className="home">
               <img alt="find nearby stops" src={LocationIcon} />
+            </div>
+          </Link>
+          <Link to="/settings">
+            <div className="home">
+              <img alt="go to settings" src={SettingsIcon} />
             </div>
           </Link>
         </div>
@@ -48,6 +55,7 @@ export default function App() {
             <Routes>
               <Route path="/" element={<HomePage />} />
               <Route path="/debug" element={<DebuggingPage />} />
+              <Route path="/settings" element={<SettingsPage />} />
               <Route path="/favorites" element={<FavoritesPage />} />
               <Route path="/nearby" element={<LocationPage />} />
               <Route path="/routes/:routeId" element={<RoutePageElement />} />
