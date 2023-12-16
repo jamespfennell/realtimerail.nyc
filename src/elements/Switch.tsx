@@ -1,27 +1,31 @@
 // Switch.tsx
-import { FC, ChangeEvent } from "react";
+import React, { FC, ChangeEvent } from "react";
 import "./Switch.css";
 
 interface SwitchProps {
   checked: boolean;
   onChange: (checked: boolean) => void;
+  label: string;
 }
 
-const Switch: FC<SwitchProps> = ({ checked, onChange }) => {
+const Switch: FC<SwitchProps> = ({ checked, onChange, label }) => {
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     onChange(event.target.checked);
   };
 
   return (
-    <label className={`switch ${checked ? "checked" : ""}`}>
-      <input
-        type="checkbox"
-        checked={checked}
-        onChange={handleChange}
-        className="input"
-      />
-      <span className="knob"></span>
-    </label>
+    <div className="switch-container">
+      <label className={`switch ${checked ? "checked" : ""}`}>
+        <input
+          type="checkbox"
+          checked={checked}
+          onChange={handleChange}
+          className="input"
+        />
+        <span className="knob"></span>
+      </label>
+      <span className="label">{label}</span>
+    </div>
   );
 };
 

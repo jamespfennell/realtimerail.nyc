@@ -7,15 +7,16 @@ export default function SettingsPage() {
   const [viewSeconds, setViewSeconds] = useState(getUseSeconds());
 
   return (
-    <div style={{ flex: "col", gap: 2, alignContent: "center" }}>
+    <div>
+      <h1>Settings</h1>
       <Switch
         checked={viewSeconds}
         onChange={(checked: boolean) => {
           setViewSeconds(checked);
           setUseSeconds(checked);
         }}
-      ></Switch>
-      Use Seconds
+        label={"View arrival time in seconds"}
+      />
     </div>
   );
 }

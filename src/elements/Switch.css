@@ -1,4 +1,9 @@
 /* Switch.css */
+.switch-container {
+  display: flex;
+  align-items: center;
+}
+
 .switch {
   display: inline-block;
   position: relative;
@@ -32,4 +37,8 @@
 
 .switch.checked .knob {
   transform: translateX(20px);
+}
+
+.label {
+  margin-left: 8px;
 }
