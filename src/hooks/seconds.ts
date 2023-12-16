@@ -6,5 +6,6 @@ export const useSeconds = () => {
   return {
     toggleSeconds: () => setUseSeconds(!useSeconds),
     getUseSeconds: () => useSeconds,
+    setUseSeconds,
   };
 };
