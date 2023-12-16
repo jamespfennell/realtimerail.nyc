@@ -12,7 +12,6 @@ import { stopServiceMapsURL, stopURL } from "../api/api";
 import { ErrorMessage, LoadingPanel } from "../elements/BasicPage";
 import { FavoriteButton } from "../elements/FavoriteButton";
 import ListOfStops from "../elements/ListOfStops";
-import { SecondsButton } from "../elements/SecondsButton";
 import { useSeconds } from "../hooks/seconds";
 
 export type StopPageProps = {
@@ -53,7 +52,6 @@ function StopPage(props: StopPageProps) {
       <h1>
         {stopName}
         <FavoriteButton stopId={props.stopId} />
-        <SecondsButton stopId={props.stopId} />
       </h1>
       <LoadingPanel loaded={loaded}>
         <Body stop={stopData.response!} />
