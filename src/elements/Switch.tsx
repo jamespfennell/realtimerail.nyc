@@ -6,9 +6,10 @@ interface SwitchProps {
   checked: boolean;
   onChange: (checked: boolean) => void;
   label: string;
+  id: string;
 }
 
-const Switch: FC<SwitchProps> = ({ checked, onChange, label }) => {
+const Switch: FC<SwitchProps> = ({ checked, onChange, label, id }) => {
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     onChange(event.target.checked);
   };
@@ -18,6 +19,7 @@ const Switch: FC<SwitchProps> = ({ checked, onChange, label }) => {
       <label className={`switch ${checked ? "checked" : ""}`}>
         <input
           type="checkbox"
+          id={id}
           checked={checked}
           onChange={handleChange}
           className="input"

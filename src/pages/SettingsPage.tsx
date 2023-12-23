@@ -12,6 +12,7 @@ export default function SettingsPage() {
         onChange={(checked: boolean) => {
           setSettings((prev) => ({ ...prev, useSeconds: checked }));
         }}
+        id="settings"
         label={"View arrival time in seconds"}
       />
     </div>
