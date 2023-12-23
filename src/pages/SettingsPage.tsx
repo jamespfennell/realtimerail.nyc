@@ -1,16 +1,16 @@
 import Switch from "../elements/Switch";
-import { useSeconds } from "../hooks/seconds";
+import { useSettings } from "../hooks/seconds";
 
 export default function SettingsPage() {
-  const { getUseSeconds, setUseSeconds } = useSeconds();
+  const { settings, setSettings } = useSettings();
 
   return (
     <div>
       <h1>Settings</h1>
       <Switch
-        checked={getUseSeconds()}
+        checked={settings.useSeconds}
         onChange={(checked: boolean) => {
-          setUseSeconds(checked);
+          setSettings((prev) => ({ ...prev, useSeconds: checked }));
         }}
         label={"View arrival time in seconds"}
       />

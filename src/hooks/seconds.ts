@@ -1,11 +1,12 @@
 import { useLocalStorage } from "./localstorage";
 
-export const useSeconds = () => {
-  const [useSeconds, setUseSeconds] = useLocalStorage("rtr.seconds", false);
+export const useSettings = () => {
+  const [settings, setSettings] = useLocalStorage("rtr.seconds", {
+    useSeconds: false,
+  });
 
   return {
-    toggleSeconds: () => setUseSeconds(!useSeconds),
-    getUseSeconds: () => !!useSeconds,
-    setUseSeconds,
+    settings,
+    setSettings,
   };
 };

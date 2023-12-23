@@ -12,7 +12,7 @@ import { stopServiceMapsURL, stopURL } from "../api/api";
 import { ErrorMessage, LoadingPanel } from "../elements/BasicPage";
 import { FavoriteButton } from "../elements/FavoriteButton";
 import ListOfStops from "../elements/ListOfStops";
-import { useSeconds } from "../hooks/seconds";
+import { useSettings } from "../hooks/seconds";
 
 export type StopPageProps = {
   stopId: string;
@@ -250,8 +250,8 @@ type TripStopTimeProps = {
 };
 
 function TripStopTime(props: TripStopTimeProps) {
-  const { getUseSeconds } = useSeconds();
-  const displaySeconds = getUseSeconds();
+  const { settings } = useSettings();
+  const displaySeconds = settings.useSeconds;
 
   let displayTime = "";
   let margin = "";

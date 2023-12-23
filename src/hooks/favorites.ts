@@ -1,7 +1,10 @@
 import { useLocalStorage } from "./localstorage";
 
 export const useFavorites = () => {
-  const [favorites, setFavorites] = useLocalStorage("rtr.favorites", []);
+  const [favorites, setFavorites] = useLocalStorage(
+    "rtr.favorites",
+    [] as string[],
+  );
 
   return {
     getFavoriteStops: () => favorites,
