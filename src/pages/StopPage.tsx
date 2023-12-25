@@ -12,7 +12,7 @@ import { stopServiceMapsURL, stopURL } from "../api/api";
 import { ErrorMessage, LoadingPanel } from "../elements/BasicPage";
 import { FavoriteButton } from "../elements/FavoriteButton";
 import ListOfStops from "../elements/ListOfStops";
-import { useSettings } from "../hooks/seconds";
+import { useSettings } from "../hooks/settings";
 
 export type StopPageProps = {
   stopId: string;

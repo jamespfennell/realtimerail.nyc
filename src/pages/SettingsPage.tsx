@@ -1,5 +1,5 @@
 import Switch from "../elements/Switch";
-import { useSettings } from "../hooks/seconds";
+import { useSettings } from "../hooks/settings";
 
 export default function SettingsPage() {
   const { settings, setSettings } = useSettings();
