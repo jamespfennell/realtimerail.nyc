@@ -8,6 +8,9 @@ RUN npm install
 COPY tsconfig.json .
 COPY ./public ./public
 COPY ./src ./src
+ARG GITHUB_RUN_NUMBER=unset
+RUN sed -i -e "s/unset/${GITHUB_RUN_NUMBER}/g" src/build.tsx
+RUN cat src/build.tsx
 RUN npm run build
 
 RUN CI=true npm test

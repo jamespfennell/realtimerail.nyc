@@ -9,10 +9,6 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Set the build information
-        run: |
-          sed -i -e 's/unset/${{ github.run_number }}/g' src/build.tsx
-
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
 
@@ -30,5 +26,7 @@ jobs:
           tags: |
             jamespfennell/realtimerail.nyc:build-${{ github.run_number }}
             jamespfennell/realtimerail.nyc:latest
+          build-args: |
+            "GITHUB_RUN_NUMBER=${{ github.run_number }}"
           # Only push to Docker Hub if this workflow is a push to master
           push: ${{ github.ref == 'refs/heads/master' && github.event_name == 'push' }}
