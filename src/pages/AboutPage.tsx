@@ -4,7 +4,38 @@ import { feedsURL, entrypointURL } from "../api/api";
 import { ErrorMessage, LoadingPanel } from "../elements/BasicPage";
 import buildNumber from "../build";
 
-export default function DebuggingPage() {
+export default function AboutPage() {
+  return <div>
+    <h1>About</h1>
+    <p>
+      realtimerail.nyc is an{" "}
+      <a href="https://github.com/jamespfennell/realtimerail.nyc-react">
+        open source app
+      </a>{" "}
+      that uses the{" "}
+      <a href="https://github.com/jamespfennell/transiter">
+        backend software Transiter
+      </a>{" "}
+      to access NYC subway realtime data.
+    </p>
+    <p>
+      To report a problem with the app, please{" "}
+      <a href="https://github.com/jamespfennell/realtimerail.nyc/issues">
+        open an issue on the GitHub repository
+      </a>.{" "}
+      Thank you in advance!
+    </p>
+    <p>
+      Subway symbols are licensed from the{" "}
+      <a href="http://www.mta.info">MTA</a>. Other icons are from the
+      open-source <a href="https://iconoir.com">Iconoir</a> project.
+    </p>
+    <h2>Debugging</h2>
+    <DebuggingInformation />
+  </div>
+}
+
+function DebuggingInformation() {
   const feedData = useHttpData(feedsURL(), 5000, ListFeedsReply.fromJSON);
   const transiterData = useHttpData(
     entrypointURL(),
@@ -26,26 +57,14 @@ export default function DebuggingPage() {
       </ErrorMessage>
     );
   }
-
   let loaded = feedData.response !== null && transiterData.response !== null;
-  // TODO: the header and report suggestion should appear even if the HTTP request errors our
   return (
-    <div className="DebugPage">
-      <h1>Debugging</h1>
-      <h3>
-        To report a problem with the app, please{" "}
-        <a href="https://github.com/jamespfennell/realtimerail.nyc/issues">
-          open an issue on the GitHub respository
-        </a>{" "}
-        Thank you in advance!
-      </h3>
-      <LoadingPanel loaded={loaded}>
-        <Body
-          feedData={feedData.response!}
-          transiterData={transiterData.response!}
-        />
-      </LoadingPanel>
-    </div>
+    <LoadingPanel loaded={loaded}>
+      <Body
+        feedData={feedData.response!}
+        transiterData={transiterData.response!}
+      />
+    </LoadingPanel>
   );
 }
 
@@ -63,7 +82,7 @@ function Body(props: BodyProps) {
       continue;
     }
     subwayFeeds.push(
-      <tr>
+      <tr key={"feed-" + feed.id}>
         <td>
           <Dot
             className={statusColor(
@@ -82,55 +101,57 @@ function Body(props: BodyProps) {
   }
   return (
     <div>
-      <h2>UI</h2>
-      <p className="Center">Build: <BuildNumber /></p>
-      <h2>Transiter</h2>
+      <p className="Center">UI build: <BuildNumber /></p>
       <p className="Center">
-        Version: {props.transiterData.transiter?.version}
+        Transiter version: {props.transiterData.transiter?.version}
       </p>
       <h2>Subway feeds</h2>
       <table>
-        <tr>
-          <td></td>
-          <th>feed</th>
-          <th>latest data</th>
-        </tr>
-        {subwayFeeds}
+        <tbody>
+          <tr key="header">
+            <td></td>
+            <th>feed</th>
+            <th>latest data</th>
+          </tr>
+          {subwayFeeds}
+        </tbody>
       </table>
       <h3>Legend</h3>
       <table>
-        <tr>
-          <td>
-            <Dot className="Green" />
-          </td>
-          <td>
-            new data less than 20 seconds ago (20 minutes for the alerts feed)
-          </td>
-        </tr>
-        <tr>
-          <td>
-            <Dot className="Orange" />
-          </td>
-          <td>
-            new data 20-60 seconds ago (20-60 minutes for the alerts feed)
-          </td>
-        </tr>
-        <tr>
-          <td>
-            <Dot className="Red" />
-          </td>
-          <td>
-            new data more than 1 minute ago (more than 1 hour for the alerts
-            feed)
-          </td>
-        </tr>
+        <tbody>
+          <tr>
+            <td>
+              <Dot className="Green" />
+            </td>
+            <td>
+              new data less than 20 seconds ago (20 minutes for the alerts feed)
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <Dot className="Orange" />
+            </td>
+            <td>
+              new data 20-60 seconds ago (20-60 minutes for the alerts feed)
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <Dot className="Red" />
+            </td>
+            <td>
+              new data more than 1 minute ago (more than 1 hour for the alerts
+              feed)
+            </td>
+          </tr>
+        </tbody>
       </table>
     </div>
   );
 }
 
 function BuildNumber() {
-  if (buildNumber == "unset") {
+  if (buildNumber === "unset") {
     return <span>N/A</span>
   }
   return <span>#{buildNumber}</span>

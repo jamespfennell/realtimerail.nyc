@@ -16,12 +16,10 @@ import RoutePage from "./pages/RoutePage";
 import TripPage from "./pages/TripPage";
 import FavoritesPage from "./pages/FavoritesPage";
 
-// TODO: add a public attribution for the icons https://iconoir.com/
 import HomeIcon from "./icons/home.svg";
 import StarIcon from "./icons/star.svg";
 import LocationIcon from "./icons/location.svg";
-import SettingsIcon from "./icons/settings.svg";
-import DebuggingPage from "./pages/DebuggingPage";
+import AboutPage from "./pages/AboutPage";
 import SettingsPage from "./pages/SettingsPage";
 
 export default function App() {
@@ -58,7 +56,8 @@ export default function App() {
           <div className="innerContainer">
             <Routes>
               <Route path="/" element={<HomePage />} />
-              <Route path="/debug" element={<DebuggingPage />} />
+              <Route path="/about" element={<AboutPage />} />
+              <Route path="/debug" element={<AboutPage />} />
               <Route path="/settings" element={<SettingsPage />} />
               <Route path="/favorites" element={<FavoritesPage />} />
               <Route path="/nearby" element={<LocationPage />} />
@@ -73,10 +72,6 @@ export default function App() {
         </div>
         <div className="footer">
           <p>
-            <Link to="/settings">Settings</Link> ·{" "}
-            <Link to="/debug">Debugging information</Link>.
-          </p>
-          <p>
             realtimerail.nyc is an{" "}
             <a href="https://github.com/jamespfennell/realtimerail.nyc-react">
               open source app
@@ -89,9 +84,8 @@ export default function App() {
           </p>
           <p>No cookies, no tracking, no ads.</p>
           <p>
-            Subway symbols are licensed from the{" "}
-            <a href="http://www.mta.info">MTA</a>. Other icons are from the
-            open-source <a href="https://iconoir.com">Iconoir</a> project.
+            <Link to="/settings">Settings</Link> ·{" "}
+            <Link to="/about">About</Link>
           </p>
         </div>
       </div>
