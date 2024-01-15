@@ -29,14 +29,14 @@ export default function App() {
     <BrowserRouter>
       <div className="App">
         <div className="appHeader">
-          <Link to="/">
-            <div className="home">
-              <img alt="go to the home page" src={HomeIcon} />
-            </div>
-          </Link>
           <Link to="/favorites">
             <div className="home">
               <img alt="go to favorite stops" src={StarIcon} />
+            </div>
+          </Link>
+          <Link to="/">
+            <div className="home">
+              <img alt="go to the home page" src={HomeIcon} />
             </div>
           </Link>
           <Link to="/nearby">
@@ -44,11 +44,15 @@ export default function App() {
               <img alt="find nearby stops" src={LocationIcon} />
             </div>
           </Link>
+          {/*
+          Having the settings link in the main nav bar could be nice when the settings
+          page has more inside it.
           <Link to="/settings">
             <div className="home">
               <img alt="go to settings" src={SettingsIcon} />
             </div>
           </Link>
+          */}
         </div>
         <div className="container">
           <div className="innerContainer">
@@ -69,6 +73,10 @@ export default function App() {
         </div>
         <div className="footer">
           <p>
+            <Link to="/settings">Settings</Link> ·{" "}
+            <Link to="/debug">Debugging information</Link>.
+          </p>
+          <p>
             realtimerail.nyc is an{" "}
             <a href="https://github.com/jamespfennell/realtimerail.nyc-react">
               open source app
@@ -77,8 +85,7 @@ export default function App() {
             <a href="https://github.com/jamespfennell/transiter">
               backend software Transiter
             </a>{" "}
-            to access NYC subway realtime data.{" "}
-            <Link to="/debug">Debugging information</Link>.
+            to access NYC subway realtime data.
           </p>
           <p>No cookies, no tracking, no ads.</p>
           <p>
