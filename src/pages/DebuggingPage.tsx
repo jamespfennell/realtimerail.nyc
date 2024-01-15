@@ -2,6 +2,7 @@ import { EntrypointReply, Feed, ListFeedsReply } from "../api/types";
 import { useHttpData } from "../hooks/http";
 import { feedsURL, entrypointURL } from "../api/api";
 import { ErrorMessage, LoadingPanel } from "../elements/BasicPage";
+import buildNumber from "../build";
 
 export default function DebuggingPage() {
   const feedData = useHttpData(feedsURL(), 5000, ListFeedsReply.fromJSON);
@@ -82,7 +83,7 @@ function Body(props: BodyProps) {
   return (
     <div>
       <h2>UI</h2>
-      <p className="Center">Build: #</p>
+      <p className="Center">Build: <BuildNumber /></p>
       <h2>Transiter</h2>
       <p className="Center">
         Version: {props.transiterData.transiter?.version}
@@ -126,6 +127,13 @@ function Body(props: BodyProps) {
       </table>
     </div>
   );
+}
+
+function BuildNumber() {
+  if (buildNumber == "unset") {
+    return <span>N/A</span>
+  }
+  return <span>#{buildNumber}</span>
 }
 
 function Dot(props: { className: string }) {
