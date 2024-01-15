@@ -23,6 +23,8 @@ jobs:
         id: docker_build
         uses: docker/build-push-action@v4
         with:
-          tags: jamespfennell/realtimerail.nyc:build-${{ github.run_number }}
+          tags: |
+            jamespfennell/realtimerail.nyc:build-${{ github.run_number }}
+            jamespfennell/realtimerail.nyc:latest
           # Only push to Docker Hub if this workflow is a push to master
           push: ${{ github.ref == 'refs/heads/master' && github.event_name == 'push' }}
