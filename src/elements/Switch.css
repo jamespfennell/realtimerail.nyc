@@ -2,6 +2,7 @@
 .switch-container {
   display: flex;
   align-items: center;
+  margin-bottom: 12px;
 }
 
 .switch {
