@@ -5,34 +5,36 @@ import { ErrorMessage, LoadingPanel } from "../elements/BasicPage";
 import buildNumber from "../build";
 
 export default function AboutPage() {
-  return <div>
-    <h1>About</h1>
-    <p>
-      realtimerail.nyc is an{" "}
-      <a href="https://github.com/jamespfennell/realtimerail.nyc-react">
-        open source app
-      </a>{" "}
-      that uses the{" "}
-      <a href="https://github.com/jamespfennell/transiter">
-        backend software Transiter
-      </a>{" "}
-      to access NYC subway realtime data.
-    </p>
-    <p>
-      To report a problem with the app, please{" "}
-      <a href="https://github.com/jamespfennell/realtimerail.nyc/issues">
-        open an issue on the GitHub repository
-      </a>.{" "}
-      Thank you in advance!
-    </p>
-    <p>
-      Subway symbols are licensed from the{" "}
-      <a href="http://www.mta.info">MTA</a>. Other icons are from the
-      open-source <a href="https://iconoir.com">Iconoir</a> project.
-    </p>
-    <h2>Debugging</h2>
-    <DebuggingInformation />
-  </div>
+  return (
+    <div>
+      <h1>About</h1>
+      <p>
+        realtimerail.nyc is an{" "}
+        <a href="https://github.com/jamespfennell/realtimerail.nyc-react">
+          open source app
+        </a>{" "}
+        that uses the{" "}
+        <a href="https://github.com/jamespfennell/transiter">
+          backend software Transiter
+        </a>{" "}
+        to access NYC subway realtime data.
+      </p>
+      <p>
+        To report a problem with the app, please{" "}
+        <a href="https://github.com/jamespfennell/realtimerail.nyc/issues">
+          open an issue on the GitHub repository
+        </a>
+        . Thank you in advance!
+      </p>
+      <p>
+        Subway symbols are licensed from the{" "}
+        <a href="http://www.mta.info">MTA</a>. Other icons are from the
+        open-source <a href="https://iconoir.com">Iconoir</a> project.
+      </p>
+      <h2>Debugging</h2>
+      <DebuggingInformation />
+    </div>
+  );
 }
 
 function DebuggingInformation() {
@@ -101,7 +103,9 @@ function Body(props: BodyProps) {
   }
   return (
     <div>
-      <p className="Center">UI build: <BuildNumber /></p>
+      <p className="Center">
+        UI build: <BuildNumber />
+      </p>
       <p className="Center">
         Transiter version: {props.transiterData.transiter?.version}
       </p>
@@ -152,9 +156,9 @@ function Body(props: BodyProps) {
 
 function BuildNumber() {
   if (buildNumber === "unset") {
-    return <span>N/A</span>
+    return <span>N/A</span>;
   }
-  return <span>#{buildNumber}</span>
+  return <span>#{buildNumber}</span>;
 }
 
 function Dot(props: { className: string }) {

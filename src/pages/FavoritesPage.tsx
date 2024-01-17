@@ -6,6 +6,7 @@ import { stopServiceMapsURL } from "../api/api";
 import { ListStopsReply } from "../api/types";
 import { ErrorMessage, LoadingPanel } from "../elements/BasicPage";
 import ListOfStops from "../elements/ListOfStops";
+import { useSettings } from "../hooks/settings";
 
 export default function FavoritesPage() {
   const { getFavoriteStops } = useFavorites();
@@ -23,6 +24,7 @@ export default function FavoritesPage() {
 }
 
 function Body(props: { favoriteStops: string[] }) {
+  const { settings } = useSettings();
   const httpData = useHttpData(
     stopServiceMapsURL(props.favoriteStops),
     null,
@@ -35,10 +37,22 @@ function Body(props: { favoriteStops: string[] }) {
       </ErrorMessage>
     );
   }
+  let favoriteStopsData = httpData.response?.stops;
+  // TODO this corrects the backend returning a response ordered by stop id instead of the order the IDs are passed in
+  // possibly fix this in the backend
+  if (!settings.alphabetizeFavoriteStops) {
+    favoriteStopsData?.sort(
+      (a, b) =>
+        props.favoriteStops.indexOf(a.id) - props.favoriteStops.indexOf(b.id),
+    );
+  }
   return (
     <div>
       <LoadingPanel loaded={httpData.response !== null}>
-        <ListOfStops stops={httpData.response?.stops!} orderByName={true} />
+        <ListOfStops
+          stops={favoriteStopsData ?? []}
+          orderByName={settings.alphabetizeFavoriteStops}
+        />
       </LoadingPanel>
     </div>
   );

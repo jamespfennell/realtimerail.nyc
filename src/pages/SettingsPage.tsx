@@ -12,8 +12,19 @@ export default function SettingsPage() {
         onChange={(checked: boolean) => {
           setSettings((prev) => ({ ...prev, useSeconds: checked }));
         }}
-        id="settings"
+        id={"useSeconds"}
         label={"View arrival time in seconds"}
+      />
+      <Switch
+        checked={settings.alphabetizeFavoriteStops}
+        onChange={(checked: boolean) => {
+          setSettings((prev) => ({
+            ...prev,
+            alphabetizeFavoriteStops: checked,
+          }));
+        }}
+        id={"alphabetizeFavoriteStops"}
+        label={"Alphabetize the favorite stops list"}
       />
     </div>
   );

@@ -4,7 +4,7 @@
 is an open-source web app for the NYC subway.
 It displays train times based on realtime data from the MTA.
 The app's philosophy is to be very simple and 100% user-centric.
-No cookes, no tracking, no ads, etc.
+No cookies, no tracking, no ads, etc.
 
 This repository hosts the UI code.
 The app uses [Transiter](https://www.github.com/jamespfennell/transiter) on the backend.
