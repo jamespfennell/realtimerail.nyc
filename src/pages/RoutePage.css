@@ -68,7 +68,7 @@
 NOTE: by using the margins, we need to make the effective height of the element less that 1em
 so that the line spacing is not affected.
  */
-.Alert .description .RouteLogo {
+.Alert .RouteLogo {
   width: 1.2em;
   height: 1.2em;
   margin-top: -0.15em;

@@ -88,7 +88,9 @@ function Alerts(props: AlertsProps) {
     console.log(alert.id);
     alertElements.push(
       <div key={alert.id} className="Alert">
-        <div className="header">{parsedAlert.header}</div>
+        <div className="header">
+          {replaceRouteIdsWithImages(parsedAlert.header)}
+        </div>
         <div className="description">
           {replaceRouteIdsWithImages(parsedAlert.description)}
         </div>
@@ -183,7 +185,7 @@ class StatusPanel extends React.Component<StatusPanelProps> {
     return this.props.alerts.length > 0;
   };
 
-  toggleAlerts = (event: any) => {
+  toggleAlerts = (_event: any) => {
     if (!this.canToggleAlerts()) {
       return;
     }
