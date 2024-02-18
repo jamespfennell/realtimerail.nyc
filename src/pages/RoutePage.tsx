@@ -5,6 +5,8 @@ import "./RoutePage.css";
 
 import RouteLogo, {
   replaceRouteIdsWithImages,
+  RouteId,
+  routeIdToDefaultColor,
 } from "../elements/routelogo/RouteLogo";
 import parseAlert, { buildStatusFromAlerts } from "../elements/Alert";
 import ServiceMap from "../elements/servicemap/ServiceMap";
@@ -56,7 +58,12 @@ function Body(route: Route) {
       />
       <ServiceMap
         stops={stops}
-        color={"#" + route.color}
+        color={
+          "#" +
+          (route.color === ""
+            ? routeIdToDefaultColor[route.id as RouteId]
+            : route.color)
+        }
         type="Route"
         showTimes={false}
       />
