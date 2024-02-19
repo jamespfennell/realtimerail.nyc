@@ -25,7 +25,7 @@ import { ReactComponent as ImageForW } from "./images/w.svg";
 import { ReactComponent as ImageForZ } from "./images/z.svg";
 import { ReactComponent as ImageForAccesible } from "./images/acc.svg";
 
-let routeIdToImage = {
+const routeIdToImage = {
   "1": ImageFor1,
   "2": ImageFor2,
   "3": ImageFor3,
@@ -58,7 +58,47 @@ let routeIdToImage = {
   SI: ImageForSIR,
   W: ImageForW,
   Z: ImageForZ,
-  AD: ImageForAccesible,
+  AD: ImageForAccesible, // TODO change icon
+} as const;
+
+export type RouteId = keyof typeof routeIdToImage;
+
+// Define defaults for routes which do not have a color in routes.txt.
+// The only routes lacking colors are SIR, H, and FS, but this defines defaults for all routes.
+export const routeIdToDefaultColor: Record<RouteId, string> = {
+  "1": "ee342e",
+  "2": "ee342e",
+  "3": "ee342e",
+  "4": "00933b",
+  "5": "00933b",
+  "5X": "00933b",
+  "6": "00933b",
+  "6X": "00933b",
+  "7": "b933ae",
+  "7X": "b933ae",
+  A: "2852ad",
+  B: "ff6219",
+  C: "2852ad",
+  D: "ff6219",
+  E: "2852ad",
+  F: "ff6219",
+  FS: "808183",
+  FX: "ff6219",
+  G: "6dbe45",
+  GS: "808183",
+  H: "808183",
+  J: "996433",
+  L: "a7a9ac",
+  M: "ff6219",
+  N: "fccc0a",
+  Q: "fccc0a",
+  R: "fccc0a",
+  S: "808183",
+  SIR: "213990",
+  SI: "213990",
+  W: "fccc0a",
+  Z: "996433",
+  AD: "000000", // TODO change color
 };
 
 export type RouteLogoProps = {
