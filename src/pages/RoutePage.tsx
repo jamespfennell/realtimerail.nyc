@@ -59,10 +59,7 @@ function Body(route: Route) {
       <ServiceMap
         stops={stops}
         color={
-          "#" +
-          (route.color === ""
-            ? routeIdToDefaultColor[route.id as RouteId]
-            : route.color)
+          "#" + (route.color || routeIdToDefaultColor[route.id as RouteId])
         }
         type="Route"
         showTimes={false}
