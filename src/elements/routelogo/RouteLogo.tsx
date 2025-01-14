@@ -4,6 +4,7 @@ import { ReactComponent as ImageFor3 } from "./images/3.svg";
 import { ReactComponent as ImageFor4 } from "./images/4.svg";
 import { ReactComponent as ImageFor5 } from "./images/5.svg";
 import { ReactComponent as ImageFor6 } from "./images/6.svg";
+import { ReactComponent as ImageFor6X } from "./images/6x.svg";
 import { ReactComponent as ImageFor7 } from "./images/7.svg";
 import { ReactComponent as ImageFor7X } from "./images/7x.svg";
 import { ReactComponent as ImageForA } from "./images/a.svg";
@@ -33,7 +34,7 @@ const routeIdToImage = {
   "5": ImageFor5,
   "5X": ImageFor5,
   "6": ImageFor6,
-  "6X": ImageFor6, // TODO
+  "6X": ImageFor6X,
   "7": ImageFor7,
   "7X": ImageFor7X,
   A: ImageForA,
