@@ -79,3 +79,7 @@ th {
   margin: 0px;
   padding: 5px;
 }
+
+p {
+  line-height: 1.4em;
+}
