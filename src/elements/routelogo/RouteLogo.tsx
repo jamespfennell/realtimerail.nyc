@@ -26,6 +26,7 @@ import { ReactComponent as ImageForW } from "./images/w.svg";
 import { ReactComponent as ImageForZ } from "./images/z.svg";
 import { ReactComponent as ImageForAccesible } from "./images/acc.svg";
 import { ReactComponent as ImageForSB } from "./images/sb.svg";
+import { ReactComponent as ImageForAirplane } from "./images/air.svg";
 
 const routeIdToImage = {
   "1": ImageFor1,
@@ -62,6 +63,7 @@ const routeIdToImage = {
   Z: ImageForZ,
   "accessibility icon": ImageForAccesible,
   "shuttle bus icon": ImageForSB,
+  "airplane icon": ImageForAirplane,
 } as const;
 
 export type RouteId = keyof typeof routeIdToImage;
@@ -103,6 +105,7 @@ export const routeIdToDefaultColor: Record<RouteId, string> = {
   Z: "996433",
   "accessibility icon": "000000",
   "shuttle bus icon": "000000",
+  "airplane icon": "000000",
 };
 
 export type RouteLogoProps = {
