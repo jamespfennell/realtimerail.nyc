@@ -17,9 +17,12 @@ export default function AboutPage() {
         <a href="https://github.com/jamespfennell/transiter">
           backend software Transiter
         </a>{" "}
-        to access NYC subway realtime data.{" "}
-        It's currently deployed in the <a href="https://www.digitalocean.com/">Digital Ocean</a> data center in{" "}
-        <a href="https://en.wikipedia.org/wiki/111_Eighth_Avenue">111 8th Avenue</a>, Chelsea.
+        to access NYC subway realtime data. It's currently deployed in the{" "}
+        <a href="https://www.digitalocean.com/">Digital Ocean</a> data center in{" "}
+        <a href="https://en.wikipedia.org/wiki/111_Eighth_Avenue">
+          111 8th Avenue
+        </a>
+        , Chelsea.
       </p>
       <p>
         To report a problem with the app, please{" "}
@@ -29,9 +32,12 @@ export default function AboutPage() {
         . Thank you!
       </p>
       <p>
-        Feature requests are also welcome.{" "}
-        Many features like the favorites page were suggested and{" "}
-        <a href="https://github.com/jamespfennell/realtimerail.nyc/commit/54e553f28d59410e01941df2aec785a4d7a93ad6">implemented</a> by users who wanted them.
+        Feature requests are also welcome. Many features like the favorites page
+        were suggested and{" "}
+        <a href="https://github.com/jamespfennell/realtimerail.nyc/commit/54e553f28d59410e01941df2aec785a4d7a93ad6">
+          implemented
+        </a>{" "}
+        by users who wanted them.
       </p>
       <p>
         Subway symbols are licensed from the{" "}
