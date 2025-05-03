@@ -25,6 +25,8 @@ import { ReactComponent as ImageForSIR } from "./images/sir.svg";
 import { ReactComponent as ImageForW } from "./images/w.svg";
 import { ReactComponent as ImageForZ } from "./images/z.svg";
 import { ReactComponent as ImageForAccesible } from "./images/acc.svg";
+import { ReactComponent as ImageForSB } from "./images/sb.svg";
+import { ReactComponent as ImageForAirplane } from "./images/air.svg";
 
 const routeIdToImage = {
   "1": ImageFor1,
@@ -59,7 +61,9 @@ const routeIdToImage = {
   SI: ImageForSIR,
   W: ImageForW,
   Z: ImageForZ,
-  AD: ImageForAccesible, // TODO change icon
+  "accessibility icon": ImageForAccesible,
+  "shuttle bus icon": ImageForSB,
+  "airplane icon": ImageForAirplane,
 } as const;
 
 export type RouteId = keyof typeof routeIdToImage;
@@ -99,7 +103,9 @@ export const routeIdToDefaultColor: Record<RouteId, string> = {
   SI: "213990",
   W: "fccc0a",
   Z: "996433",
-  AD: "000000", // TODO change color
+  "accessibility icon": "000000",
+  "shuttle bus icon": "000000",
+  "airplane icon": "000000",
 };
 
 export type RouteLogoProps = {
@@ -134,9 +140,7 @@ export function replaceRouteIdsWithImages(message: string): JSX.Element[] {
     let pre = message.substring(0, a);
     let route_id = message.substring(a + 1, b);
     elements.push(<span key={2 * message.length}>{pre}</span>);
-    elements.push(
-      <RouteLogo route={route_id.toUpperCase()} key={2 * message.length + 1} />,
-    );
+    elements.push(<RouteLogo route={route_id} key={2 * message.length + 1} />);
     message = message.substring(b + 1);
   }
   return elements;
