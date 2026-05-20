@@ -1,0 +1,12 @@
+:80 {
+    root * /usr/share/realtimerail.nyc
+
+    @static path /static/*
+    header @static Cache-Control "public, max-age=31536000"
+
+    @other not path /static/*
+    header @other Cache-Control "public, no-cache"
+
+    try_files {path} /index.html
+    file_server
+}

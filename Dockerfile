@@ -15,9 +15,7 @@ RUN npm run build
 
 RUN CI=true npm test
 
-FROM nginx
+FROM caddy
 COPY --from=build-deps /usr/src/app/build /usr/share/realtimerail.nyc
-RUN rm /etc/nginx/conf.d/*
-COPY ./nginx.conf /etc/nginx/conf.d/realtimerail.nyc-nginx.conf
+COPY ./Caddyfile /etc/caddy/Caddyfile
 EXPOSE 80
-CMD ["nginx", "-g", "daemon off;"]
