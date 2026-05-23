@@ -1,58 +1,126 @@
 import React from "react";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useHttpData } from "../hooks/http";
 import { locationURL } from "../api/api";
 import { ErrorMessage, LoadingPanel } from "../elements/BasicPage";
-import { ListStopsReply } from "../api/types";
+import { ListStopsReply, Stop } from "../api/types";
 import ListOfStops from "../elements/ListOfStops";
+import StopMap from "../elements/StopMap";
+import { filterStopsWithUsualRoutes } from "../lib/stopUtils";
 
-export default function LocationPage() {
+function getLocationErrorMessage(error: GeolocationPositionError): string {
+  switch (error.code) {
+    case error.PERMISSION_DENIED:
+      return "Location access denied. Please enable location permissions in your browser settings and try again.";
+    case error.POSITION_UNAVAILABLE:
+      return "Unable to determine your location. Please check your internet connection and try again.";
+    case error.TIMEOUT:
+      return "Location request timed out. Please try again.";
+    default:
+      return (
+        "An unknown error occurred while trying to access your location." +
+        (error.message
+          ? ` Details: ${error.message}`
+          : " Please check your device and browser settings, then try again.")
+      );
+  }
+}
+
+function useCurrentLocation() {
   const [location, setLocation] = useState<LocationQueryResponse>({
     response: null,
     error: null,
   });
-  // need to useState then have an if statement based on the result below. That's it!
-  useEffect(() => {
+
+  const fetchLocation = useCallback(() => {
     if ("geolocation" in navigator) {
       console.log("Getting location...");
       navigator.geolocation.getCurrentPosition(
         function (position) {
-          console.log("Got location");
-          setLocation((prev) => {
-            // TODO: is there a better way of just getting the location once than this?
-            // Also we should get it every 5 seconds
-            if (prev.response !== null) {
-              return prev;
-            }
-            return { response: position, error: null };
-          });
+          console.log("Got location", position);
+          setLocation({ response: position, error: null });
         },
         function (error) {
-          console.log("Location error:", error);
-          setLocation((_) => {
-            return { response: null, error: error };
+          console.log("Got location error", error);
+          setLocation({
+            response: null,
+            error: getLocationErrorMessage(error),
           });
         },
       );
     } else {
-      // TODO: error here too
       console.log("Location not supported by this browser");
+      setLocation({
+        response: null,
+        error:
+          "Geolocation is not supported by this browser. Please use a modern browser that supports location services.",
+      });
     }
-  });
+  }, []);
 
-  if (location.error !== null) {
-    return <div className="LocationPage">Error (TODO)</div>;
-  }
+  useEffect(() => {
+    fetchLocation();
+  }, [fetchLocation]);
+
+  return { location, fetchLocation };
+}
+
+export default function LocationPage() {
   return (
     <div>
       <h1>Nearby stops</h1>
-      <LoadingPanel loaded={location.response !== null}>
-        <h3>Stops within 2 miles</h3>
-        <Body
-          latitude={location.response?.coords.latitude!}
-          longitude={location.response?.coords.longitude!}
-        />
+      <Body />
+    </div>
+  );
+}
+
+function Body() {
+  // State for the current location and nearby stops.
+  const { location, fetchLocation } = useCurrentLocation();
+  const [stops, setStops] = useState<Stop[]>([]);
+
+  // ListStops request is issued if we have the location.
+  const url =
+    location.response !== null
+      ? locationURL(
+          location.response.coords.latitude,
+          location.response.coords.longitude,
+        )
+      : "";
+  const listStopsHttpData = useHttpData(url, null, ListStopsReply.fromJSON);
+
+  useEffect(() => {
+    if (listStopsHttpData.response) {
+      setStops(filterStopsWithUsualRoutes(listStopsHttpData.response.stops));
+    }
+  }, [listStopsHttpData.response]);
+
+  // If the location fetch had an error, show the error with retry.
+  if (location.error !== null) {
+    return (
+      <ErrorMessage tryAgainFunction={fetchLocation}>
+        {location.error}
+      </ErrorMessage>
+    );
+  }
+
+  // If the list stops request had an error, show the error retry.
+  if (listStopsHttpData.error !== null) {
+    return (
+      <ErrorMessage tryAgainFunction={listStopsHttpData.poll}>
+        {listStopsHttpData.error}
+      </ErrorMessage>
+    );
+  }
+
+  // Display the stop map regardless of the whether we have the nearby stops,
+  // since we can show the map immediately.
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+      <StopMap stops={stops} />
+      <LoadingPanel loaded={listStopsHttpData.response !== null}>
+        <ListOfStops stops={stops} orderByName={false} />
       </LoadingPanel>
     </div>
   );
@@ -60,27 +128,5 @@ export default function LocationPage() {
 
 type LocationQueryResponse = {
   response: GeolocationPosition | null;
-  error: GeolocationPositionError | null;
+  error: string | null;
 };
-
-type BodyProps = {
-  latitude: number;
-  longitude: number;
-};
-
-function Body(props: BodyProps) {
-  let url = locationURL(props.latitude, props.longitude);
-  const httpData = useHttpData(url, null, ListStopsReply.fromJSON);
-  if (httpData.error !== null) {
-    return (
-      <ErrorMessage tryAgainFunction={httpData.poll}>
-        {httpData.error}
-      </ErrorMessage>
-    );
-  }
-  return (
-    <LoadingPanel loaded={httpData.response !== null}>
-      <ListOfStops stops={httpData.response?.stops!} orderByName={false} />
-    </LoadingPanel>
-  );
-}
