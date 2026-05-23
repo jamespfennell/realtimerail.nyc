@@ -1,0 +1,6 @@
+/* Fix MapLibre blurry marker rendering */
+.StopMarkers .RouteLogo {
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+  transform: translateZ(0);
+}
