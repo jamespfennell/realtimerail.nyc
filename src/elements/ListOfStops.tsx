@@ -4,6 +4,7 @@ import { Stop } from "../api/types";
 import { List, ListElement } from "./List";
 import ListOfRouteLogos from "./routelogo/ListOfRouteLogos";
 import { Link } from "react-router-dom";
+import { getUsualRouteIds } from "../lib/stopUtils";
 
 export default function ListOfStops(props: {
   stops: Stop[];
@@ -16,12 +17,7 @@ export default function ListOfStops(props: {
   }
   let elements = [];
   for (const stop of props.stops) {
-    let usualRouteIds: string[] = [];
-    for (const serviceMap of stop.serviceMaps) {
-      if (serviceMap.configId === "weekday") {
-        serviceMap.routes.forEach((route) => usualRouteIds.push(route.id));
-      }
-    }
+    const usualRouteIds = getUsualRouteIds(stop);
     if (usualRouteIds.length === 0) {
       continue;
     }

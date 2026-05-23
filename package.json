@@ -4,9 +4,11 @@
   "private": true,
   "dependencies": {
     "axios": "^0.27.2",
+    "maplibre-gl": "^5.6.1",
     "react": "^18.1.0",
     "react-animate-height": "^3.0.3",
     "react-dom": "^18.1.0",
+    "react-map-gl": "^8.0.4",
     "react-router": "^6.3.0",
     "react-router-dom": "^6.3.0",
     "react-scripts": "5.0.1",
@@ -22,6 +24,11 @@
   },
   "eslintConfig": {
     "extends": "react-app"
+  },
+  "jest": {
+    "moduleNameMapper": {
+      "^react-map-gl/maplibre$": "<rootDir>/src/__mocks__/react-map-gl-maplibre.js"
+    }
   },
   "browserslist": {
     "production": [
